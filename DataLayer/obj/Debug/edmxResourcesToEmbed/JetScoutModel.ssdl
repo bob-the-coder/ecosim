@@ -1,0 +1,1139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="JetscoutModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Aircraft">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="ExternalId" Type="varchar" MaxLength="100" />
+    <Property Name="ModelId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="CompanyId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="AircraftName" Type="nvarchar" MaxLength="150" />
+    <Property Name="RegistrationNumber" Type="nvarchar" MaxLength="150" />
+    <Property Name="SerialNumber" Type="nvarchar" MaxLength="150" />
+    <Property Name="MaxPAX" Type="int" />
+    <Property Name="CrewNumberCockpit" Type="int" />
+    <Property Name="CrewNumberCabin" Type="int" />
+    <Property Name="FAStandard" Type="nvarchar" MaxLength="50" />
+    <Property Name="CurrencyId" Type="int" />
+    <Property Name="InsuranceUrl" Type="nvarchar" MaxLength="500" />
+    <Property Name="Ttaf" Type="nvarchar" MaxLength="50" />
+    <Property Name="ManufacturingYear" Type="int" Nullable="false" />
+    <Property Name="InteriorRefurbished" Type="nvarchar" MaxLength="10" />
+    <Property Name="FloorplanUrl" Type="nvarchar" MaxLength="500" />
+    <Property Name="MinimumUtilisationPerDay" Type="nvarchar" MaxLength="150" />
+    <Property Name="MinimumUtilisationPerDayMinutes" Type="nvarchar" MaxLength="150" />
+    <Property Name="ExteriorRefurbished" Type="nvarchar" MaxLength="10" />
+    <Property Name="Mtow" Type="float" />
+    <Property Name="MtowMU" Type="int" Nullable="false" />
+    <Property Name="Description" Type="nvarchar" MaxLength="400" />
+    <Property Name="PictureExteriorUrl" Type="nvarchar" MaxLength="500" />
+    <Property Name="PictureInteriorUrl" Type="nvarchar" MaxLength="500" />
+    <Property Name="Status" Type="int" />
+    <Property Name="VMAXCruise" Type="float" />
+    <Property Name="NBAAIfrFRes" Type="float" />
+    <Property Name="VLRCRangeMax" Type="float" />
+    <Property Name="RangeMaxVLRC" Type="float" />
+    <Property Name="VMAXRangeMax" Type="float" />
+    <Property Name="RangeMaxVMAX" Type="float" />
+    <Property Name="NrOfCopies" Type="int" />
+    <Property Name="SmokingOption" Type="bit" />
+  </EntityType>
+  <EntityType Name="Aircraft_Categories">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Category" Type="varchar" MaxLength="100" Nullable="false" />
+    <Property Name="RangeMin" Type="int" Nullable="false" />
+    <Property Name="RangeMax" Type="int" Nullable="false" />
+    <Property Name="PassengerMin" Type="int" Nullable="false" />
+    <Property Name="PassengerMax" Type="int" Nullable="false" />
+    <Property Name="Status" Type="int" />
+    <Property Name="Order" Type="int" />
+  </EntityType>
+  <EntityType Name="Aircraft_ClassNum">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="ClassNum" Type="int" Nullable="false" />
+    <Property Name="AvgVBlock1" Type="float" Nullable="false" />
+    <Property Name="AvgRange" Type="float" Nullable="false" />
+    <Property Name="AverageMaximumSeats" Type="int" />
+    <Property Name="AverageTypicalSeats" Type="int" />
+  </EntityType>
+  <EntityType Name="Aircraft_Homebases">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="AircraftId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Homebase" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="HomebaseFIR" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="StartDate" Type="date" Nullable="false" />
+    <Property Name="EndDate" Type="date" Nullable="false" />
+    <Property Name="Status" Type="int" Nullable="false" />
+    <Property Name="IsPrimary" Type="bit" />
+  </EntityType>
+  <EntityType Name="Aircraft_Manufacturers">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="100" />
+    <Property Name="Status" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Aircraft_Models">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="CategoryId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="ManufacturerId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Model" Type="nvarchar" MaxLength="255" />
+    <Property Name="Status" Type="int" Nullable="false" />
+    <Property Name="ICAOTypename" Type="nvarchar" MaxLength="255" />
+    <Property Name="MaximumSeats" Type="int" />
+    <Property Name="TypicalSeats" Type="int" />
+    <Property Name="ICAODesignator" Type="nvarchar" MaxLength="255" />
+    <Property Name="WTC" Type="nvarchar" MaxLength="255" />
+    <Property Name="ICAODescription" Type="nvarchar" MaxLength="255" />
+    <Property Name="AcftClassName" Type="nvarchar" MaxLength="255" />
+    <Property Name="FuelType" Type="nvarchar" MaxLength="255" />
+    <Property Name="SimFee" Type="float" />
+    <Property Name="AcftFuelFlow" Type="float" />
+    <Property Name="VBlock" Type="int" />
+    <Property Name="AcftEntryDoorHeightFT" Type="float" />
+    <Property Name="AcftEntryDoorWidthFT" Type="float" />
+    <Property Name="Range" Type="float" />
+    <Property Name="BalFieldLengthMTOM" Type="float" />
+    <Property Name="LdgFAR91" Type="nvarchar" MaxLength="255" />
+    <Property Name="LdgFAR121" Type="float" />
+    <Property Name="LdgFAR135" Type="nvarchar" MaxLength="255" />
+    <Property Name="AllEngROC" Type="float" />
+    <Property Name="OEIROC" Type="float" />
+    <Property Name="VMAXCruise" Type="float" />
+    <Property Name="VNormCruise" Type="float" />
+    <Property Name="VLongRangeCruise" Type="float" />
+    <Property Name="FullTankRange" Type="float" />
+    <Property Name="Rng30MinStFull" Type="float" />
+    <Property Name="RangeMaxVLRC" Type="float" />
+    <Property Name="VLRCRangeMax" Type="float" />
+    <Property Name="RangeMaxVMAX" Type="float" />
+    <Property Name="VMAXRangeMax" Type="float" />
+    <Property Name="RngResTnkFull" Type="float" />
+    <Property Name="ServiceCeiling" Type="float" />
+    <Property Name="CertifiedCeiling" Type="float" />
+    <Property Name="OEICeiling" Type="float" />
+    <Property Name="IGEHovering" Type="float" />
+    <Property Name="OGEHovering" Type="float" />
+    <Property Name="CabinHeight" Type="float" />
+    <Property Name="CabinWidth" Type="float" />
+    <Property Name="CabinLength" Type="float" />
+    <Property Name="InternalBaggageVol" Type="float" />
+    <Property Name="ExternalBaggageVol" Type="float" />
+    <Property Name="Mtow" Type="int" />
+    <Property Name="MtowMU" Type="int" />
+    <Property Name="MLM" Type="float" />
+    <Property Name="BOW" Type="float" />
+    <Property Name="UsableFuel" Type="float" />
+    <Property Name="IFR" Type="nvarchar" MaxLength="255" />
+    <Property Name="AcftLength" Type="float" />
+    <Property Name="Acft" Type="float" />
+    <Property Name="RampMax" Type="float" />
+    <Property Name="WtMaxRampOpt" Type="float" />
+    <Property Name="WtMTOGWOpt" Type="float" />
+    <Property Name="ZFW" Type="float" />
+    <Property Name="WtZeroFuelWOpt" Type="float" />
+    <Property Name="WtBowOpt" Type="float" />
+    <Property Name="WtPayFuelOpt" Type="float" />
+    <Property Name="MaxPayloadOpt" Type="float" />
+    <Property Name="NBAAIfrFRes" Type="float" />
+    <Property Name="MinVREF" Type="float" />
+    <Property Name="Meridian_RangeSeatsFull" Type="float" />
+    <Property Name="Meridian_MaximumRange" Type="float" />
+    <Property Name="Meridian_BalancedFieldLenght" Type="float" />
+    <Property Name="Meridian_FAR121LandingDistance" Type="float" />
+    <Property Name="Meridian_MaxCruiseSpeed" Type="float" />
+    <Property Name="Meridian_NormalCruiseSpeed" Type="float" />
+    <Property Name="Meridian_LongRangeCruiseSpeed" Type="float" />
+  </EntityType>
+  <EntityType Name="Airport">
+    <Key>
+      <PropertyRef Name="AptKey" />
+    </Key>
+    <Property Name="AptKey" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="AptLocation" Type="varchar" MaxLength="50" />
+    <Property Name="AptName" Type="varchar" MaxLength="50" />
+    <Property Name="AptState" Type="varchar" MaxLength="5" />
+    <Property Name="AptCtryKey" Type="int" />
+    <Property Name="AptArea" Type="varchar" MaxLength="3" />
+    <Property Name="AptIcao" Type="varchar" MaxLength="4" />
+    <Property Name="AptIata" Type="varchar" MaxLength="3" />
+    <Property Name="AptFir" Type="varchar" MaxLength="4" />
+    <Property Name="AptLat" Type="varchar" MaxLength="8" />
+    <Property Name="AptLng" Type="varchar" MaxLength="8" />
+    <Property Name="AptMagVar" Type="varchar" MaxLength="6" />
+    <Property Name="AptElevation" Type="smallint" />
+    <Property Name="AptRefCode" Type="varchar" MaxLength="2" />
+    <Property Name="AptAlternate1Key" Type="int" />
+    <Property Name="AptAlternate2Key" Type="int" />
+    <Property Name="AptCompanyCat" Type="varchar" MaxLength="1" />
+    <Property Name="AptResFireCat" Type="varchar" MaxLength="3" />
+    <Property Name="AptHomepage" Type="varchar" MaxLength="100" />
+    <Property Name="AptFaa" Type="varchar" MaxLength="4" />
+    <Property Name="AptType" Type="tinyint" />
+    <Property Name="AptUsage" Type="tinyint" />
+    <Property Name="AptFuelAvgas" Type="bit" />
+    <Property Name="AptFuelJet" Type="bit" />
+    <Property Name="AptHours" Type="varchar" MaxLength="50" />
+    <Property Name="AptUtc" Type="float" />
+    <Property Name="AptSlots" Type="bit" />
+    <Property Name="AptInfo" Type="text" />
+    <Property Name="AptMail" Type="varchar" MaxLength="100" />
+    <Property Name="AptUpdate" Type="smalldatetime" />
+    <Property Name="AptEntry" Type="bit" />
+    <Property Name="AptCustoms" Type="bit" />
+    <Property Name="AptContinent" Type="int" />
+    <Property Name="Continent" Type="nvarchar" MaxLength="100" />
+  </EntityType>
+  <EntityType Name="AirportBlacklist">
+    <Key>
+      <PropertyRef Name="CompanyId" />
+      <PropertyRef Name="AirportIcao" />
+    </Key>
+    <Property Name="CompanyId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="AirportIcao" Type="nvarchar" MaxLength="4" Nullable="false" />
+    <Property Name="Status" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Applications">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="WhiteLabelMode" Type="bit" />
+    <Property Name="LogoFilePath" Type="nvarchar" MaxLength="500" />
+    <Property Name="FaviconFilePath" Type="nvarchar" MaxLength="500" />
+    <Property Name="AppName" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="AppSlogan" Type="nvarchar" MaxLength="500" />
+    <Property Name="VideoLink" Type="nvarchar" MaxLength="150" />
+    <Property Name="SocialLinkFacebook" Type="nvarchar" MaxLength="150" />
+    <Property Name="SocialLinkLinkedIn" Type="nvarchar" MaxLength="150" />
+    <Property Name="SocialLinkTwitter" Type="nvarchar" MaxLength="150" />
+    <Property Name="SocialLinkInstagram" Type="nvarchar" MaxLength="150" />
+    <Property Name="SocialLinkGooglePlus" Type="nvarchar" MaxLength="150" />
+    <Property Name="SocialLinkYoutube" Type="nvarchar" MaxLength="150" />
+    <Property Name="SocialLinkVimeo" Type="nvarchar" MaxLength="150" />
+    <Property Name="Domain" Type="nvarchar" MaxLength="150" Nullable="false" />
+    <Property Name="Status" Type="int" />
+  </EntityType>
+  <EntityType Name="Companies">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="WhiteLabelId" Type="uniqueidentifier" />
+    <Property Name="CountryId" Type="int" />
+    <Property Name="CompanyName" Type="nvarchar" MaxLength="150" />
+    <Property Name="FiscalCode" Type="nvarchar" MaxLength="50" />
+    <Property Name="VAT" Type="nvarchar" MaxLength="50" />
+    <Property Name="Email_Inquiries_Quotes" Type="nvarchar" MaxLength="255" />
+    <Property Name="Email_Quotes" Type="nvarchar" MaxLength="255" />
+    <Property Name="City" Type="nvarchar" MaxLength="150" />
+    <Property Name="Address" Type="nvarchar" MaxLength="150" />
+    <Property Name="CompanyAddress" Type="nvarchar" MaxLength="250" />
+    <Property Name="ZipCode" Type="nvarchar" MaxLength="50" />
+    <Property Name="Trial" Type="bit" />
+    <Property Name="TrialEndDate" Type="datetime" />
+    <Property Name="Phone" Type="nvarchar" MaxLength="50" />
+    <Property Name="Fax" Type="nvarchar" MaxLength="50" />
+    <Property Name="UploadFile" Type="nvarchar" MaxLength="250" />
+    <Property Name="LogoFile" Type="nvarchar" MaxLength="250" />
+    <Property Name="ContactName" Type="nvarchar" MaxLength="150" />
+    <Property Name="ContactEmail" Type="nvarchar" MaxLength="255" />
+    <Property Name="CompanyWebsite" Type="nvarchar" MaxLength="250" />
+    <Property Name="OfferReferenceNumber" Type="int" />
+    <Property Name="Status" Type="int" />
+  </EntityType>
+  <EntityType Name="Country">
+    <Key>
+      <PropertyRef Name="AxCtryKey" />
+    </Key>
+    <Property Name="AxCtryKey" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="AxCtryName" Type="varchar" MaxLength="50" />
+    <Property Name="AxCtryCapital" Type="varchar" MaxLength="50" />
+    <Property Name="AxCtryPostalCode" Type="varchar" MaxLength="2" />
+    <Property Name="AxCtryIsoCode" Type="varchar" MaxLength="3" />
+    <Property Name="AxCtryIsoNbr" Type="varchar" MaxLength="3" />
+    <Property Name="AxCtryCurKey" Type="int" />
+    <Property Name="AxCtryDialPrefix" Type="varchar" MaxLength="5" />
+    <Property Name="AxCtrySos" Type="varchar" MaxLength="10" />
+    <Property Name="AxCtryLanguage" Type="varchar" MaxLength="100" />
+    <Property Name="AxCtryUrlInfo" Type="varchar" MaxLength="100" />
+    <Property Name="AxCtryUrlAvi" Type="varchar" MaxLength="100" />
+    <Property Name="AxCtryAviRules" Type="varchar" MaxLength="10" />
+    <Property Name="AxCtryActPrefix" Type="varchar" MaxLength="10" />
+    <Property Name="AxCtryRemarks" Type="text" />
+    <Property Name="AxCtryFlag" Type="image" />
+    <Property Name="AxCtryMap" Type="image" />
+    <Property Name="AxCtryCommunity" Type="tinyint" />
+    <Property Name="AxCtryEuEts" Type="bit" />
+    <Property Name="AxCtryArea" Type="varchar" MaxLength="20" />
+    <Property Name="AxCtryICAO" Type="bit" />
+    <Property Name="AxCtryContinent" Type="tinyint" />
+    <Property Name="AxCtryUVName" Type="varchar" MaxLength="100" />
+    <Property Name="AxCtryUVCode" Type="varchar" MaxLength="10" />
+    <Property Name="CommunityName" Type="nvarchar" MaxLength="100" />
+  </EntityType>
+  <EntityType Name="CustomChargeRules">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="CompanyId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="CustomChargeId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Order" Type="int" Nullable="false" />
+    <Property Name="Field" Type="int" Nullable="false" />
+    <Property Name="Operator" Type="int" Nullable="false" />
+    <Property Name="Value" Type="nvarchar" MaxLength="300" Nullable="false" />
+    <Property Name="Unit" Type="int" Nullable="false" />
+    <Property Name="AndOr" Type="int" Nullable="false" />
+    <Property Name="ValueExtra" Type="nvarchar" MaxLength="300" />
+  </EntityType>
+  <EntityType Name="CustomCharges">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="CompanyId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Cost" Type="float" Nullable="false" />
+    <Property Name="CostType" Type="int" />
+    <Property Name="Unit" Type="int" Nullable="false" />
+    <Property Name="CurrencyId" Type="int" Nullable="false" />
+    <Property Name="Note" Type="nvarchar" MaxLength="500" />
+    <Property Name="Status" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CustomFees">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="CurrencyId" Type="int" Nullable="false" />
+    <Property Name="Cost" Type="float" Nullable="false" />
+    <Property Name="ChargeType" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="FlyZones">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="RegionDescriptor" Type="nvarchar(max)" />
+    <Property Name="CompanyId" Type="uniqueidentifier" />
+    <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="Color" Type="nvarchar" MaxLength="20" />
+  </EntityType>
+  <EntityType Name="Messages">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Sender" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="DateTime" Type="datetime2" Precision="7" Nullable="false" />
+    <Property Name="Type" Type="int" Nullable="false" />
+    <Property Name="Title" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="Content" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Unread" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Offers">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="UserId" Type="uniqueidentifier" />
+    <Property Name="RequesterId" Type="uniqueidentifier" />
+    <Property Name="ReviewerId" Type="uniqueidentifier" />
+    <Property Name="QuoteId" Type="uniqueidentifier" />
+    <Property Name="AircraftId" Type="uniqueidentifier" />
+    <Property Name="TaxCodeId" Type="uniqueidentifier" />
+    <Property Name="PricingProfileId" Type="uniqueidentifier" />
+    <Property Name="OfferDate" Type="datetime2" Precision="7" Nullable="false" />
+    <Property Name="ReviewDate" Type="datetime2" Precision="7" />
+    <Property Name="TotalHandlingFee" Type="float" />
+    <Property Name="TotalParkingFee" Type="float" />
+    <Property Name="TotalLandingFee" Type="float" />
+    <Property Name="TotalOvernightFee" Type="float" />
+    <Property Name="TotalCateringFee" Type="float" />
+    <Property Name="TotalOvernights" Type="int" />
+    <Property Name="PriceWithoutTaxes" Type="float" />
+    <Property Name="SurchargeType" Type="int" />
+    <Property Name="SurchargeValue" Type="float" />
+    <Property Name="Price" Type="float" Nullable="false" />
+    <Property Name="Currency" Type="nvarchar" MaxLength="50" />
+    <Property Name="InternalNote" Type="nvarchar(max)" />
+    <Property Name="QTEHeader" Type="nvarchar" MaxLength="300" />
+    <Property Name="QTEFooter" Type="nvarchar" MaxLength="300" />
+    <Property Name="INVHeader" Type="nvarchar" MaxLength="300" />
+    <Property Name="INVFooter" Type="nvarchar" MaxLength="300" />
+    <Property Name="CONHeader" Type="nvarchar" MaxLength="300" />
+    <Property Name="CONFooter" Type="nvarchar" MaxLength="300" />
+    <Property Name="Status" Type="int" Nullable="false" />
+    <Property Name="QuoteReference" Type="nvarchar" MaxLength="100" />
+    <Property Name="AircraftCategoryId" Type="uniqueidentifier" />
+  </EntityType>
+  <EntityType Name="PDFCustomTexts">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="CompanyId" Type="uniqueidentifier" />
+    <Property Name="TextType" Type="int" />
+    <Property Name="Text" Type="nvarchar" MaxLength="500" />
+  </EntityType>
+  <EntityType Name="PricingProfiles">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="CompanyId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="AircraftId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="CurrencyId" Type="int" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="150" Nullable="false" />
+    <Property Name="BudgetCost" Type="float" Nullable="false" />
+    <Property Name="MarketPositioningPrice" Type="float" Nullable="false" />
+    <Property Name="MarketOccupiedPrice" Type="float" Nullable="false" />
+    <Property Name="MarketFerryPrice" Type="float" Nullable="false" />
+    <Property Name="HandlingFee" Type="float" Nullable="false" />
+    <Property Name="LandingFee" Type="float" Nullable="false" />
+    <Property Name="ParkingFee" Type="float" Nullable="false" />
+    <Property Name="OvernightFee" Type="float" Nullable="false" />
+    <Property Name="StandardPositioningPrice" Type="float" Nullable="false" />
+    <Property Name="StandardOccupiedPrice" Type="float" Nullable="false" />
+    <Property Name="StandardFerryPrice" Type="float" Nullable="false" />
+    <Property Name="CateringShortFlightFee" Type="float" Nullable="false" />
+    <Property Name="CateringLongFlightFee" Type="float" Nullable="false" />
+    <Property Name="IsDefault" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Quote_Fee_Assignments">
+    <Key>
+      <PropertyRef Name="OfferId" />
+      <PropertyRef Name="FeeId" />
+      <PropertyRef Name="SectorId" />
+      <PropertyRef Name="FeeType" />
+      <PropertyRef Name="AppliesFor" />
+    </Key>
+    <Property Name="OfferId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="FeeId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="SectorId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="FeeType" Type="int" Nullable="false" />
+    <Property Name="AppliesFor" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Quote_LegsWaypointAssignments">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="QuoteId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="QuoteLegId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Type" Type="nvarchar" MaxLength="50" />
+    <Property Name="id_" Type="nvarchar" MaxLength="150" />
+    <Property Name="ic_" Type="nvarchar" MaxLength="150" />
+    <Property Name="Lat" Type="float" Nullable="false" />
+    <Property Name="Long" Type="float" Nullable="false" />
+    <Property Name="Via" Type="nvarchar" MaxLength="50" />
+    <Property Name="TCRS" Type="nvarchar" MaxLength="50" />
+    <Property Name="MCRS" Type="nchar" MaxLength="10" />
+    <Property Name="Distance" Type="float" Nullable="false" />
+    <Property Name="XAltitude" Type="float" />
+    <Property Name="MinAltitude" Type="float" />
+    <Property Name="MaxAltitude" Type="float" />
+    <Property Name="ISADeviation" Type="float" Nullable="false" />
+    <Property Name="WindDirection" Type="float" Nullable="false" />
+    <Property Name="WindSpeed" Type="float" Nullable="false" />
+    <Property Name="Order" Type="int" />
+  </EntityType>
+  <EntityType Name="QuoteLegs">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="QuoteId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="DepartAirport" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="DepartICAOCode" Type="nvarchar" MaxLength="10" />
+    <Property Name="DepartDateTimeLocal" Type="datetime" Nullable="false" />
+    <Property Name="DepartDateTimeHomeBase" Type="datetime" />
+    <Property Name="DepartDateTimeUTC" Type="datetime" />
+    <Property Name="DepartLatitude" Type="nvarchar" MaxLength="15" />
+    <Property Name="DepartLongitude" Type="nvarchar" MaxLength="15" />
+    <Property Name="ArrivalAirport" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="ArrivalICAOCode" Type="nvarchar" MaxLength="10" />
+    <Property Name="ArrivalDateTimeLocal" Type="datetime" Nullable="false" />
+    <Property Name="ArrivalDateTimeHomebase" Type="datetime" />
+    <Property Name="ArrivalDateTimeUTC" Type="datetime" />
+    <Property Name="ArrivalLatitude" Type="nvarchar" MaxLength="15" />
+    <Property Name="ArrivalLongitude" Type="nvarchar" MaxLength="15" />
+    <Property Name="Routing" Type="nvarchar" MaxLength="500" />
+    <Property Name="PassengersNumber" Type="int" Nullable="false" />
+    <Property Name="PassengersNumberIsDetailed" Type="bit" />
+    <Property Name="AdultsPassengersNumber" Type="int" />
+    <Property Name="ChildrenPassengersNumber" Type="int" />
+    <Property Name="InfantsPassengersNumber" Type="int" />
+    <Property Name="PetsPassengersNumber" Type="int" />
+    <Property Name="PetsOption" Type="nvarchar" MaxLength="50" />
+    <Property Name="PetsExtraInfo" Type="nvarchar(max)" />
+    <Property Name="TotalDistanceNM" Type="float" />
+    <Property Name="TotalDistanceKM" Type="float" />
+    <Property Name="TotalDistanceSM" Type="float" />
+    <Property Name="GreatCircleDistanceNM" Type="float" />
+    <Property Name="GreatCircleDistanceKM" Type="float" />
+    <Property Name="GreatCircleDistanceSM" Type="float" />
+    <Property Name="GreatCircleTrkMag" Type="float" />
+    <Property Name="GreatCircleTrkTrue" Type="float" />
+    <Property Name="AverageWindComponent" Type="float" />
+    <Property Name="AverageDeviationFromISATemperature" Type="float" />
+    <Property Name="FlightTime" Type="float" />
+    <Property Name="Order" Type="int" />
+    <Property Name="ArrivesNextDay" Type="bit" />
+    <Property Name="FlightType" Type="int" />
+    <Property Name="IsEmptySector" Type="bit" />
+    <Property Name="Preference_GroundTransportation" Type="bit" />
+    <Property Name="Preference_InflightCatering" Type="bit" />
+    <Property Name="Preference_GolfBags" Type="bit" />
+    <Property Name="Preference_Skis" Type="bit" />
+    <Property Name="Preference_ExcessBaggage" Type="bit" />
+    <Property Name="Preference_FoodType" Type="nvarchar" MaxLength="50" />
+    <Property Name="Preference_SmokingOption" Type="nvarchar" MaxLength="50" />
+    <Property Name="Preference_OtherDetails" Type="text" />
+  </EntityType>
+  <EntityType Name="Quotes">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="WhiteLabelId" Type="uniqueidentifier" />
+    <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="RequestNumber" Type="int" Nullable="false" />
+    <Property Name="POD" Type="nvarchar" MaxLength="150" />
+    <Property Name="POD_ICAO" Type="nvarchar" MaxLength="10" />
+    <Property Name="POA" Type="nvarchar" MaxLength="150" />
+    <Property Name="POA_ICAO" Type="nvarchar" MaxLength="10" />
+    <Property Name="ClassType" Type="int" Nullable="false" />
+    <Property Name="RequestDate" Type="datetime2" Precision="7" Nullable="false" />
+    <Property Name="AdditionalInformation" Type="nvarchar" MaxLength="500" />
+    <Property Name="MinimumClass" Type="int" />
+    <Property Name="TotalFlightTime" Type="float" />
+    <Property Name="IsUnattended" Type="bit" Nullable="false" />
+    <Property Name="Status" Type="int" Nullable="false" />
+    <Property Name="QuoteType" Type="int" Nullable="false" />
+    <Property Name="ResponseStatus" Type="int" Nullable="false" />
+    <Property Name="FirstDepartDateTimeLocal" Type="datetime2" Precision="7" Nullable="false" />
+    <Property Name="FirstDepartDateTimeUTC" Type="datetime2" Precision="7" Nullable="false" />
+    <Property Name="LastArrivalDateTimeLocal" Type="datetime2" Precision="7" Nullable="false" />
+    <Property Name="LastArrivalDateTimeUTC" Type="datetime2" Precision="7" Nullable="false" />
+    <Property Name="FirstDepartAirport" Type="nvarchar" MaxLength="150" />
+    <Property Name="LastArrivalAirport" Type="nvarchar" MaxLength="150" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'jetscout.dbo.ResetPasswordTokens' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="ResetPasswordTokens">
+    <Key>
+      <PropertyRef Name="Id" />
+      <PropertyRef Name="UserId" />
+      <PropertyRef Name="TokenDateTime" />
+      <PropertyRef Name="Availability" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="TokenDateTime" Type="datetime" Nullable="false" />
+    <Property Name="Availability" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Roles">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+  </EntityType>
+  <EntityType Name="SectorPricings">
+    <Key>
+      <PropertyRef Name="CompanyId" />
+      <PropertyRef Name="AircraftId" />
+      <PropertyRef Name="ICAO" />
+    </Key>
+    <Property Name="CompanyId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="AircraftId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="ICAO" Type="varchar" MaxLength="4" Nullable="false" />
+    <Property Name="Currency" Type="nchar" MaxLength="10" />
+    <Property Name="Handling" Type="float" />
+    <Property Name="Landing" Type="float" />
+    <Property Name="Parking" Type="float" />
+    <Property Name="Overnight" Type="float" />
+    <Property Name="Permission" Type="float" />
+    <Property Name="SpeedType" Type="int" />
+  </EntityType>
+  <EntityType Name="Sectors">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="OfferId" Type="uniqueidentifier" />
+    <Property Name="SectorType" Type="int" />
+    <Property Name="FlightType" Type="int" />
+    <Property Name="SpeedType" Type="int" />
+    <Property Name="Order" Type="int" />
+    <Property Name="FlightTypeName" Type="nvarchar" MaxLength="50" />
+    <Property Name="DepartICAOCode" Type="nvarchar" MaxLength="50" />
+    <Property Name="DepartAirport" Type="nvarchar" MaxLength="50" />
+    <Property Name="DepartCity" Type="nvarchar" MaxLength="50" />
+    <Property Name="DepartState" Type="nvarchar" MaxLength="50" />
+    <Property Name="DepartCountry" Type="nvarchar" MaxLength="50" />
+    <Property Name="DepartContinent" Type="nvarchar" MaxLength="50" />
+    <Property Name="DepartLatitude" Type="nvarchar" MaxLength="50" />
+    <Property Name="DepartLongitude" Type="nvarchar" MaxLength="50" />
+    <Property Name="DepartDateTimeLocal" Type="datetime" />
+    <Property Name="DepartDateTimeHome" Type="datetime" />
+    <Property Name="DepartDateTimeUTC" Type="datetime" />
+    <Property Name="ArrivalICAOCode" Type="nvarchar" MaxLength="50" />
+    <Property Name="ArrivalAirport" Type="nvarchar" MaxLength="50" />
+    <Property Name="ArrivalCity" Type="nvarchar" MaxLength="50" />
+    <Property Name="ArrivalState" Type="nvarchar" MaxLength="50" />
+    <Property Name="ArrivalCountry" Type="nvarchar" MaxLength="50" />
+    <Property Name="ArrivalContinent" Type="nvarchar" MaxLength="50" />
+    <Property Name="ArrivalLatitude" Type="nvarchar" MaxLength="50" />
+    <Property Name="ArrivalLongitude" Type="nvarchar" MaxLength="50" />
+    <Property Name="ArrivalDateTimeLocal" Type="datetime" />
+    <Property Name="ArrivalDateTimeHome" Type="datetime" />
+    <Property Name="ArrivalDateTimeUTC" Type="datetime" />
+    <Property Name="TotalDistanceNM" Type="float" />
+    <Property Name="TotalDistanceSM" Type="float" />
+    <Property Name="TotalDistanceKM" Type="float" />
+    <Property Name="GreatCircleDistanceNM" Type="float" />
+    <Property Name="GreatCircleDistanceSM" Type="float" />
+    <Property Name="GreatCircleDistanceKM" Type="float" />
+    <Property Name="AverageFlightTime" Type="int" />
+    <Property Name="AverageFlightTimePrice" Type="float" />
+    <Property Name="AverageBlockTime" Type="int" />
+    <Property Name="AverageBlockTimePrice" Type="float" />
+    <Property Name="HandlingFee" Type="float" />
+    <Property Name="ParkingFee" Type="float" />
+    <Property Name="LandingFee" Type="float" />
+    <Property Name="OvernightFee" Type="float" />
+    <Property Name="NumberOfOvernights" Type="float" />
+    <Property Name="CateringFeeType" Type="int" />
+    <Property Name="CateringFee" Type="float" />
+    <Property Name="PassengersNumber" Type="int" />
+    <Property Name="PassengersNumberIsDetailed" Type="bit" />
+    <Property Name="ChildrenPassengersNumber" Type="int" />
+    <Property Name="InfantsPassengersNumber" Type="int" />
+    <Property Name="PetsPassengersNumber" Type="int" />
+    <Property Name="PetsOption" Type="nvarchar" MaxLength="50" />
+    <Property Name="PetsExtraInfo" Type="nvarchar" MaxLength="50" />
+    <Property Name="PreferenceExcessBaggage" Type="bit" />
+    <Property Name="PreferenceGolfBags" Type="bit" />
+    <Property Name="PreferenceInflightCatering" Type="bit" />
+    <Property Name="PreferenceSkis" Type="bit" />
+    <Property Name="PreferenceFoodType" Type="nvarchar" MaxLength="50" />
+    <Property Name="PreferenceSmokingOption" Type="nvarchar" MaxLength="50" />
+    <Property Name="PreferenceOtherDetails" Type="nvarchar" MaxLength="500" />
+    <Property Name="FlightTime" Type="int" />
+    <Property Name="FlightTimePrice" Type="float" />
+    <Property Name="BlockTime" Type="int" />
+    <Property Name="BlockTimePrice" Type="float" />
+    <Property Name="AverageSpeed" Type="float" />
+    <Property Name="BudgetFlightTimePrice" Type="float" />
+    <Property Name="BudgetBlockTimePrice" Type="float" />
+    <Property Name="IsFlown" Type="bit" />
+    <Property Name="IsCharged" Type="bit" />
+    <Property Name="PreferenceGroundTransportation" Type="bit" />
+    <Property Name="DepartCountryPostalCode" Type="nvarchar" MaxLength="2" />
+    <Property Name="ArrivalCountryPostalCode" Type="nvarchar" MaxLength="2" />
+  </EntityType>
+  <EntityType Name="TaxCodes">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="CompanyId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="TaxCodeName" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="TaxRate" Type="float" Nullable="false" />
+    <Property Name="Status" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="User_RoleAssignments">
+    <Key>
+      <PropertyRef Name="UserId" />
+      <PropertyRef Name="RoleId" />
+    </Key>
+    <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="RoleId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="RoleName" Type="nvarchar" MaxLength="100" Nullable="false" />
+  </EntityType>
+  <EntityType Name="User_TokenAssignments">
+    <Key>
+      <PropertyRef Name="TokenId" />
+      <PropertyRef Name="UserId" />
+    </Key>
+    <Property Name="TokenId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
+  </EntityType>
+  <EntityType Name="User_Type">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserType" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Description" Type="nvarchar" MaxLength="50" />
+    <Property Name="Status" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Users">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="CompanyId" Type="uniqueidentifier" />
+    <Property Name="Username" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="Password" Type="varbinary" MaxLength="30" Nullable="false" />
+    <Property Name="Status" Type="int" Nullable="false" />
+    <Property Name="UserTypeId" Type="int" />
+    <Property Name="Title" Type="nvarchar" MaxLength="15" />
+    <Property Name="FirstName" Type="nvarchar" MaxLength="80" />
+    <Property Name="LastName" Type="nvarchar" MaxLength="80" />
+    <Property Name="MiddleName" Type="nvarchar" MaxLength="80" />
+    <Property Name="Email" Type="nvarchar" MaxLength="255" Nullable="false" />
+    <Property Name="Trial" Type="bit" />
+    <Property Name="TrialEndDate" Type="datetime" />
+    <Property Name="Language" Type="nvarchar" MaxLength="150" />
+    <Property Name="Url" Type="nvarchar" MaxLength="150" />
+    <Property Name="Headquarters" Type="nvarchar" MaxLength="50" />
+    <Property Name="Notes" Type="nvarchar" MaxLength="150" />
+    <Property Name="PreferredAircraftType" Type="uniqueidentifier" />
+    <Property Name="EmbarkingAirport" Type="nvarchar" MaxLength="150" />
+    <Property Name="PromotionalEmails" Type="bit" Nullable="false" />
+    <Property Name="Terms" Type="bit" Nullable="false" />
+    <Property Name="InvoicingEmail" Type="nvarchar" MaxLength="255" />
+    <Property Name="HeadquartersFIR" Type="nvarchar" MaxLength="50" />
+    <Property Name="DestinationAirport" Type="nvarchar" MaxLength="150" />
+  </EntityType>
+  <EntityType Name="VIPAirports">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="CompanyId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="ICAO" Type="nvarchar" MaxLength="4" Nullable="false" />
+    <Property Name="Notes" Type="nvarchar" MaxLength="500" />
+    <Property Name="Status" Type="bit" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_Aircraft_Aircraft_Models">
+    <End Role="Aircraft_Models" Type="Self.Aircraft_Models" Multiplicity="1" />
+    <End Role="Aircraft" Type="Self.Aircraft" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Aircraft_Models">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Aircraft">
+        <PropertyRef Name="ModelId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Aircraft_Homebases_Aircraft">
+    <End Role="Aircraft" Type="Self.Aircraft" Multiplicity="1" />
+    <End Role="Aircraft_Homebases" Type="Self.Aircraft_Homebases" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Aircraft">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Aircraft_Homebases">
+        <PropertyRef Name="AircraftId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Aircraft_Models_Aircraft_Manufacturers">
+    <End Role="Aircraft_Manufacturers" Type="Self.Aircraft_Manufacturers" Multiplicity="1" />
+    <End Role="Aircraft_Models" Type="Self.Aircraft_Models" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Aircraft_Manufacturers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Aircraft_Models">
+        <PropertyRef Name="ManufacturerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Aircraft_Models_Aircraft_Models">
+    <End Role="Aircraft_Categories" Type="Self.Aircraft_Categories" Multiplicity="1" />
+    <End Role="Aircraft_Models" Type="Self.Aircraft_Models" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Aircraft_Categories">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Aircraft_Models">
+        <PropertyRef Name="CategoryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Companies_Applications">
+    <End Role="Applications" Type="Self.Applications" Multiplicity="0..1" />
+    <End Role="Companies" Type="Self.Companies" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Applications">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Companies">
+        <PropertyRef Name="WhiteLabelId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CustomChargeRules_Companies">
+    <End Role="Companies" Type="Self.Companies" Multiplicity="1" />
+    <End Role="CustomChargeRules" Type="Self.CustomChargeRules" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Companies">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CustomChargeRules">
+        <PropertyRef Name="CompanyId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CustomChargeRules_CustomCharges">
+    <End Role="CustomCharges" Type="Self.CustomCharges" Multiplicity="1" />
+    <End Role="CustomChargeRules" Type="Self.CustomChargeRules" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CustomCharges">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CustomChargeRules">
+        <PropertyRef Name="CustomChargeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_FlyZones_Companies">
+    <End Role="Companies" Type="Self.Companies" Multiplicity="0..1" />
+    <End Role="FlyZones" Type="Self.FlyZones" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Companies">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="FlyZones">
+        <PropertyRef Name="CompanyId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Messages_UserID">
+    <End Role="Users" Type="Self.Users" Multiplicity="1" />
+    <End Role="Messages" Type="Self.Messages" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Messages">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Offer_Aircraft">
+    <End Role="Aircraft" Type="Self.Aircraft" Multiplicity="0..1" />
+    <End Role="Offers" Type="Self.Offers" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Aircraft">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Offers">
+        <PropertyRef Name="AircraftId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Offer_Quote">
+    <End Role="Quotes" Type="Self.Quotes" Multiplicity="0..1" />
+    <End Role="Offers" Type="Self.Offers" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Quotes">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Offers">
+        <PropertyRef Name="QuoteId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Offer_User">
+    <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+    <End Role="Offers" Type="Self.Offers" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Offers">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PricingProfiles_Aircraft">
+    <End Role="Aircraft" Type="Self.Aircraft" Multiplicity="1" />
+    <End Role="PricingProfiles" Type="Self.PricingProfiles" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Aircraft">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="PricingProfiles">
+        <PropertyRef Name="AircraftId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_QuoteLegs_Quotes">
+    <End Role="Quotes" Type="Self.Quotes" Multiplicity="1" />
+    <End Role="QuoteLegs" Type="Self.QuoteLegs" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Quotes">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="QuoteLegs">
+        <PropertyRef Name="QuoteId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_QuoteLegsWaypointAssignments_QuoteLegs">
+    <End Role="QuoteLegs" Type="Self.QuoteLegs" Multiplicity="1" />
+    <End Role="Quote_LegsWaypointAssignments" Type="Self.Quote_LegsWaypointAssignments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="QuoteLegs">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Quote_LegsWaypointAssignments">
+        <PropertyRef Name="QuoteLegId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_QuoteLegsWaypointAssignments_Quotes">
+    <End Role="Quotes" Type="Self.Quotes" Multiplicity="1" />
+    <End Role="Quote_LegsWaypointAssignments" Type="Self.Quote_LegsWaypointAssignments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Quotes">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Quote_LegsWaypointAssignments">
+        <PropertyRef Name="QuoteId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Quotes_Users">
+    <End Role="Users" Type="Self.Users" Multiplicity="1" />
+    <End Role="Quotes" Type="Self.Quotes" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Quotes">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SectorPricings_Aircraft">
+    <End Role="Aircraft" Type="Self.Aircraft" Multiplicity="1" />
+    <End Role="SectorPricings" Type="Self.SectorPricings" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Aircraft">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SectorPricings">
+        <PropertyRef Name="AircraftId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TaxCodes_Companies">
+    <End Role="Companies" Type="Self.Companies" Multiplicity="1" />
+    <End Role="TaxCodes" Type="Self.TaxCodes" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Companies">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TaxCodes">
+        <PropertyRef Name="CompanyId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_UserRoleAssignments_Roles">
+    <End Role="Roles" Type="Self.Roles" Multiplicity="1" />
+    <End Role="User_RoleAssignments" Type="Self.User_RoleAssignments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Roles">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="User_RoleAssignments">
+        <PropertyRef Name="RoleId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_UserRoleAssignments_Users">
+    <End Role="Users" Type="Self.Users" Multiplicity="1" />
+    <End Role="User_RoleAssignments" Type="Self.User_RoleAssignments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="User_RoleAssignments">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_UserTokenAssignments_Users">
+    <End Role="Users" Type="Self.Users" Multiplicity="1" />
+    <End Role="User_TokenAssignments" Type="Self.User_TokenAssignments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="User_TokenAssignments">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_VIPAirports_VIPAirports">
+    <End Role="VIPAirports" Type="Self.VIPAirports" Multiplicity="1" />
+    <End Role="VIPAirports1" Type="Self.VIPAirports" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="VIPAirports">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="VIPAirports1">
+        <PropertyRef Name="Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="JetscoutModelStoreContainer">
+    <EntitySet Name="Aircraft" EntityType="Self.Aircraft" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Aircraft_Categories" EntityType="Self.Aircraft_Categories" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Aircraft_ClassNum" EntityType="Self.Aircraft_ClassNum" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Aircraft_Homebases" EntityType="Self.Aircraft_Homebases" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Aircraft_Manufacturers" EntityType="Self.Aircraft_Manufacturers" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Aircraft_Models" EntityType="Self.Aircraft_Models" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Airport" EntityType="Self.Airport" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="AirportBlacklist" EntityType="Self.AirportBlacklist" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Applications" EntityType="Self.Applications" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Companies" EntityType="Self.Companies" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Country" EntityType="Self.Country" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="CustomChargeRules" EntityType="Self.CustomChargeRules" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="CustomCharges" EntityType="Self.CustomCharges" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="CustomFees" EntityType="Self.CustomFees" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="FlyZones" EntityType="Self.FlyZones" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Messages" EntityType="Self.Messages" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Offers" EntityType="Self.Offers" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PDFCustomTexts" EntityType="Self.PDFCustomTexts" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PricingProfiles" EntityType="Self.PricingProfiles" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Quote_Fee_Assignments" EntityType="Self.Quote_Fee_Assignments" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Quote_LegsWaypointAssignments" EntityType="Self.Quote_LegsWaypointAssignments" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="QuoteLegs" EntityType="Self.QuoteLegs" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Quotes" EntityType="Self.Quotes" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="SectorPricings" EntityType="Self.SectorPricings" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Sectors" EntityType="Self.Sectors" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TaxCodes" EntityType="Self.TaxCodes" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="User_RoleAssignments" EntityType="Self.User_RoleAssignments" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="User_TokenAssignments" EntityType="Self.User_TokenAssignments" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="User_Type" EntityType="Self.User_Type" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="VIPAirports" EntityType="Self.VIPAirports" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ResetPasswordTokens" EntityType="Self.ResetPasswordTokens" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [ResetPasswordTokens].[Id] AS [Id], 
+    [ResetPasswordTokens].[UserId] AS [UserId], 
+    [ResetPasswordTokens].[TokenDateTime] AS [TokenDateTime], 
+    [ResetPasswordTokens].[Availability] AS [Availability]
+    FROM [dbo].[ResetPasswordTokens] AS [ResetPasswordTokens]</DefiningQuery>
+    </EntitySet>
+    <AssociationSet Name="FK_Aircraft_Aircraft_Models" Association="Self.FK_Aircraft_Aircraft_Models">
+      <End Role="Aircraft_Models" EntitySet="Aircraft_Models" />
+      <End Role="Aircraft" EntitySet="Aircraft" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Aircraft_Homebases_Aircraft" Association="Self.FK_Aircraft_Homebases_Aircraft">
+      <End Role="Aircraft" EntitySet="Aircraft" />
+      <End Role="Aircraft_Homebases" EntitySet="Aircraft_Homebases" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Aircraft_Models_Aircraft_Manufacturers" Association="Self.FK_Aircraft_Models_Aircraft_Manufacturers">
+      <End Role="Aircraft_Manufacturers" EntitySet="Aircraft_Manufacturers" />
+      <End Role="Aircraft_Models" EntitySet="Aircraft_Models" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Aircraft_Models_Aircraft_Models" Association="Self.FK_Aircraft_Models_Aircraft_Models">
+      <End Role="Aircraft_Categories" EntitySet="Aircraft_Categories" />
+      <End Role="Aircraft_Models" EntitySet="Aircraft_Models" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Companies_Applications" Association="Self.FK_Companies_Applications">
+      <End Role="Applications" EntitySet="Applications" />
+      <End Role="Companies" EntitySet="Companies" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CustomChargeRules_Companies" Association="Self.FK_CustomChargeRules_Companies">
+      <End Role="Companies" EntitySet="Companies" />
+      <End Role="CustomChargeRules" EntitySet="CustomChargeRules" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CustomChargeRules_CustomCharges" Association="Self.FK_CustomChargeRules_CustomCharges">
+      <End Role="CustomCharges" EntitySet="CustomCharges" />
+      <End Role="CustomChargeRules" EntitySet="CustomChargeRules" />
+    </AssociationSet>
+    <AssociationSet Name="FK_FlyZones_Companies" Association="Self.FK_FlyZones_Companies">
+      <End Role="Companies" EntitySet="Companies" />
+      <End Role="FlyZones" EntitySet="FlyZones" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Messages_UserID" Association="Self.FK_Messages_UserID">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="Messages" EntitySet="Messages" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Offer_Aircraft" Association="Self.FK_Offer_Aircraft">
+      <End Role="Aircraft" EntitySet="Aircraft" />
+      <End Role="Offers" EntitySet="Offers" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Offer_Quote" Association="Self.FK_Offer_Quote">
+      <End Role="Quotes" EntitySet="Quotes" />
+      <End Role="Offers" EntitySet="Offers" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Offer_User" Association="Self.FK_Offer_User">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="Offers" EntitySet="Offers" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PricingProfiles_Aircraft" Association="Self.FK_PricingProfiles_Aircraft">
+      <End Role="Aircraft" EntitySet="Aircraft" />
+      <End Role="PricingProfiles" EntitySet="PricingProfiles" />
+    </AssociationSet>
+    <AssociationSet Name="FK_QuoteLegs_Quotes" Association="Self.FK_QuoteLegs_Quotes">
+      <End Role="Quotes" EntitySet="Quotes" />
+      <End Role="QuoteLegs" EntitySet="QuoteLegs" />
+    </AssociationSet>
+    <AssociationSet Name="FK_QuoteLegsWaypointAssignments_QuoteLegs" Association="Self.FK_QuoteLegsWaypointAssignments_QuoteLegs">
+      <End Role="QuoteLegs" EntitySet="QuoteLegs" />
+      <End Role="Quote_LegsWaypointAssignments" EntitySet="Quote_LegsWaypointAssignments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_QuoteLegsWaypointAssignments_Quotes" Association="Self.FK_QuoteLegsWaypointAssignments_Quotes">
+      <End Role="Quotes" EntitySet="Quotes" />
+      <End Role="Quote_LegsWaypointAssignments" EntitySet="Quote_LegsWaypointAssignments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Quotes_Users" Association="Self.FK_Quotes_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="Quotes" EntitySet="Quotes" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SectorPricings_Aircraft" Association="Self.FK_SectorPricings_Aircraft">
+      <End Role="Aircraft" EntitySet="Aircraft" />
+      <End Role="SectorPricings" EntitySet="SectorPricings" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TaxCodes_Companies" Association="Self.FK_TaxCodes_Companies">
+      <End Role="Companies" EntitySet="Companies" />
+      <End Role="TaxCodes" EntitySet="TaxCodes" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UserRoleAssignments_Roles" Association="Self.FK_UserRoleAssignments_Roles">
+      <End Role="Roles" EntitySet="Roles" />
+      <End Role="User_RoleAssignments" EntitySet="User_RoleAssignments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UserRoleAssignments_Users" Association="Self.FK_UserRoleAssignments_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="User_RoleAssignments" EntitySet="User_RoleAssignments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UserTokenAssignments_Users" Association="Self.FK_UserTokenAssignments_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="User_TokenAssignments" EntitySet="User_TokenAssignments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_VIPAirports_VIPAirports" Association="Self.FK_VIPAirports_VIPAirports">
+      <End Role="VIPAirports" EntitySet="VIPAirports" />
+      <End Role="VIPAirports1" EntitySet="VIPAirports" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

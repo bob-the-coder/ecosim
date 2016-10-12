@@ -1,0 +1,164 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<style>
+    .app-container {
+        width: 90vw;
+        height: 80vh;
+        background-color: #d9d9d9;
+        margin: 5vh auto;
+        padding: 3vh 3vw;
+    }
+
+        .app-container > * {
+            float: left;
+            height: 74vh;
+        }
+
+    .graph-container {
+        width: 65vw;
+        background-color: white;
+    }
+
+    .app-menu {
+        width: 19vw;
+        background-color: #585858;
+    }
+
+    .overlay {
+        background-color: #d9d9d9;
+        color: black;
+        width: 90vw;
+        height: 80vh;
+        position: absolute;
+        font-size: 30px;
+        text-align: center;
+        line-height: 80vh;
+        margin-left: -3vw;
+        margin-top: -3vh;
+        -ms-opacity: 0.75;
+        opacity: 0.75;
+    }
+</style>
+
+@Styles.Render("~/Content/visjs_css")
+
+<div class="app-container">
+    <div class="graph-container" id="node-map"></div>
+    <div class="app-menu">
+        <div class="btn btn-default" onclick="getGraph()">Get Graph Data</div>
+        <div class="btn btn-default" onclick="populateGraph()">Start Population</div>
+    </div>
+    <div class="overlay" id="overlay">Populating Graph...</div>
+</div>
+
+
+@Scripts.Render("~/Content/visjs_js")
+<script>
+    
+    var len = undefined;
+
+    var nodes = [
+        { id: 0, label: "0" },
+        { id: 1, label: "1" },
+        { id: 2, label: "2" },
+        { id: 3, label: "3" },
+        { id: 4, label: "4" }
+    ];
+    var edges = [
+        { from: 1, to: 0 },
+        { from: 2, to: 0 },
+        { from: 3, to: 0 },
+        { from: 4, to: 0 }
+    ];
+
+    var network;
+    // create a network
+    function createGraph(data, callback) {
+        var container = document.getElementById('node-map');
+
+        var options = {
+            nodes: {
+                shape: 'dot',
+                size: 10,
+                font: {
+                    size: 10
+                },
+                borderWidth: 1
+            },  
+            edges: {
+                width: 1,
+                smooth:false,
+                shadow: false
+            }
+        };
+        network = new vis.Network(container, data, options);
+        network.on("afterDrawing", function() {
+            if (callback && typeof(callback) === "function") {
+                callback();
+            } else {
+                $("#overlay").fadeOut(200);
+            }
+        });
+    }
+
+    createGraph({ nodes: nodes, edges: edges });
+
+    var nodes;
+    var links;
+
+    function getGraph(callback) {
+        $("#overlay").fadeIn(0);
+
+        $.post(
+            "/Home/GetGraph",
+            {},
+            function (data) {
+                var graphData = $.parseJSON(data);
+                nodes = graphData.Nodes;
+                links = graphData.Edges;
+
+                createGraph({ nodes: graphData.Nodes, edges: graphData.Edges });
+
+                if (callback && typeof (callback) === "function") {
+                    callback();
+                }
+            }
+        );
+    }
+
+    var iter = 0;
+    var maxIter = 10;
+
+    function populateGraph() {
+        if (iter === maxIter) {
+            getGraph();
+            return;
+        }
+
+        var linkIds = [];
+        if (nodes && nodes.length > 0) {
+            nodes.forEach((node) => {
+                var x = Math.floor(Math.random() * 100 / Math.random() * 50 + Math.random());
+                if (x % 2 === 0) {
+                    linkIds.push(node.id);
+                }
+            });
+        }
+        $.post(
+            "/Home/CreateNode",
+            {
+                Name: '' + iter,
+                SpendingLimit: Math.random() * 1000
+            },
+            function () {
+                iter += 1;
+                $("#overlay").fadeOut(0);
+                getGraph(function() {
+                    populateGraph();
+                });
+            }
+        );
+    }
+</script>

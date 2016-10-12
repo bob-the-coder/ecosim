@@ -1,0 +1,13 @@
+C:\projects\jetscout\JetScout\DataLayer\bin\Release\DataLayer.dll
+C:\projects\jetscout\JetScout\DataLayer\bin\Release\DataLayer.pdb
+C:\projects\jetscout\JetScout\DataLayer\bin\Release\Logging.dll
+C:\projects\jetscout\JetScout\DataLayer\bin\Release\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.dll
+C:\projects\jetscout\JetScout\DataLayer\bin\Release\RetryPolicyHelper.dll
+C:\projects\jetscout\JetScout\DataLayer\bin\Release\NLog.dll
+C:\projects\jetscout\JetScout\DataLayer\bin\Release\Logging.pdb
+C:\projects\jetscout\JetScout\DataLayer\bin\Release\RetryPolicyHelper.pdb
+C:\projects\jetscout\JetScout\DataLayer\bin\Release\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.xml
+C:\projects\jetscout\JetScout\DataLayer\bin\Release\NLog.xml
+C:\projects\jetscout\JetScout\DataLayer\obj\Release\DataLayer.csprojResolveAssemblyReference.cache
+C:\projects\jetscout\JetScout\DataLayer\obj\Release\DataLayer.dll
+C:\projects\jetscout\JetScout\DataLayer\obj\Release\DataLayer.pdb

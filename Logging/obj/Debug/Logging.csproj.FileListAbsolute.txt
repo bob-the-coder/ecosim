@@ -1,0 +1,7 @@
+c:\Users\calin sicoe\documents\visual studio 2015\Projects\EcoSim\Logging\bin\Debug\Logging.dll
+c:\Users\calin sicoe\documents\visual studio 2015\Projects\EcoSim\Logging\bin\Debug\Logging.pdb
+c:\Users\calin sicoe\documents\visual studio 2015\Projects\EcoSim\Logging\bin\Debug\NLog.dll
+c:\Users\calin sicoe\documents\visual studio 2015\Projects\EcoSim\Logging\bin\Debug\NLog.xml
+c:\Users\calin sicoe\documents\visual studio 2015\Projects\EcoSim\Logging\obj\Debug\Logging.csprojResolveAssemblyReference.cache
+c:\Users\calin sicoe\documents\visual studio 2015\Projects\EcoSim\Logging\obj\Debug\Logging.dll
+c:\Users\calin sicoe\documents\visual studio 2015\Projects\EcoSim\Logging\obj\Debug\Logging.pdb
