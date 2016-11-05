@@ -1,0 +1,11 @@
+﻿@model List<string>
+@{
+    Layout = null;
+}
+
+<h1>Search Results</h1>
+
+@foreach (var entry in Model)
+{
+    <p>@entry</p>
+}

@@ -16,7 +16,7 @@ namespace BusinessLogic
         {
             var sp = new NodeGet(id);
             OperationStatus status;
-            var result = await Task.Run(()=> StoredProcedureExecutor.GetSingleSetResult<Node>(sp, out status)).ConfigureAwait(false);
+            var result = await Task.Run(() => StoredProcedureExecutor.GetSingleSetResult<Node>(sp, out status)).ConfigureAwait(false);
 
             return result;
         }
@@ -39,10 +39,19 @@ namespace BusinessLogic
             return result;
         }
 
+        public static async Task<List<Node>> GetListAsync(Node node)
+        {
+            var sp = new NodeGetList("NodeId", node.Id);
+            OperationStatus status;
+            var result = await Task.Run(() => StoredProcedureExecutor.GetMultipleSetResult<Node>(sp, out status)).ConfigureAwait(false);
+
+            return result;
+        }
+
         public static async Task<VisJsGraph> GetGraphAsync()
         {
             OperationStatus status;
-            var nodes =await Task.Run(
+            var nodes = await Task.Run(
                         () => StoredProcedureExecutor.GetMultipleSetResult<VisJsNode>(
                             new NodeGetAllVisJs(), out status)).ConfigureAwait(false);
             var edges = await Task.Run(
@@ -65,6 +74,21 @@ namespace BusinessLogic
                 {
                     sps.Add(new NodeLinkCreate(n.Id, l));
                 });
+                StoredProcedureExecutor.ExecuteNoQueryAsTransaction(sps);
+            }).ConfigureAwait(false);
+        }
+
+        public static async Task NetworkInitialCreate(List<Node> network, List<NodeLink> links)
+        {
+            await Task.Run(() =>
+            {
+                var sps = new List<StoredProcedureBase>();
+                network.ForEach(node =>
+                {
+                    sps.Add(new NodeCreate(node));
+                });
+                links.ForEach(link => {sps.Add(new NodeLinkCreate(link.NodeId, link.LinkId));});
+
                 StoredProcedureExecutor.ExecuteNoQueryAsTransaction(sps);
             }).ConfigureAwait(false);
         }

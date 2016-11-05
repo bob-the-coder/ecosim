@@ -24,6 +24,7 @@
     .app-menu {
         width: 19vw;
         background-color: #585858;
+        padding: 1vh 1vw;
     }
 
     .overlay {
@@ -48,7 +49,12 @@
     <div class="graph-container" id="node-map"></div>
     <div class="app-menu">
         <div class="btn btn-default" onclick="getGraph()">Get Graph Data</div>
-        <div class="btn btn-default" onclick="populateGraph()">Start Population</div>
+        <div class="btn btn-default" onclick="populateGraph()">Insert 10 Nodes</div>
+        <input type="text" class="btn btn-default" placeholder="Network Size" id="networkSize"/>
+        <input type="text" class="btn btn-default" placeholder="Link Patern" id="linkPattern" />
+        <div class="btn btn-default" onclick="createInitialPopulation()">Create Initial Population</div>
+        <input type="text" class="btn btn-default" readonly placeholder="Start Time" id="startDrawTime"/>
+        <input type="text" class="btn btn-default" readonly placeholder="End Time" id="endDrawTime" />
     </div>
     <div class="overlay" id="overlay">Populating Graph...</div>
 </div>
@@ -56,7 +62,7 @@
 
 @Scripts.Render("~/Content/visjs_js")
 <script>
-    
+
     var len = undefined;
 
     var nodes = [
@@ -74,6 +80,7 @@
     ];
 
     var network;
+    var editableEndTime = true;
     // create a network
     function createGraph(data, callback) {
         var container = document.getElementById('node-map');
@@ -86,16 +93,23 @@
                     size: 10
                 },
                 borderWidth: 1
-            },  
+            },
             edges: {
                 width: 1,
-                smooth:false,
+                smooth: false,
                 shadow: false
+            },
+            layout: {
+                improvedLayout: false
             }
         };
         network = new vis.Network(container, data, options);
-        network.on("afterDrawing", function() {
-            if (callback && typeof(callback) === "function") {
+        network.on("afterDrawing", function () {
+            if (editableEndTime) {
+                $("#endDrawTime").val(new Date());
+                editableEndTime = false;
+            }
+            if (callback && typeof (callback) === "function") {
                 callback();
             } else {
                 $("#overlay").fadeOut(200);
@@ -115,6 +129,8 @@
             "/Home/GetGraph",
             {},
             function (data) {
+                editableEndTime = true;
+                $("#startDrawTime").val(new Date());
                 var graphData = $.parseJSON(data);
                 nodes = graphData.Nodes;
                 links = graphData.Edges;
@@ -132,7 +148,12 @@
     var maxIter = 10;
 
     function populateGraph() {
+        if (iter === maxIter - 10) {
+            editableEndTime = true;
+            $("#startDrawTime").val(new Date());
+        }
         if (iter === maxIter) {
+            maxIter += 10;
             getGraph();
             return;
         }
@@ -155,10 +176,28 @@
             function () {
                 iter += 1;
                 $("#overlay").fadeOut(0);
-                getGraph(function() {
+                getGraph(function () {
                     populateGraph();
                 });
             }
         );
+    }
+
+    function createInitialPopulation() {
+        editableEndTime = true;
+        $("#startDrawTime").val(new Date());
+
+        $("#overlay").fadeOut(1);
+        $.post(
+        "/Home/CreateInitialPopulation",
+        {
+            networkSize: +($("#networkSize").val()),
+            linkPattern: +($("#linkPattern").val())
+        },
+        function () {
+            $("#overlay").fadeOut(0);
+            getGraph();
+        }
+    );
     }
 </script>

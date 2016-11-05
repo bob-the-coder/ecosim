@@ -9,3 +9,8 @@ C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\BusinessLogic\
 C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\DatabaseHandler.pdb
 C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\Logging.pdb
 C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\NLog.xml
+C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\BusinessLogic.dll.config
+C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\EntityFramework.dll
+C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\EntityFramework.xml
+C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\EntityFramework.SqlServer.xml

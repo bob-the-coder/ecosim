@@ -76,6 +76,7 @@
     <Compile Include="Helpers\StoredProcedureExecutor.cs" />
     <Compile Include="Helpers\StoredProcedures.cs" />
     <Compile Include="Interfaces\INode.cs" />
+    <Compile Include="Interfaces\INodeLink.cs" />
     <Compile Include="Interfaces\IProduct.cs" />
     <Compile Include="Interfaces\IVisJsEdge.cs" />
     <Compile Include="Interfaces\IVisJsNode.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="StoreProcedures\NodeGet.cs" />
     <Compile Include="StoreProcedures\NodeGetAll.cs" />
     <Compile Include="StoreProcedures\NodeGetAllVisJs.cs" />
+    <Compile Include="StoreProcedures\NodeGetList.cs" />
     <Compile Include="StoreProcedures\NodeLinkCreate.cs" />
   </ItemGroup>
   <ItemGroup>
