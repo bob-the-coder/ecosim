@@ -3,9 +3,17 @@
     Layout = null;
 }
 
+<style>
+    div {
+        padding: 5px;
+        margin-bottom: 5px;
+        border-bottom: 1px solid black;
+    }
+</style>
+
 <h1>Search Results</h1>
 
 @foreach (var entry in Model)
 {
-    <p>@entry</p>
+    <div>@entry</div>
 }
