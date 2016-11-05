@@ -57,5 +57,23 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+    <Folder Include="dbo\Stored Procedures\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\Products.sql" />
+    <Build Include="dbo\Tables\Productions.sql" />
+    <Build Include="dbo\Tables\ProductIngredients.sql" />
+    <Build Include="dbo\Tables\Nodes.sql" />
+    <Build Include="dbo\Tables\NodeLinks.sql" />
+    <Build Include="dbo\Tables\Needs.sql" />
+    <Build Include="dbo\Stored Procedures\NodeLinkCreate.sql" />
+    <Build Include="dbo\Stored Procedures\NodeGetList.sql" />
+    <Build Include="dbo\Stored Procedures\NodeGetAllVisJs.sql" />
+    <Build Include="dbo\Stored Procedures\NodeGetAll.sql" />
+    <Build Include="dbo\Stored Procedures\NodeGet.sql" />
+    <Build Include="dbo\Stored Procedures\NodeCreate.sql" />
+    <Build Include="dbo\Stored Procedures\LinkGetAllVisJs.sql" />
   </ItemGroup>
 </Project>
