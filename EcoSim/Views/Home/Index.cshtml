@@ -54,7 +54,20 @@
         <input type="text" class="btn btn-default" placeholder="Link Patern" id="linkPattern" />
         <div class="btn btn-default" onclick="createInitialPopulation()">Create Initial Population</div>
         <input type="text" class="btn btn-default" readonly placeholder="Start Time" id="startDrawTime"/>
-        <input type="text" class="btn btn-default" readonly placeholder="End Time" id="endDrawTime" />
+        <input type="text" class="btn btn-default" readonly placeholder="End Time" id="endDrawTime"/>
+
+        <div>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Action <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+            </ul>
+        </div>
     </div>
     <div class="overlay" id="overlay">Populating Graph...</div>
 </div>

@@ -52,11 +52,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enum\NetworkSearchType.cs" />
+    <Compile Include="Enum\PatternType.cs" />
     <Compile Include="Models\Node.cs" />
     <Compile Include="Models\NodeLink.cs" />
     <Compile Include="Models\VisJsEdge.cs" />
     <Compile Include="Models\VisJsGraph.cs" />
     <Compile Include="Models\VisJsNode.cs" />
+    <Compile Include="NetworkCreationPatterns.cs" />
     <Compile Include="NetworkManager.cs" />
     <Compile Include="NodeManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
