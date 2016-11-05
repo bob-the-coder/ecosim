@@ -50,7 +50,7 @@ namespace BusinessLogic
 
         private static async Task<Dictionary<Guid, Guid>> AddNodesToBfsList(Dictionary<Guid, Guid> bfsList, int networkSize, List<Node> startNodes)
         {
-            if (bfsList.Count == networkSize || startNodes.Count == 0)
+            if (bfsList.Count == networkSize || startNodes == null || startNodes.Count == 0)
             {
                 return bfsList;
             }
@@ -59,6 +59,10 @@ namespace BusinessLogic
             foreach (var startNode in startNodes)
             {
                 var neighbours = await NodeManager.GetListAsync(startNode).ConfigureAwait(false);
+                if(neighbours == null)
+                {
+                    continue;
+                }
                 foreach (var neighbour in neighbours)
                 {
                     if (bfsList.ContainsKey(neighbour.Id))
