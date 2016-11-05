@@ -1,0 +1,6 @@
+﻿CREATE TABLE [dbo].[Products] (
+    [Id]   UNIQUEIDENTIFIER NOT NULL,
+    [Name] NVARCHAR (200)   NOT NULL,
+    CONSTRAINT [PK_Products] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
