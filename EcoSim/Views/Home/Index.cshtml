@@ -5,91 +5,195 @@
 <style>
     .app-container {
         width: 90vw;
-        height: 80vh;
+        height: 90vh;
         background-color: #d9d9d9;
         margin: 5vh auto;
-        padding: 3vh 3vw;
+        padding: 2.5vh 2.5vw;
+        position: relative;
     }
 
-        .app-container > * {
-            float: left;
-            height: 74vh;
-        }
-
     .graph-container {
-        width: 65vw;
+        width: 85vw;
+        height: 70vh;
         background-color: white;
     }
 
     .app-menu {
-        width: 19vw;
+        width: 85vw;
+        height: 15vh;
         background-color: #585858;
         padding: 1vh 1vw;
+    }
+
+    .config-block {
+        float: left;
+        margin-right: 1vw;
+    }
+
+        .config-block .btn {
+            display: block;
+            max-width: 150px;
+        }
+
+    .config-name {
+        color: white;
+        font-weight: bold;
     }
 
     .overlay {
         background-color: #d9d9d9;
         color: black;
         width: 90vw;
-        height: 80vh;
+        height: 90vh;
         position: absolute;
+        left: 0;
+        top: 0;
         font-size: 30px;
         text-align: center;
         line-height: 80vh;
-        margin-left: -3vw;
-        margin-top: -3vh;
         -ms-opacity: 0.75;
         opacity: 0.75;
+    }
+
+    .log-output, .log-title {
+        width: 90vw;
+        height: 40vh;
+        background-color: #d9d9d9;
+        margin: 0 auto;
+    }
+
+    .log-output {
+        padding: 3vh 3vw;
+        margin-bottom: 5vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        border-bottom: 10px solid #d9d9d9;
+    }
+
+    .log-title {
+        padding: 0 3vw;
+        height: 30px;
+        line-height: 30px;
+        font-size: 20px;
+    }
+
+    .log-entry {
+        background-color: white;
+        padding-left: 10px;
+        height: 25px;
+        line-height: 25px;
     }
 </style>
 
 @Styles.Render("~/Content/visjs_css")
 
 <div class="app-container">
-    <div class="graph-container" id="node-map"></div>
-    <div class="app-menu">
-        <div class="btn btn-default" onclick="getGraph()">Get Graph Data</div>
-        <div class="btn btn-default" onclick="populateGraph()">Insert 10 Nodes</div>
-        <input type="text" class="btn btn-default" placeholder="Network Size" id="networkSize"/>
-        <input type="text" class="btn btn-default" placeholder="Link Patern" id="linkPattern" />
-        <div class="btn btn-default" onclick="createInitialPopulation()">Create Initial Population</div>
-        <input type="text" class="btn btn-default" readonly placeholder="Start Time" id="startDrawTime"/>
-        <input type="text" class="btn btn-default" readonly placeholder="End Time" id="endDrawTime"/>
+    <div class="app-menu clearfix">
+        <div class="config-block">
+            <div class="config-name">Network Pattern</div>
+            <select class="btn btn-default" placeholder="Link Patern" id="NetworkPattern" onchange="toggleNetworkInputs()">
+                <option value="0">Circular</option>
+                <option value="1">Centroid</option>
+                <option value="2">Random</option>
+                <option value="3">Grid</option>
+                <option value="4">SmallWorld</option>
+            </select>
 
-        <div>
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Action <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="#">Separated link</a></li>
-            </ul>
+            <input type="text" class="btn btn-default" placeholder="Network Size" id="NetworkSize" />
+            <input type="text" class="btn btn-default" placeholder="Grid Height" id="GridHeight" />
+            <input type="text" class="btn btn-default" placeholder="Grid Width" id="GridWidth" />
+            <input type="text" class="btn btn-default" placeholder="Initial Degree" id="SwInitialDegree" />
+            <input type="text" class="btn btn-default" placeholder="Rewire Chance" id="SwRewireChance" />
+        </div>
+
+        <div class="config-block">
+            <div class="config-name">Product Creation</div>
+            <select class="btn btn-default" placeholder="Link Patern" id="ProductCreationPattern">
+                <option value="0">Amount</option>
+                <option value="1">Percentage</option>
+            </select>
+
+            <input type="text" class="btn btn-default" placeholder="Value" id="ProductBias" />
+        </div>
+
+        <div class="config-block">
+            <div class="config-name">Producer Selection</div>
+            <select class="btn btn-default" placeholder="Link Patern" id="ProducerSelectionPattern">
+                <option value="0">Amount</option>
+                <option value="1">Percentage</option>
+                <option value="2">By Chance</option>
+            </select>
+
+            <input type="text" class="btn btn-default" placeholder="Value" id="ProducerBias" />
+        </div>
+
+        <div class="config-block">
+            <div class="config-name">Production Selection</div>
+            <select class="btn btn-default" placeholder="Link Patern" id="ProductionSelectionPattern">
+                <option value="0">Amount</option>
+                <option value="1">Percentage</option>
+                <option value="2">By Chance</option>
+            </select>
+
+            <input type="text" class="btn btn-default" placeholder="Value" id="ProductionBias" />
+        </div>
+
+        <div class="config-block">
+            <div class="config-name">Need Selection</div>
+            <select class="btn btn-default" placeholder="Link Patern" id="NeedSelectionPattern">
+                <option value="0">Random Product</option>
+                <option value="1">N Random Products</option>
+                <option value="2">Random Production</option>
+                <option value="3">N Random Productions</option>
+            </select>
+
+            <input type="text" class="btn btn-default" placeholder="Value" id="NeedBias" />
+        </div>
+
+        <div class="config-block">
+            <div class="config-name">Actions</div>
+            <div class="btn btn-default" onclick="createInitialPopulation()">Create Network</div>
+            <div class="btn btn-default" onclick="getGraph()">Get Graph Data</div>
+        </div>
+
+        <div class="config-block">
+            <div class="config-name">Simulation</div>
+            <select class="btn btn-default" id="iterationCount">
+                <option value="1">1 Iteration</option>
+                <option value="2">2 Iterations</option>
+                <option value="5">5 Iterations</option>
+                <option value="10">10 Iterations</option>
+                <option value="50">50 Iterations</option>
+            </select>
+            <div class="btn btn-default" onclick="simulateIterations()">Simulate</div>
         </div>
     </div>
+    <div class="graph-container" id="node-map"></div>
     <div class="overlay" id="overlay">Populating Graph...</div>
 </div>
 
-
 @Scripts.Render("~/Content/visjs_js")
 <script>
+    toggleNetworkInputs();
+
+    function toggleNetworkInputs() {
+        var type = $("#NetworkPattern").val();
+        if (type === "3") {
+            $("#GridHeight, #GridWidth").fadeIn(1);
+            $("#NetworkSize").fadeOut(1);
+        } else if (type === "4") {
+            $("#GridHeight, #GridWidth").fadeOut(1);
+            $("#NetworkSize, #SwInitialDegree, #SwRewireChance").fadeIn(1);
+        } else {
+            $("#GridHeight, #GridWidth, #SwInitialDegree, #SwRewireChance").fadeOut(1);
+        }
+    }
 
     var len = undefined;
 
     var nodes = [
-        { id: 0, label: "0" },
-        { id: 1, label: "1" },
-        { id: 2, label: "2" },
-        { id: 3, label: "3" },
-        { id: 4, label: "4" }
     ];
     var edges = [
-        { from: 1, to: 0 },
-        { from: 2, to: 0 },
-        { from: 3, to: 0 },
-        { from: 4, to: 0 }
     ];
 
     var network;
@@ -114,19 +218,23 @@
             },
             layout: {
                 improvedLayout: false
+            },
+            physics: {
+                stabilization: false,
+                barnesHut: {
+                    gravitationalConstant: -80000,
+                    springConstant: 0.001,
+                    springLength: 200
+                }
+            },
+            interaction: {
+                tooltipDelay: 200,
+                hideEdgesOnDrag: true
             }
         };
         network = new vis.Network(container, data, options);
         network.on("afterDrawing", function () {
-            if (editableEndTime) {
-                $("#endDrawTime").val(new Date());
-                editableEndTime = false;
-            }
-            if (callback && typeof (callback) === "function") {
-                callback();
-            } else {
-                $("#overlay").fadeOut(200);
-            }
+            $("#overlay").fadeOut(200);
         });
     }
 
@@ -135,24 +243,19 @@
     var nodes;
     var links;
 
-    function getGraph(callback) {
-        $("#overlay").fadeIn(0);
+    function getGraph() {
+        $("#overlay").fadeIn(1);
 
         $.post(
             "/Home/GetGraph",
             {},
             function (data) {
                 editableEndTime = true;
-                $("#startDrawTime").val(new Date());
                 var graphData = $.parseJSON(data);
                 nodes = graphData.Nodes;
                 links = graphData.Edges;
 
                 createGraph({ nodes: graphData.Nodes, edges: graphData.Edges });
-
-                if (callback && typeof (callback) === "function") {
-                    callback();
-                }
             }
         );
     }
@@ -163,7 +266,6 @@
     function populateGraph() {
         if (iter === maxIter - 10) {
             editableEndTime = true;
-            $("#startDrawTime").val(new Date());
         }
         if (iter === maxIter) {
             maxIter += 10;
@@ -198,19 +300,51 @@
 
     function createInitialPopulation() {
         editableEndTime = true;
-        $("#startDrawTime").val(new Date());
 
-        $("#overlay").fadeOut(1);
+        var props = [
+            "NetworkPattern", "NetworkSize", "GridHeight", "GridWidth", "SwInitialDegree", "SwRewireChance",
+            "ProductCreationPattern", "ProductBias", "ProducerSelectionPattern", "ProducerBias",
+            "ProductionSelectionPattern", "ProductionBias", "NeedSelectionPattern", "NeedBias"
+        ];
+
+        var config = {};
+        props.forEach(function(p) {
+            config[p] = $("#" + p).val();
+        });
+
+        $("#overlay").fadeIn(1);
         $.post(
         "/Home/CreateInitialPopulation",
-        {
-            networkSize: +($("#networkSize").val()),
-            linkPattern: +($("#linkPattern").val())
-        },
+        config,
         function () {
-            $("#overlay").fadeOut(0);
             getGraph();
-        }
-    );
+        });
     }
+
+    setTimeout(function () {
+        getGraph();
+    }, 100);
+
+    simulateIterations = function () {
+        $.post(
+        "/Output/Simulate",
+        {
+            numberOfIterations: +($("#iterationCount").val())
+        },
+        function (logData) {
+            if (typeof logData === "undefined" || logData === null || logData.length === 0) {
+                alert("No log Data received. Try debugging to see issues");
+                return;
+            }
+
+            for (var i = 0; i < logData.length; i++) {
+                $("body").append("<div class='log-title'>" + logData[i].Name + "</div>");
+                var logContent = $("body").append("<div class='log-output'></div>");
+                var lastOutputIndex = $(".log-output").length - 1;
+                for (var l = 0; l < logData[i].Lines.length; l++) {
+                    $($(".log-output")[lastOutputIndex]).append("<div class='log-entry'>" + logData[i].Lines[l] + "</div.");
+                }
+            }
+        });
+    };
 </script>

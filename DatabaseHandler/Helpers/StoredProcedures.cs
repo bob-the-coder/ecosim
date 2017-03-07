@@ -2,6 +2,11 @@
 {
 	public enum StoredProcedures
 	{
+        ClearDatabase,
+
+        SimSettingsCreate,
+        SimSettingsGet,
+
         ProductCreate,
         ProductUpdate,
         ProductRemove,
@@ -12,7 +17,12 @@
 
         ProductIngredientAssign,
 
-		NodeCreate,
+        ProductionCreate,
+        ProductionUpdate,
+        ProductionDelete,
+        ProductionGetAll,
+
+        NodeCreate,
         NodeUpdate,
         NodeDelete,
         NodeGet,
@@ -21,12 +31,12 @@
 
         NodeLinkCreate,
         NodeLinkDelete,
+        NodeLinkGetAll,
 
-        NodeNeedCreate,
-        NodeNeedDelete,
-
-        NodeProductionCreate,
-        NodeProductionDelete,
+        NeedCreate,
+        NeedUpdate,
+        NeedDelete,
+        NeedGetAll,
 
         LinkGetAllVisJs,
         NodeGetAllVisJs

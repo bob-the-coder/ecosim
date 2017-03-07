@@ -1,0 +1,187 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<style>
+    .app-container {
+        width: 90vw;
+        height: 90vh;
+        background-color: #d9d9d9;
+        margin: 5vh auto;
+        padding: 2.5vh 2.5vw;
+        position: relative;
+    }
+
+    .graph-container {
+        width: 85vw;
+        height: 70vh;
+        background-color: white;
+    }
+
+    .app-menu {
+        width: 85vw;
+        height: 15vh;
+        background-color: #585858;
+        padding: 1vh 1vw;
+    }
+
+    .config-block {
+        float: left;
+        margin-right: 1vw;
+    }
+
+        .config-block .btn {
+            display: block;
+            max-width: 150px;
+        }
+
+    .config-name {
+        color: white;
+        font-weight: bold;
+    }
+
+    .overlay {
+        background-color: #d9d9d9;
+        color: black;
+        width: 90vw;
+        height: 90vh;
+        position: absolute;
+        left: 0;
+        top: 0;
+        font-size: 30px;
+        text-align: center;
+        line-height: 80vh;
+        -ms-opacity: 0.75;
+        opacity: 0.75;
+    }
+
+    .log-output, .log-title {
+        width: 90vw;
+        height: 40vh;
+        background-color: #d9d9d9;
+        margin: 0 auto;
+    }
+
+    .log-output {
+        padding: 3vh 3vw;
+        margin-bottom: 5vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        border-bottom: 10px solid #d9d9d9;
+    }
+
+    .log-title {
+        padding: 0 3vw;
+        height: 30px;
+        line-height: 30px;
+        font-size: 20px;
+    }
+
+    .log-entry {
+        background-color: white;
+        padding-left: 10px;
+        height: 25px;
+        line-height: 25px;
+    }
+</style>
+
+<div class="app-container">
+    <div class="app-menu clearfix">
+        <div class="config-block">
+            <div class="config-name">Network Pattern</div>
+            <select class="btn btn-default" placeholder="Link Patern" id="NetworkPattern" onchange="toggleNetworkInputs()">
+                <option value="0">Circular</option>
+                <option value="1">Centroid</option>
+                <option value="2">Random</option>
+                <option value="3">Grid</option>
+                <option value="4">SmallWorld</option>
+            </select>
+
+            <input type="text" class="btn btn-default" placeholder="Network Size" id="NetworkSize" />
+            <input type="text" class="btn btn-default" placeholder="Grid Height" id="GridHeight" />
+            <input type="text" class="btn btn-default" placeholder="Grid Width" id="GridWidth" />
+            <input type="text" class="btn btn-default" placeholder="Initial Degree" id="SwInitialDegree" />
+            <input type="text" class="btn btn-default" placeholder="Rewire Chance" id="SwRewireChance" />
+        </div>
+
+        <div class="config-block">
+            <div class="config-name">Product Creation</div>
+            <select class="btn btn-default" placeholder="Link Patern" id="ProductCreationPattern">
+                <option value="0">Amount</option>
+                <option value="1">Percentage</option>
+            </select>
+
+            <input type="text" class="btn btn-default" placeholder="Value" id="ProductBias" />
+        </div>
+
+        <div class="config-block">
+            <div class="config-name">Producer Selection</div>
+            <select class="btn btn-default" placeholder="Link Patern" id="ProducerSelectionPattern">
+                <option value="0">Amount</option>
+                <option value="1">Percentage</option>
+                <option value="2">By Chance</option>
+            </select>
+
+            <input type="text" class="btn btn-default" placeholder="Value" id="ProducerBias" />
+        </div>
+
+        <div class="config-block">
+            <div class="config-name">Production Selection</div>
+            <select class="btn btn-default" placeholder="Link Patern" id="ProductionSelectionPattern">
+                <option value="0">Amount</option>
+                <option value="1">Percentage</option>
+                <option value="2">By Chance</option>
+            </select>
+
+            <input type="text" class="btn btn-default" placeholder="Value" id="ProductionBias" />
+        </div>
+
+        <div class="config-block">
+            <div class="config-name">Need Selection</div>
+            <select class="btn btn-default" placeholder="Link Patern" id="NeedSelectionPattern">
+                <option value="0">Random Product</option>
+                <option value="1">N Random Products</option>
+                <option value="2">Random Production</option>
+                <option value="3">N Random Productions</option>
+            </select>
+
+            <input type="text" class="btn btn-default" placeholder="Value" id="NeedBias" />
+        </div>
+
+        <div class="config-block">
+            <div class="config-name">Actions</div>
+            <div class="btn btn-default" onclick="createInitialPopulation()">Create Network</div>
+            <div class="btn btn-default" onclick="getGraph()">Get Graph Data</div>
+        </div>
+
+        <div class="config-block">
+            <div class="config-name">Simulation</div>
+            <select class="btn btn-default" id="iterationCount">
+                <option value="1">1 Iteration</option>
+                <option value="2">2 Iterations</option>
+                <option value="5">5 Iterations</option>
+                <option value="10">10 Iterations</option>
+                <option value="50">50 Iterations</option>
+            </select>
+            <div class="btn btn-default" onclick="simulateIterations()">Simulate</div>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/Content/visjs_js")
+<script>
+    toggleNetworkInputs();
+
+    function toggleNetworkInputs() {
+        var type = $("#NetworkPattern").val();
+        if (type === "3") {
+            $("#GridHeight, #GridWidth").fadeIn(1);
+            $("#NetworkSize").fadeOut(1);
+        } else if (type === "4") {
+            $("#GridHeight, #GridWidth").fadeOut(1);
+            $("#NetworkSize, #SwInitialDegree, #SwRewireChance").fadeIn(1);
+        } else {
+            $("#GridHeight, #GridWidth, #SwInitialDegree, #SwRewireChance").fadeOut(1);
+        }
+    }
+</script>

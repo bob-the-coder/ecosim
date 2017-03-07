@@ -1,0 +1,278 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="EcoSimModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Decision">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="DecisionChances" Relationship="Self.FK_DecisionChance_Decision" FromRole="Decisions" ToRole="DecisionChances" />
+  </EntityType>
+  <EntityType Name="Node">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SimulationId" Type="Int32" Nullable="false" />
+    <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="SpendingLimit" Type="Double" Nullable="false" />
+    <NavigationProperty Name="Simulation" Relationship="Self.FK_Node_Simulation" FromRole="Nodes" ToRole="Simulations" />
+    <NavigationProperty Name="Needs" Relationship="Self.FK_NodeNeed_Node" FromRole="Nodes" ToRole="Needs" />
+    <NavigationProperty Name="Productions" Relationship="Self.FK_NodeProduction_Node" FromRole="Nodes" ToRole="Productions" />
+    <NavigationProperty Name="Nodes1" Relationship="Self.NodeLinks" FromRole="Nodes" ToRole="Nodes1" />
+    <NavigationProperty Name="Nodes" Relationship="Self.NodeLinks" FromRole="Nodes1" ToRole="Nodes" />
+  </EntityType>
+  <EntityType Name="Product">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Needs" Relationship="Self.FK_NodeNeed_Product" FromRole="Products" ToRole="Needs" />
+    <NavigationProperty Name="Productions" Relationship="Self.FK_NodeProduction_Product" FromRole="Products" ToRole="Productions" />
+    <NavigationProperty Name="Products1" Relationship="Self.ProductIngredients" FromRole="Products" ToRole="Products1" />
+    <NavigationProperty Name="Products" Relationship="Self.ProductIngredients" FromRole="Products1" ToRole="Products" />
+  </EntityType>
+  <EntityType Name="SimulationLog">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="SimulationId" Type="Int32" Nullable="false" />
+    <Property Name="NodeId" Type="Int32" Nullable="false" />
+    <Property Name="IterationNumber" Type="Int32" Nullable="false" />
+    <Property Name="Type" Type="Int32" Nullable="false" />
+    <Property Name="Content" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Simulation" Relationship="Self.FK_Log_Simulation" FromRole="SimulationLogs" ToRole="Simulations" />
+  </EntityType>
+  <EntityType Name="Simulation">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="Name" Type="Int32" Nullable="false" />
+    <Property Name="NeedFulfillSortByPriority" Type="Int32" Nullable="false" />
+    <Property Name="NeedFulfillSortByQuantity" Type="Int32" Nullable="false" />
+    <Property Name="ProductionSortByDistance" Type="Int32" Nullable="false" />
+    <Property Name="ProductionSortByFinalCost" Type="Int32" Nullable="false" />
+    <Property Name="ProductionSortByInitialCost" Type="Int32" Nullable="false" />
+    <Property Name="ProductPriceIncreasePerQuality" Type="Double" Nullable="false" />
+    <Property Name="ProductPriceIncreasePerIntermediary" Type="Double" Nullable="false" />
+    <NavigationProperty Name="Nodes" Relationship="Self.FK_Node_Simulation" FromRole="Simulations" ToRole="Nodes" />
+    <NavigationProperty Name="SimulationLogs" Relationship="Self.FK_Log_Simulation" FromRole="Simulations" ToRole="SimulationLogs" />
+    <NavigationProperty Name="DecisionChances" Relationship="Self.FK_DecisionChance_Simulation" FromRole="Simulations" ToRole="DecisionChances" />
+  </EntityType>
+  <EntityType Name="DecisionChance">
+    <Key>
+      <PropertyRef Name="SimulationId" />
+      <PropertyRef Name="DecisionId" />
+      <PropertyRef Name="Chance" />
+      <PropertyRef Name="Enabled" />
+    </Key>
+    <Property Name="SimulationId" Type="Int32" Nullable="false" />
+    <Property Name="DecisionId" Type="Int32" Nullable="false" />
+    <Property Name="Chance" Type="Double" Nullable="false" />
+    <Property Name="Enabled" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Decision" Relationship="Self.FK_DecisionChance_Decision" FromRole="DecisionChances" ToRole="Decisions" />
+    <NavigationProperty Name="Simulation" Relationship="Self.FK_DecisionChance_Simulation" FromRole="DecisionChances" ToRole="Simulations" />
+  </EntityType>
+  <EntityType Name="Need">
+    <Key>
+      <PropertyRef Name="NodeId" />
+      <PropertyRef Name="ProductId" />
+      <PropertyRef Name="Quantity" />
+      <PropertyRef Name="Priority" />
+    </Key>
+    <Property Name="NodeId" Type="Int32" Nullable="false" />
+    <Property Name="ProductId" Type="Int32" Nullable="false" />
+    <Property Name="Quantity" Type="Int32" Nullable="false" />
+    <Property Name="Priority" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Node" Relationship="Self.FK_NodeNeed_Node" FromRole="Needs" ToRole="Nodes" />
+    <NavigationProperty Name="Product" Relationship="Self.FK_NodeNeed_Product" FromRole="Needs" ToRole="Products" />
+  </EntityType>
+  <EntityType Name="Production">
+    <Key>
+      <PropertyRef Name="NodeId" />
+      <PropertyRef Name="ProductId" />
+      <PropertyRef Name="Quantity" />
+      <PropertyRef Name="Quality" />
+      <PropertyRef Name="Price" />
+    </Key>
+    <Property Name="NodeId" Type="Int32" Nullable="false" />
+    <Property Name="ProductId" Type="Int32" Nullable="false" />
+    <Property Name="Quantity" Type="Int32" Nullable="false" />
+    <Property Name="Quality" Type="Int32" Nullable="false" />
+    <Property Name="Price" Type="Double" Nullable="false" />
+    <NavigationProperty Name="Node" Relationship="Self.FK_NodeProduction_Node" FromRole="Productions" ToRole="Nodes" />
+    <NavigationProperty Name="Product" Relationship="Self.FK_NodeProduction_Product" FromRole="Productions" ToRole="Products" />
+  </EntityType>
+  <Association Name="FK_DecisionChance_Decision">
+    <End Role="Decisions" Type="Self.Decision" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="DecisionChances" Type="Self.DecisionChance" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Decisions">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="DecisionChances">
+        <PropertyRef Name="DecisionId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Node_Simulation">
+    <End Role="Simulations" Type="Self.Simulation" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Nodes" Type="Self.Node" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Simulations">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Nodes">
+        <PropertyRef Name="SimulationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_NodeNeed_Node">
+    <End Role="Nodes" Type="Self.Node" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Needs" Type="Self.Need" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Nodes">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Needs">
+        <PropertyRef Name="NodeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_NodeProduction_Node">
+    <End Role="Nodes" Type="Self.Node" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Productions" Type="Self.Production" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Nodes">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Productions">
+        <PropertyRef Name="NodeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_NodeNeed_Product">
+    <End Role="Products" Type="Self.Product" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Needs" Type="Self.Need" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Products">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Needs">
+        <PropertyRef Name="ProductId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_NodeProduction_Product">
+    <End Role="Products" Type="Self.Product" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Productions" Type="Self.Production" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Products">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Productions">
+        <PropertyRef Name="ProductId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Log_Simulation">
+    <End Role="Simulations" Type="Self.Simulation" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="SimulationLogs" Type="Self.SimulationLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Simulations">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SimulationLogs">
+        <PropertyRef Name="SimulationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DecisionChance_Simulation">
+    <End Role="Simulations" Type="Self.Simulation" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="DecisionChances" Type="Self.DecisionChance" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Simulations">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="DecisionChances">
+        <PropertyRef Name="SimulationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="NodeLinks">
+    <End Role="Nodes" Type="Self.Node" Multiplicity="*" />
+    <End Role="Nodes1" Type="Self.Node" Multiplicity="*" />
+  </Association>
+  <Association Name="ProductIngredients">
+    <End Role="Products" Type="Self.Product" Multiplicity="*" />
+    <End Role="Products1" Type="Self.Product" Multiplicity="*" />
+  </Association>
+  <EntityContainer Name="EcoSimEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Decisions" EntityType="Self.Decision" />
+    <EntitySet Name="Nodes" EntityType="Self.Node" />
+    <EntitySet Name="Products" EntityType="Self.Product" />
+    <EntitySet Name="SimulationLogs" EntityType="Self.SimulationLog" />
+    <EntitySet Name="Simulations" EntityType="Self.Simulation" />
+    <EntitySet Name="DecisionChances" EntityType="Self.DecisionChance" />
+    <EntitySet Name="Needs" EntityType="Self.Need" />
+    <EntitySet Name="Productions" EntityType="Self.Production" />
+    <AssociationSet Name="FK_DecisionChance_Decision" Association="Self.FK_DecisionChance_Decision">
+      <End Role="Decisions" EntitySet="Decisions" />
+      <End Role="DecisionChances" EntitySet="DecisionChances" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Node_Simulation" Association="Self.FK_Node_Simulation">
+      <End Role="Simulations" EntitySet="Simulations" />
+      <End Role="Nodes" EntitySet="Nodes" />
+    </AssociationSet>
+    <AssociationSet Name="FK_NodeNeed_Node" Association="Self.FK_NodeNeed_Node">
+      <End Role="Nodes" EntitySet="Nodes" />
+      <End Role="Needs" EntitySet="Needs" />
+    </AssociationSet>
+    <AssociationSet Name="FK_NodeProduction_Node" Association="Self.FK_NodeProduction_Node">
+      <End Role="Nodes" EntitySet="Nodes" />
+      <End Role="Productions" EntitySet="Productions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_NodeNeed_Product" Association="Self.FK_NodeNeed_Product">
+      <End Role="Products" EntitySet="Products" />
+      <End Role="Needs" EntitySet="Needs" />
+    </AssociationSet>
+    <AssociationSet Name="FK_NodeProduction_Product" Association="Self.FK_NodeProduction_Product">
+      <End Role="Products" EntitySet="Products" />
+      <End Role="Productions" EntitySet="Productions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Log_Simulation" Association="Self.FK_Log_Simulation">
+      <End Role="Simulations" EntitySet="Simulations" />
+      <End Role="SimulationLogs" EntitySet="SimulationLogs" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DecisionChance_Simulation" Association="Self.FK_DecisionChance_Simulation">
+      <End Role="Simulations" EntitySet="Simulations" />
+      <End Role="DecisionChances" EntitySet="DecisionChances" />
+    </AssociationSet>
+    <AssociationSet Name="NodeLinks" Association="Self.NodeLinks">
+      <End Role="Nodes" EntitySet="Nodes" />
+      <End Role="Nodes1" EntitySet="Nodes" />
+    </AssociationSet>
+    <AssociationSet Name="ProductIngredients" Association="Self.ProductIngredients">
+      <End Role="Products" EntitySet="Products" />
+      <End Role="Products1" EntitySet="Products" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

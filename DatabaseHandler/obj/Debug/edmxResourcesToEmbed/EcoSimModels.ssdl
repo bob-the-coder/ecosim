@@ -1,0 +1,370 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="EcoSimModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'EcoSim.dbo.DecisionChances' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="DecisionChances">
+    <Key>
+      <PropertyRef Name="SimulationId" />
+      <PropertyRef Name="DecisionId" />
+      <PropertyRef Name="Chance" />
+      <PropertyRef Name="Enabled" />
+    </Key>
+    <Property Name="SimulationId" Type="int" Nullable="false" />
+    <Property Name="DecisionId" Type="int" Nullable="false" />
+    <Property Name="Chance" Type="float" Nullable="false" />
+    <Property Name="Enabled" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Decisions">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'EcoSim.dbo.Needs' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="Needs">
+    <Key>
+      <PropertyRef Name="NodeId" />
+      <PropertyRef Name="ProductId" />
+      <PropertyRef Name="Quantity" />
+      <PropertyRef Name="Priority" />
+    </Key>
+    <Property Name="NodeId" Type="int" Nullable="false" />
+    <Property Name="ProductId" Type="int" Nullable="false" />
+    <Property Name="Quantity" Type="int" Nullable="false" />
+    <Property Name="Priority" Type="int" Nullable="false" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'EcoSim.dbo.NodeLinks' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="NodeLinks">
+    <Key>
+      <PropertyRef Name="NodeId" />
+      <PropertyRef Name="LinkId" />
+    </Key>
+    <Property Name="NodeId" Type="int" Nullable="false" />
+    <Property Name="LinkId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Nodes">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="SimulationId" Type="int" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="200" Nullable="false" />
+    <Property Name="SpendingLimit" Type="float" Nullable="false" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'EcoSim.dbo.ProductIngredients' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="ProductIngredients">
+    <Key>
+      <PropertyRef Name="ProductId" />
+      <PropertyRef Name="IngredientId" />
+    </Key>
+    <Property Name="ProductId" Type="int" Nullable="false" />
+    <Property Name="IngredientId" Type="int" Nullable="false" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'EcoSim.dbo.Productions' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="Productions">
+    <Key>
+      <PropertyRef Name="NodeId" />
+      <PropertyRef Name="ProductId" />
+      <PropertyRef Name="Quantity" />
+      <PropertyRef Name="Quality" />
+      <PropertyRef Name="Price" />
+    </Key>
+    <Property Name="NodeId" Type="int" Nullable="false" />
+    <Property Name="ProductId" Type="int" Nullable="false" />
+    <Property Name="Quantity" Type="int" Nullable="false" />
+    <Property Name="Quality" Type="int" Nullable="false" />
+    <Property Name="Price" Type="float" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Products">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="200" Nullable="false" />
+  </EntityType>
+  <EntityType Name="SimulationLogs">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" />
+    <Property Name="SimulationId" Type="int" Nullable="false" />
+    <Property Name="NodeId" Type="int" Nullable="false" />
+    <Property Name="IterationNumber" Type="int" Nullable="false" />
+    <Property Name="Type" Type="int" Nullable="false" />
+    <Property Name="Content" Type="nvarchar" MaxLength="100" />
+  </EntityType>
+  <EntityType Name="Simulations">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" />
+    <Property Name="Name" Type="int" Nullable="false" />
+    <Property Name="NeedFulfillSortByPriority" Type="int" Nullable="false" />
+    <Property Name="NeedFulfillSortByQuantity" Type="int" Nullable="false" />
+    <Property Name="ProductionSortByDistance" Type="int" Nullable="false" />
+    <Property Name="ProductionSortByFinalCost" Type="int" Nullable="false" />
+    <Property Name="ProductionSortByInitialCost" Type="int" Nullable="false" />
+    <Property Name="ProductPriceIncreasePerQuality" Type="float" Nullable="false" />
+    <Property Name="ProductPriceIncreasePerIntermediary" Type="float" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_DecisionChance_Decision">
+    <End Role="Decisions" Type="Self.Decisions" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="DecisionChances" Type="Self.DecisionChances" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Decisions">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="DecisionChances">
+        <PropertyRef Name="DecisionId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DecisionChance_Simulation">
+    <End Role="Simulations" Type="Self.Simulations" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="DecisionChances" Type="Self.DecisionChances" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Simulations">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="DecisionChances">
+        <PropertyRef Name="SimulationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Log_Simulation">
+    <End Role="Simulations" Type="Self.Simulations" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="SimulationLogs" Type="Self.SimulationLogs" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Simulations">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SimulationLogs">
+        <PropertyRef Name="SimulationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Node_Simulation">
+    <End Role="Simulations" Type="Self.Simulations" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Nodes" Type="Self.Nodes" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Simulations">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Nodes">
+        <PropertyRef Name="SimulationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_NodeLink_Link">
+    <End Role="Nodes" Type="Self.Nodes" Multiplicity="1" />
+    <End Role="NodeLinks" Type="Self.NodeLinks" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Nodes">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="NodeLinks">
+        <PropertyRef Name="LinkId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_NodeLink_Node">
+    <End Role="Nodes" Type="Self.Nodes" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="NodeLinks" Type="Self.NodeLinks" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Nodes">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="NodeLinks">
+        <PropertyRef Name="NodeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_NodeNeed_Node">
+    <End Role="Nodes" Type="Self.Nodes" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Needs" Type="Self.Needs" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Nodes">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Needs">
+        <PropertyRef Name="NodeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_NodeNeed_Product">
+    <End Role="Products" Type="Self.Products" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Needs" Type="Self.Needs" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Products">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Needs">
+        <PropertyRef Name="ProductId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_NodeProduction_Node">
+    <End Role="Nodes" Type="Self.Nodes" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Productions" Type="Self.Productions" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Nodes">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Productions">
+        <PropertyRef Name="NodeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_NodeProduction_Product">
+    <End Role="Products" Type="Self.Products" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Productions" Type="Self.Productions" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Products">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Productions">
+        <PropertyRef Name="ProductId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ProductIngredient_Product">
+    <End Role="Products" Type="Self.Products" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="ProductIngredients" Type="Self.ProductIngredients" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Products">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ProductIngredients">
+        <PropertyRef Name="ProductId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ProductsIngredient_Ingredient">
+    <End Role="Products" Type="Self.Products" Multiplicity="1" />
+    <End Role="ProductIngredients" Type="Self.ProductIngredients" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Products">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ProductIngredients">
+        <PropertyRef Name="IngredientId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="EcoSimModelStoreContainer">
+    <EntitySet Name="Decisions" EntityType="Self.Decisions" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Nodes" EntityType="Self.Nodes" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Products" EntityType="Self.Products" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="SimulationLogs" EntityType="Self.SimulationLogs" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Simulations" EntityType="Self.Simulations" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="DecisionChances" EntityType="Self.DecisionChances" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [DecisionChances].[SimulationId] AS [SimulationId], 
+    [DecisionChances].[DecisionId] AS [DecisionId], 
+    [DecisionChances].[Chance] AS [Chance], 
+    [DecisionChances].[Enabled] AS [Enabled]
+    FROM [dbo].[DecisionChances] AS [DecisionChances]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="Needs" EntityType="Self.Needs" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [Needs].[NodeId] AS [NodeId], 
+    [Needs].[ProductId] AS [ProductId], 
+    [Needs].[Quantity] AS [Quantity], 
+    [Needs].[Priority] AS [Priority]
+    FROM [dbo].[Needs] AS [Needs]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="NodeLinks" EntityType="Self.NodeLinks" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [NodeLinks].[NodeId] AS [NodeId], 
+    [NodeLinks].[LinkId] AS [LinkId]
+    FROM [dbo].[NodeLinks] AS [NodeLinks]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="ProductIngredients" EntityType="Self.ProductIngredients" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [ProductIngredients].[ProductId] AS [ProductId], 
+    [ProductIngredients].[IngredientId] AS [IngredientId]
+    FROM [dbo].[ProductIngredients] AS [ProductIngredients]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="Productions" EntityType="Self.Productions" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [Productions].[NodeId] AS [NodeId], 
+    [Productions].[ProductId] AS [ProductId], 
+    [Productions].[Quantity] AS [Quantity], 
+    [Productions].[Quality] AS [Quality], 
+    [Productions].[Price] AS [Price]
+    FROM [dbo].[Productions] AS [Productions]</DefiningQuery>
+    </EntitySet>
+    <AssociationSet Name="FK_DecisionChance_Decision" Association="Self.FK_DecisionChance_Decision">
+      <End Role="Decisions" EntitySet="Decisions" />
+      <End Role="DecisionChances" EntitySet="DecisionChances" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DecisionChance_Simulation" Association="Self.FK_DecisionChance_Simulation">
+      <End Role="Simulations" EntitySet="Simulations" />
+      <End Role="DecisionChances" EntitySet="DecisionChances" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Log_Simulation" Association="Self.FK_Log_Simulation">
+      <End Role="Simulations" EntitySet="Simulations" />
+      <End Role="SimulationLogs" EntitySet="SimulationLogs" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Node_Simulation" Association="Self.FK_Node_Simulation">
+      <End Role="Simulations" EntitySet="Simulations" />
+      <End Role="Nodes" EntitySet="Nodes" />
+    </AssociationSet>
+    <AssociationSet Name="FK_NodeLink_Link" Association="Self.FK_NodeLink_Link">
+      <End Role="Nodes" EntitySet="Nodes" />
+      <End Role="NodeLinks" EntitySet="NodeLinks" />
+    </AssociationSet>
+    <AssociationSet Name="FK_NodeLink_Node" Association="Self.FK_NodeLink_Node">
+      <End Role="Nodes" EntitySet="Nodes" />
+      <End Role="NodeLinks" EntitySet="NodeLinks" />
+    </AssociationSet>
+    <AssociationSet Name="FK_NodeNeed_Node" Association="Self.FK_NodeNeed_Node">
+      <End Role="Nodes" EntitySet="Nodes" />
+      <End Role="Needs" EntitySet="Needs" />
+    </AssociationSet>
+    <AssociationSet Name="FK_NodeNeed_Product" Association="Self.FK_NodeNeed_Product">
+      <End Role="Products" EntitySet="Products" />
+      <End Role="Needs" EntitySet="Needs" />
+    </AssociationSet>
+    <AssociationSet Name="FK_NodeProduction_Node" Association="Self.FK_NodeProduction_Node">
+      <End Role="Nodes" EntitySet="Nodes" />
+      <End Role="Productions" EntitySet="Productions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_NodeProduction_Product" Association="Self.FK_NodeProduction_Product">
+      <End Role="Products" EntitySet="Products" />
+      <End Role="Productions" EntitySet="Productions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ProductIngredient_Product" Association="Self.FK_ProductIngredient_Product">
+      <End Role="Products" EntitySet="Products" />
+      <End Role="ProductIngredients" EntitySet="ProductIngredients" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ProductsIngredient_Ingredient" Association="Self.FK_ProductsIngredient_Ingredient">
+      <End Role="Products" EntitySet="Products" />
+      <End Role="ProductIngredients" EntitySet="ProductIngredients" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

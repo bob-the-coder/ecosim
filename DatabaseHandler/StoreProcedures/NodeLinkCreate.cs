@@ -3,9 +3,9 @@ using DatabaseHandler.Helpers;
 
 namespace DatabaseHandler.StoreProcedures
 {
-    public class NodeLinkCreate:StoredProcedureBase
+    public class NodeLinkCreate : StoredProcedureBase
     {
-        public NodeLinkCreate(Guid nodeId, Guid linkId) : base(StoredProcedures.NodeLinkCreate)
+        public NodeLinkCreate(int nodeId, int linkId) : base(StoredProcedures.NodeLinkCreate)
         {
             Parameters.Add("@NodeId", nodeId);
             Parameters.Add("@LinkId", linkId);

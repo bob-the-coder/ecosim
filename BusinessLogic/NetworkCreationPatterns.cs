@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using BusinessLogic.Models;
+using Models;
 
 namespace BusinessLogic
 {
@@ -29,28 +29,17 @@ namespace BusinessLogic
 
         public static void UsePatternCentroid(int networkSize, List<NodeLink> links, List<Node> network)
         {
-            var centroid1 = new Random().Next(0, networkSize - 1);
-            var centroid2 = new Random().Next(0, centroid1 - 1);
+            var centroid = new Random().Next(0, networkSize - 1);
             for (var i = 0; i < networkSize; i++)
             {
-                if (i == centroid1 || i == centroid2) continue;
+                if (i == centroid)
+                {
+                    continue;
+                }
+
                 links.Add(new NodeLink
                 {
-                    NodeId = network[centroid1].Id,
-                    LinkId = network[i].Id
-                });
-                links.Add(new NodeLink
-                {
-                    NodeId = network[i].Id,
-                    LinkId = network[i + 1].Id
-                });
-                i++;
-                if (i == centroid1) i++;
-                if (i == centroid2) i++;
-                if (i == centroid1) i++;
-                links.Add(new NodeLink
-                {
-                    NodeId = network[centroid2].Id,
+                    NodeId = network[centroid].Id,
                     LinkId = network[i].Id
                 });
             }
@@ -78,6 +67,135 @@ namespace BusinessLogic
                             LinkId = network[j].Id
                         });
                     }
+                }
+            }
+        }
+
+        public static void UsePatternSmallWorld(int networkSize, List<NodeLink> links, List<Node> network, int k, int p)
+        {
+            if (network == null || network.Count == 0)
+            {
+                return;
+            }
+
+            for (var i = 0; i < networkSize; i++)
+            {
+                links.Add(new NodeLink
+                {
+                    NodeId = network[i].Id,
+                    LinkId = network[(i + 1) % networkSize].Id
+                });
+
+                for (var j = 1; j <= k; j++)
+                {
+                    var nextKIndex = (i + j + 1) % networkSize;
+                    var prevKIndex = (i - j - 1) < 0 ? (networkSize + i - j - 1) % networkSize : (i - j - 1);
+
+                    links.Add(new NodeLink
+                    {
+                        NodeId = network[i].Id,
+                        LinkId = network[nextKIndex].Id
+                    });
+
+                    links.Add(new NodeLink
+                    {
+                        NodeId = network[i].Id,
+                        LinkId = network[prevKIndex].Id
+                    });
+                }
+            }
+
+            if (p <= 0)
+            {
+                return;
+            }
+
+            for (var i = 0; i < networkSize; i++)
+            {
+                var iLinks = links.Where(link => link.NodeId == network[i].Id).ToList();
+
+                foreach (var link in iLinks)
+                {
+                    var prob = Rng.Next(0, 100);
+                    if (prob > p)
+                    {
+                        continue;
+                    }
+
+                    var lastNeighbourId = iLinks.Max(primaryLink => primaryLink.LinkId);
+                    var lastAdjacentNeighbourId = links.Where(l => l.NodeId == lastNeighbourId).Max(l2 => l2.LinkId);
+
+                    if (lastAdjacentNeighbourId < lastNeighbourId)
+                    {
+                        continue;
+                    }
+
+                    var newLink = Rng.Next(lastAdjacentNeighbourId, network.Count - 1);
+
+                    links.Add(new NodeLink
+                    {
+                        NodeId = network[i].Id,
+                        LinkId = network[newLink].Id
+                    });
+
+                    links.Remove(link);
+
+                    break;
+                }
+            }
+        }
+
+        public static void UsePatternGrid(List<NodeLink> links, List<Node> network, int n, int m)
+        {
+            if (n == 0 || m == 0 || network?.Count != n * m)
+            {
+                return;
+            }
+
+            var nodeLines = new List<List<Node>>();
+            for (var i = 0; i < n; i++)
+            {
+                var line = new List<Node>();
+                for (var j = 0; j < m; j++)
+                {
+                    line.Add(network[i * m + j]);
+                }
+                nodeLines.Add(line);
+            }
+
+            for (var i = 0; i < n; i++)
+            {
+                for (var j = 0; j < m - 1; j++)
+                {
+                    links.Add(new NodeLink
+                    {
+                        NodeId = nodeLines[i][j].Id,
+                        LinkId = nodeLines[i][j + 1].Id
+                    });
+                    links.Add(new NodeLink
+                    {
+                        NodeId = nodeLines[i][j + 1].Id,
+                        LinkId = nodeLines[i][j].Id
+                    });
+                }
+
+                if (i == n - 1)
+                {
+                    break;
+                }
+
+                for (var j = 0; j < m; j++)
+                {
+                    links.Add(new NodeLink
+                    {
+                        NodeId = nodeLines[i][j].Id,
+                        LinkId = nodeLines[i + 1][j].Id
+                    });
+                    links.Add(new NodeLink
+                    {
+                        NodeId = nodeLines[i + 1][j].Id,
+                        LinkId = nodeLines[i][j].Id
+                    });
                 }
             }
         }

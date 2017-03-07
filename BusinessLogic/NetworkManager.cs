@@ -1,85 +1,93 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using BusinessLogic.Models;
+using System.Linq;
+using Models;
 
 namespace BusinessLogic
 {
-    public class NetworkManager
+    public static class NetworkManager
     {
-        public static async Task<Dictionary<Guid, Guid>> GetBfsList(Node start)
+        public static void GetShortestPathsHeap(this Node start, List<Node> network)
         {
-            var network = await NodeManager.GetAllAsync().ConfigureAwait(false);
             var networkSize = network.Count;
-            var bfsResult = new Dictionary<Guid, Guid> { { start.Id, Guid.Empty} };
+            var bfsResult = new Dictionary<int, int> { { start.Id, -1 } };
 
-            bfsResult = await AddNodesToBfsList(bfsResult, networkSize, new List<Node> { start }).ConfigureAwait(false);
+            bfsResult = GetShortestPathsByNeighbours(bfsResult, networkSize, new List<Node> { start }, network);
 
-            return bfsResult;
+            start.ShortestPathsHeap = bfsResult;
         }
 
-        public static async Task<string> GetBfsPath(Node dest, IDictionary<Guid, Guid> bfsResult)
+
+        public static List<Node> GetShortestPathToNode(this Node origin, Node dest, List<Node> network)
         {
-            if (dest == null)
+            if (origin == null || dest == null)
             {
                 return null;
             }
 
-            var res = $"{dest.Name}";
-
-            if (bfsResult == null || bfsResult.Count == 0)
+            if (origin.ShortestPathsHeap == null || origin.ShortestPathsHeap.Count == 0)
             {
-                return res;
+                return null;
             }
+
+            if (!origin.ShortestPathsHeap.ContainsKey(dest.Id))
+            {
+                return null;
+            }
+
+            var res = new List<Node>();
 
             while (true)
             {
-                if (!bfsResult.ContainsKey(dest.Id))
+                if (!origin.ShortestPathsHeap.ContainsKey(dest.Id))
                 {
+                    return null;
+                }
+                if (origin.ShortestPathsHeap[dest.Id] == -1)
+                {
+                    res.Add(origin);
                     return res;
                 }
-                dest = await NodeManager.GetAsync(bfsResult[dest.Id]).ConfigureAwait(false);
-                if (dest == null)
-                {
-                    return res;
-                }
-                res = $"{dest.Name} -> {res}";
+                res.Add(dest);
+                dest = network.First(node => node.Id == origin.ShortestPathsHeap[dest.Id]);
             }
         }
 
-        private static async Task<Dictionary<Guid, Guid>> AddNodesToBfsList(Dictionary<Guid, Guid> bfsList, int networkSize, List<Node> startNodes)
+        private static Dictionary<int, int> GetShortestPathsByNeighbours(Dictionary<int, int> heap, int networkSize, List<Node> startNodes, List<Node> network)
         {
-            if (bfsList.Count == networkSize || startNodes == null || startNodes.Count == 0)
+            while (true)
             {
-                return bfsList;
-            }
-            var nextIterationNodes = new List<Node>();
-
-            foreach (var startNode in startNodes)
-            {
-                var neighbours = await NodeManager.GetListAsync(startNode).ConfigureAwait(false);
-                if(neighbours == null)
+                if (heap.Count == networkSize || startNodes == null || startNodes.Count == 0)
                 {
-                    continue;
+                    return heap;
                 }
-                foreach (var neighbour in neighbours)
+                var nextIterationNodes = new List<Node>();
+
+                foreach (var startNode in startNodes)
                 {
-                    if (bfsList.ContainsKey(neighbour.Id))
+                    var neighbours = startNode.Neighbours;
+                    if (neighbours == null)
                     {
                         continue;
                     }
-                    bfsList.Add(neighbour.Id, startNode.Id);
-                    nextIterationNodes.Add(neighbour);
+                    foreach (var neighbour in neighbours)
+                    {
+                        if (heap.ContainsKey(neighbour.Id))
+                        {
+                            continue;
+                        }
+                        heap.Add(neighbour.Id, startNode.Id);
+                        nextIterationNodes.Add(network.First(node => node.Id == neighbour.Id));
+                    }
                 }
-            }
 
-            if (nextIterationNodes.Count == 0)
-            {
-                return bfsList;
-            }
+                if (nextIterationNodes.Count == 0)
+                {
+                    return heap;
+                }
 
-            return await AddNodesToBfsList(bfsList, networkSize, nextIterationNodes).ConfigureAwait(false);
+                startNodes = nextIterationNodes;
+            }
         }
     }
 }

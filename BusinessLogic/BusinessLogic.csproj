@@ -51,22 +51,36 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\NetworkConfiguration.cs" />
+    <Compile Include="DecisionManager.cs" />
+    <Compile Include="Economics\ExpansionPattern.cs" />
+    <Compile Include="Economics\ExpasionPatterns.cs" />
+    <Compile Include="Economics\TransactionManager.cs" />
+    <Compile Include="Enum\NeedSelectionPattern.cs" />
     <Compile Include="Enum\NetworkSearchType.cs" />
-    <Compile Include="Enum\PatternType.cs" />
-    <Compile Include="Models\Node.cs" />
-    <Compile Include="Models\NodeLink.cs" />
-    <Compile Include="Models\VisJsEdge.cs" />
-    <Compile Include="Models\VisJsGraph.cs" />
-    <Compile Include="Models\VisJsNode.cs" />
+    <Compile Include="Enum\NetworkPatternType.cs" />
+    <Compile Include="Enum\ProductCreationPattern.cs" />
+    <Compile Include="Enum\ProducerSelectionPattern.cs" />
+    <Compile Include="Enum\ProductionSelectionPattern.cs" />
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="NetworkCreationPatterns.cs" />
     <Compile Include="NetworkManager.cs" />
     <Compile Include="NodeManager.cs" />
+    <Compile Include="ProducerManager.cs" />
+    <Compile Include="ProductionManager.cs" />
+    <Compile Include="ProductManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimulationManager.cs" />
+    <Compile Include="Simulator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DatabaseHandler\DatabaseHandler.csproj">
       <Project>{5168739f-8be7-4231-903f-514f7450106a}</Project>
       <Name>DatabaseHandler</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Models\Models.csproj">
+      <Project>{d0a8366d-71bb-4d3d-9121-2689a2b48a9e}</Project>
+      <Name>Models</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

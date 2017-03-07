@@ -75,3 +75,5 @@ C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\EcoSim\bin\Bus
 C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\EcoSim\bin\DatabaseHandler.pdb
 C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\EcoSim\bin\Logging.pdb
 C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\EcoSim\bin\NLog.xml
+C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\EcoSim\bin\Models.dll
+C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\EcoSim\bin\Models.pdb

@@ -3,74 +3,131 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using BusinessLogic;
+using BusinessLogic.Configuration;
 using BusinessLogic.Enum;
-using BusinessLogic.Models;
+using Models;
 using Newtonsoft.Json;
 
 namespace EcoSim.Controllers
 {
     public class HomeController : Controller
     {
+        private static readonly Random Rng = new Random((int)DateTime.Now.ToBinary());
         public ActionResult Index()
         {
-            return View();
+            return RedirectToAction("Simulations");
+        }
+
+        public ActionResult Simulations()
+        {
+            return View("SimulationSettings");
         }
 
         [HttpPost]
-        public async Task<JsonResult> CreateNode(Node n)
+        public JsonResult CreateNode(Node n)
         {
-            n.Id = Guid.NewGuid();
-            var result = await NodeManager.CreateAsync(n).ConfigureAwait(false);
+            var result = NodeManager.Create(n);
 
             return Json(result);
         }
 
         [HttpPost]
-        public async Task<string> GetGraph()
+        public string GetGraph()
         {
-            var result = await NodeManager.GetGraphAsync().ConfigureAwait(false);
+            var result = NodeManager.GetGraph();
 
             return JsonConvert.SerializeObject(result);
         }
 
         [HttpPost]
-        public async Task CreateInitialPopulation(int networkSize = 128, int linkPattern = (int)PatternType.Circular)
+        public void CreateInitialPopulation(NetworkConfiguration config)
         {
-            var network = new List<Node>(networkSize);
-            for (var i = 0; i < networkSize; i++)
+            if (config.GridHeight != 0 && config.GridWidth != 0 && config.NetworkPattern == (int)NetworkPatternType.Grid)
+            {
+                config.NetworkSize = config.GridHeight * config.GridWidth;
+            }
+
+            var network = new List<Node>(config.NetworkSize);
+            for (var i = 0; i < config.NetworkSize; i++)
             {
                 network.Add(new Node
                 {
-                    Id = Guid.NewGuid(),
-                    Name = $"Node {i}",
-                    SpendingLimit = new Random().NextDouble() * new Random().Next(100, 500) * 10
+                    Name = $"{i}",
+                    SpendingLimit = Rng.NextDouble() * Rng.Next(100, 500) * 10
                 });
             }
 
+            var dbIsClean = Simulator.ClearDatabase();
+
+            if (!dbIsClean)
+            {
+                return;
+            }
+
+            network = NodeManager.AppendToNetwork(network);
+
             var links = new List<NodeLink>();
 
-            switch ((PatternType)linkPattern)
+            switch ((NetworkPatternType)config.NetworkPattern)
             {
-                case PatternType.Circular:
+                case NetworkPatternType.Circular:
                     {
-                        NetworkCreationPatterns.UsePatternCircular(networkSize, links, network);
+                        NetworkCreationPatterns.UsePatternCircular(config.NetworkSize, links, network);
                     }
                     break;
-                case PatternType.Centroid:
+                case NetworkPatternType.Centroid:
                     {
-                        NetworkCreationPatterns.UsePatternCentroid(networkSize, links, network);
+                        NetworkCreationPatterns.UsePatternCentroid(config.NetworkSize, links, network);
                     }
                     break;
-                case PatternType.Random:
+                case NetworkPatternType.Random:
                     {
-                        NetworkCreationPatterns.UsePatternRandom(networkSize, links, network);
+                        NetworkCreationPatterns.UsePatternRandom(config.NetworkSize, links, network);
+                    }
+                    break;
+                case NetworkPatternType.Grid:
+                    {
+                        NetworkCreationPatterns.UsePatternGrid(links, network, config.GridHeight, config.GridWidth);
+                    }
+                    break;
+                case NetworkPatternType.SmallWorld:
+                    {
+                        NetworkCreationPatterns.UsePatternSmallWorld(config.NetworkSize, links, network, config.SwInitialDegree, config.SwRewireChance);
                     }
                     break;
                 default:
                     return;
             }
 
-            await NodeManager.NetworkInitialCreate(network, links).ConfigureAwait(false);
+            if (links.Count == 0)
+            {
+                return;
+            }
+
+            network = NodeManager.AppendToNetwork(links: links);
+
+            if (network == null)
+            {
+                return;
+            }
+
+            var products = ProductManager.CommitProducts(
+                (ProductCreationPattern)config.ProductCreationPattern, config.ProductBias, network.Count);
+
+            var productions = ProductManager.CreateProductions(
+                network,
+                products,
+                (ProducerSelectionPattern)config.ProducerSelectionPattern,
+                config.ProducerBias,
+                (ProductionSelectionPattern)config.ProductionSelectionPattern,
+                config.ProductionBias);
+
+            var needs = ProductManager.CreateNeeds(
+                network,
+                products,
+                productions,
+                (NeedSelectionPattern)config.NeedSelectionPattern,
+                config.NeedBias);
         }
     }
 }

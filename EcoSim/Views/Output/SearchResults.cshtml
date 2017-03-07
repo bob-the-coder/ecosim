@@ -4,16 +4,22 @@
 }
 
 <style>
+    * {
+        font-family: Consolas;
+        font-size: 14px;
+    }
+
     div {
-        padding: 5px;
-        margin-bottom: 5px;
-        border-bottom: 1px solid black;
+        height:16px;
     }
 </style>
 
-<h1>Search Results</h1>
+<h1>Iteration Overview</h1>
 
-@foreach (var entry in Model)
+@if (Model != null)
 {
-    <div>@entry</div>
+    foreach (var entry in Model)
+    {
+        <div>@entry</div>
+    }
 }

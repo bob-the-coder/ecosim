@@ -30,6 +30,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Practices.EnterpriseLibrary.2008.4.1\lib\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
       <Private>True</Private>
@@ -59,8 +67,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -70,36 +81,54 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DatabaseConnection.cs" />
+    <Compile Include="Extensions\Linq\EntityFrameworkLinqExtensions.cs" />
+    <Compile Include="Extensions\QueryableExtensions.cs" />
     <Compile Include="Helpers\OperationStatus.cs" />
     <Compile Include="Helpers\OutputParametersConstants.cs" />
     <Compile Include="Helpers\StoredProcedureBase.cs" />
     <Compile Include="Helpers\StoredProcedureExecutor.cs" />
     <Compile Include="Helpers\StoredProcedures.cs" />
-    <Compile Include="Interfaces\INode.cs" />
-    <Compile Include="Interfaces\INodeLink.cs" />
-    <Compile Include="Interfaces\IProduct.cs" />
-    <Compile Include="Interfaces\IVisJsEdge.cs" />
-    <Compile Include="Interfaces\IVisJsNode.cs" />
+    <Compile Include="Interfaces\IDataAccessObject.cs" />
+    <Compile Include="Interfaces\ISinglePkDataAccessObject.cs" />
     <Compile Include="LocalConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StoreProcedures\ClearDatabaseSp.cs" />
     <Compile Include="StoreProcedures\LinkGetAllVisJs.cs" />
+    <Compile Include="StoreProcedures\NeedCreate.cs" />
+    <Compile Include="StoreProcedures\NeedUpdate.cs" />
+    <Compile Include="StoreProcedures\NodeLinkGetAll.cs" />
+    <Compile Include="StoreProcedures\NodeUpdate.cs" />
+    <Compile Include="StoreProcedures\ProductGetAll.cs" />
+    <Compile Include="StoreProcedures\ProductionGetAll.cs" />
+    <Compile Include="StoreProcedures\NeedGetAll.cs" />
     <Compile Include="StoreProcedures\NodeCreate.cs" />
     <Compile Include="StoreProcedures\NodeGet.cs" />
     <Compile Include="StoreProcedures\NodeGetAll.cs" />
     <Compile Include="StoreProcedures\NodeGetAllVisJs.cs" />
     <Compile Include="StoreProcedures\NodeGetList.cs" />
     <Compile Include="StoreProcedures\NodeLinkCreate.cs" />
+    <Compile Include="StoreProcedures\ProductCreate.cs" />
+    <Compile Include="StoreProcedures\ProductionCreate.cs" />
+    <Compile Include="StoreProcedures\ProductionUpdate.cs" />
+    <Compile Include="StoreProcedures\SimSettingsCreate.cs" />
+    <Compile Include="StoreProcedures\SimSettingsGet.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Logging\Logging.csproj">
       <Project>{23a5d704-fbb0-4ed7-848c-d3c27f320156}</Project>
       <Name>Logging</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Models\Models.csproj">
+      <Project>{d0a8366d-71bb-4d3d-9121-2689a2b48a9e}</Project>
+      <Name>Models</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
