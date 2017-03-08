@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseCore.cs" />
     <Compile Include="Configuration\NetworkConfiguration.cs" />
     <Compile Include="DecisionManager.cs" />
     <Compile Include="Economics\ExpansionPattern.cs" />

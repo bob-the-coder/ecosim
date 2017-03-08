@@ -2,7 +2,7 @@
 
 namespace Models.Interfaces
 {
-    public interface INeed
+    public interface INeed : ISimObject
     {
         int NodeId { get; set; }
         int ProductId { get; set; }

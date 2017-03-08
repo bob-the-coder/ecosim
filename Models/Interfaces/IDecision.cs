@@ -1,6 +1,6 @@
 ﻿namespace Models.Interfaces
 {
-    public interface IProduct : IIntPkObject
+    public interface IDecision : IIntPkObject
     {
         string Name { get; set; }
     }

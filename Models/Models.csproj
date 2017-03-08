@@ -40,12 +40,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Decision.cs" />
+    <Compile Include="DecisionChance.cs" />
+    <Compile Include="Interfaces\IDecision.cs" />
+    <Compile Include="Interfaces\IDecisionChance.cs" />
+    <Compile Include="Interfaces\IGuidPkObject.cs" />
+    <Compile Include="Interfaces\IIntPkObject.cs" />
     <Compile Include="Interfaces\INeed.cs" />
     <Compile Include="Interfaces\INode.cs" />
     <Compile Include="Interfaces\INodeLink.cs" />
     <Compile Include="Interfaces\IProduct.cs" />
     <Compile Include="Interfaces\IProduction.cs" />
-    <Compile Include="Interfaces\ISimSettings.cs" />
+    <Compile Include="Interfaces\ISimObject.cs" />
+    <Compile Include="Interfaces\ISimulation.cs" />
+    <Compile Include="Interfaces\ISimulationLog.cs" />
     <Compile Include="Interfaces\IVisJsEdge.cs" />
     <Compile Include="Interfaces\IVisJsNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -54,7 +62,9 @@
     <Compile Include="NodeLink.cs" />
     <Compile Include="Product.cs" />
     <Compile Include="Production.cs" />
-    <Compile Include="SimSettings.cs" />
+    <Compile Include="Simulation.cs" />
+    <Compile Include="SimulationLog.cs" />
+    <Compile Include="SimulationMember.cs" />
     <Compile Include="VisJsEdge.cs" />
     <Compile Include="VisJsGraph.cs" />
     <Compile Include="VisJsNode.cs" />

@@ -5,10 +5,8 @@ namespace DatabaseHandler.StoreProcedures
 {
     public class NodeCreate:StoredProcedureBase
     {
-        public NodeCreate(Node model) : base(StoredProcedures.NodeCreate)
+        public NodeCreate(Node model) : base(StoredProcedures.NodeCreate, model)
         {
-            Parameters.Add("Name", model.Name);
-            Parameters.Add("SpendingLimit", model.SpendingLimit);
         }
     }
 }

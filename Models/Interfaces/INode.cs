@@ -2,9 +2,9 @@
 
 namespace Models.Interfaces
 {
-    public interface INode
+    public interface INode : IIntPkObject
     {
-        int Id { get; set; }
+        int SimulationId { get; set; }
         string Name { get; set; }
         double SpendingLimit { get; set; }
     }

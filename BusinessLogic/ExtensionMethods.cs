@@ -31,18 +31,18 @@ namespace BusinessLogic
             return info;
         }
 
-        public static double PriceByQuality(this Production p, SimSettings simSettings)
+        public static double PriceByQuality(this Production p, Simulation simSettings)
         {
             return p.Price * Math.Pow(1 + simSettings.ProductPriceIncreasePerQuality, p.Quality);
         }
 
-        public static double PriceByDistance(this Production p, SimSettings simSettings,
+        public static double PriceByDistance(this Production p, Simulation simSettings,
             List<Node> pathFromBuyerToSeller)
         {
             return p.Price * Math.Pow(1 + simSettings.ProductPriceIncreasePerIntermediary, pathFromBuyerToSeller.Count - 2);
         }
 
-        public static double PriceByQualityAndDistance(this Production p, SimSettings simSettings,
+        public static double PriceByQualityAndDistance(this Production p, Simulation simSettings,
             List<Node> pathFromBuyerToSeller)
         {
             return p.PriceByQuality(simSettings) * Math.Pow(1 + simSettings.ProductPriceIncreasePerIntermediary, pathFromBuyerToSeller.Count - 2);

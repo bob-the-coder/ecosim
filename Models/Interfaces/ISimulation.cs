@@ -1,10 +1,9 @@
 ﻿namespace Models.Interfaces
 {
-    internal interface ISimSettings
+    internal interface ISimulation : IIntPkObject
     {
-        int Id { get; set; }
-        int NeedFulfillByPriority { get; set; }
-        int NeedFulfillByQuantity { get; set; }
+        int NeedFulfillSortByPriority { get; set; }
+        int NeedFulfillSortByQuantity { get; set; }
         int ProductionSortByDistance { get; set; }
         int ProductionSortByFinalCost { get; set; }
         int ProductionSortByInitialCost { get; set; }

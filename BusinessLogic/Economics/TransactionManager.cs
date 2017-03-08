@@ -24,7 +24,7 @@ namespace BusinessLogic.Economics
             Node seller,
             Production sellerProduction,
             List<Node> pathFromBuyerToSeller,
-            SimSettings simSettings,
+            Simulation simSettings,
             List<string> log = null)
         {
             log?.Add($"Transaction between {buyer.Name} and {seller.Name}");

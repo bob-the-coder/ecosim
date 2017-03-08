@@ -2,7 +2,7 @@
 
 namespace Models.Interfaces
 {
-    public interface IVisJsNode
+    public interface IVisJsNode : ISimObject
     {
         int id { get; set; }
         string label { get; set; }

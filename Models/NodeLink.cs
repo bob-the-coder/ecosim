@@ -2,7 +2,7 @@
 
 namespace Models
 {
-    public class NodeLink : INodeLink
+    public class NodeLink : ISimObject
     {
         public int NodeId { get; set; }
         public int LinkId { get; set; }

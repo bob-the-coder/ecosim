@@ -35,7 +35,7 @@ namespace BusinessLogic
                 //TODO: add additional links
             }
 
-            NodeManager.AppendToNetwork(new List<Node> { childNode }, childLinks);
+            NodeManager.AppendToNetwork(parentNode.SimulationId, new List<Node> { childNode }, childLinks);
         }
 
         public static void ImproveProductionQuality(this Node node, List<Production> allProductions)
@@ -57,7 +57,7 @@ namespace BusinessLogic
             return;
         }
 
-        public static void CreateProduction(this Node node, SimSettings simSettings, List<Product> allProducts, List<Production> allProductions, List<Need> allNeeds)
+        public static void CreateProduction(this Node node, Simulation simSettings, List<Product> allProducts, List<Production> allProductions, List<Need> allNeeds)
         {
             var validProducts = allProducts.Where(
                 product =>

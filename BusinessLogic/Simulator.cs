@@ -91,7 +91,7 @@ namespace BusinessLogic
             List<Node> network,
             Dictionary<int, int> nodeBfsResult,
             List<Production> allProductions,
-            SimSettings simSettings,
+            Simulation simSettings,
             List<string> log)
         {
             var selectedProducer = node.GetClosestProducer(network, allProductions, need);

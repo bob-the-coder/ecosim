@@ -130,7 +130,7 @@ namespace BusinessLogic
                         continue;
                     }
 
-                    var newLink = Rng.Next(lastAdjacentNeighbourId, network.Count - 1);
+                    var newLink = Rng.Next(lastAdjacentNeighbourId, network.Max(n => n.Id) - 1);
 
                     links.Add(new NodeLink
                     {

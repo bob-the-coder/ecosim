@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Models.Interfaces;
 
 namespace Models
 {
-    public class SimSettings
+    public class Simulation : ISimulation
     {
-        public Guid Id { get; set; }
-        public int NeedFulfillByPriority { get; set; }
-        public int NeedFulfillByQuantity { get; set; }
+        public int Id { get; set; }
+        public int NeedFulfillSortByPriority { get; set; }
+        public int NeedFulfillSortByQuantity { get; set; }
         public int ProductionSortByDistance { get; set; }
         public int ProductionSortByFinalCost { get; set; }
         public int ProductionSortByInitialCost { get; set; }

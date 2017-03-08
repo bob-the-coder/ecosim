@@ -2,7 +2,7 @@
 
 namespace Models.Interfaces
 {
-    public interface INodeLink
+    public interface INodeLink : IIntPkObject
     {
         int NodeId { get; set; }
         int LinkId { get; set; }

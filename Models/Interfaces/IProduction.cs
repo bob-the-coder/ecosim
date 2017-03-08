@@ -2,7 +2,7 @@
 
 namespace Models.Interfaces
 {
-    public interface IProduction
+    public interface IProduction : ISimObject
     {
         int NodeId { get; set; }
         int ProductId { get; set; }

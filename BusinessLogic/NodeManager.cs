@@ -69,26 +69,27 @@ namespace BusinessLogic
             StoredProcedureExecutor.ExecuteNoQueryAsTransaction(sps);
         }
 
-        public static List<Node> AppendToNetwork(List<Node> network = null, List<NodeLink> links = null)
+        public static List<Node> AppendToNetwork(int simulationId, List<Node> network = null, List<NodeLink> links = null)
         {
-            if (network != null || links != null)
+            var sps = new List<StoredProcedureBase>();
+            network?.ForEach(node =>
             {
-                var sps = new List<StoredProcedureBase>();
-                network?.ForEach(node =>
-                {
-                    sps.Add(new NodeCreate(node));
-                });
+                sps.Add(new NodeCreate(node));
+            });
 
-                links?.ForEach(link => { sps.Add(new NodeLinkCreate(link.NodeId, link.LinkId)); });
+            links?.ForEach(link => { sps.Add(new NodeLinkCreate(link.NodeId, link.LinkId)); });
 
-                if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(sps))
-                {
-                    return null;
-                }
+            if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(sps))
+            {
+                return null;
             }
 
             OperationStatus os;
-            network = StoredProcedureExecutor.GetMultipleSetResult<Node>(new NodeGetAll(), out os);
+            var sp = new StoredProcedureBase(StoredProcedures.NodeGetAll, new SimulationMember
+            {
+                SimulationId = simulationId
+            });
+            network = StoredProcedureExecutor.GetMultipleSetResult<Node>(sp, out os);
 
             return os.Error ? null : network;
         }

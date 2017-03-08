@@ -1,55 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Models.Interfaces;
 
 namespace DatabaseHandler.Helpers
 {
-    public abstract class StoredProcedureBase
+    public class StoredProcedureBase
     {
         #region Private Fields
-
-        private StoredProcedures _StoredProcedure;
-
-        private Dictionary<string, object> _Parameters;
 
         #endregion
 
         #region Properties
 
-        public StoredProcedures StoredProcedure
-        {
-            get
-            {
-                return _StoredProcedure;
-            }
-            private set
-            {
-                _StoredProcedure = value;
-            }
-        }
+        public StoredProcedures StoredProcedure { get; private set; }
 
-        public Dictionary<string, object> Parameters
-        {
-            get
-            {
-                return _Parameters;
-            }
-            private set
-            {
-                _Parameters = value;
-            }
-        }
+        public Dictionary<string, object> Parameters { get; private set; }
 
         #endregion
 
         #region Constructors
 
-        public StoredProcedureBase(StoredProcedures storedProcedure)
+        public StoredProcedureBase(StoredProcedures storedProcedure, ISimObject model = null)
         {
-            this.StoredProcedure = storedProcedure;
-            this.Parameters = new Dictionary<string, object>();
+            StoredProcedure = storedProcedure;
+            Parameters = new Dictionary<string, object>();
+
+            if (model != null)
+            {
+                var memberNames = model.GetType().GetMembers()
+                    .Where(m => m.MemberType == MemberTypes.Property)
+                    .Select(m2 => m2.Name);
+                foreach (var memberName in memberNames)
+                {
+
+                    Parameters.Add($"@{memberName}", model.GetType().GetProperty(memberName).GetValue(model));
+                }
+            }
         }
 
         #endregion

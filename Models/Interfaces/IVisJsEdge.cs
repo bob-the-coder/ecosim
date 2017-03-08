@@ -2,7 +2,7 @@
 
 namespace Models.Interfaces
 {
-    public interface IVisJsEdge
+    public interface IVisJsEdge : ISimObject
     {
         int from { get; set; }
         int to { get; set; }
