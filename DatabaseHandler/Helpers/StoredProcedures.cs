@@ -39,6 +39,18 @@
         NeedGetAll,
 
         LinkGetAllVisJs,
-        NodeGetAllVisJs
+        NodeGetAllVisJs,
+
+        FullSimulation_GetNodes,
+        FullSimulation_GetProducts,
+        FullSimulation_GetLinks,
+        FullSimulation_GetProductions,
+        FullSimulation_GetNeeds,
+        FullSimulation_GetSimulation,
+        FullSimulation_GetSimulationLogs,
+        FullSimulation_GetDecisionChances,
+
+        DecisionChanceCreate,
+        SessionLogCreate
     }
 }

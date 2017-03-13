@@ -122,23 +122,17 @@ namespace BusinessLogic
                         continue;
                     }
 
-                    var lastNeighbourId = iLinks.Max(primaryLink => primaryLink.LinkId);
-                    var lastAdjacentNeighbourId = links.Where(l => l.NodeId == lastNeighbourId).Max(l2 => l2.LinkId);
+                    var nonNeighbours = links.Where(l => l.NodeId != network[i].Id && l.LinkId != network[i].Id).ToList();
 
-                    if (lastAdjacentNeighbourId < lastNeighbourId)
-                    {
-                        continue;
-                    }
+                    var newLinkIndex = Rng.Next(0, nonNeighbours.Count - 1);
 
-                    var newLink = Rng.Next(lastAdjacentNeighbourId, network.Max(n => n.Id) - 1);
+                    links.Remove(link);
 
                     links.Add(new NodeLink
                     {
                         NodeId = network[i].Id,
-                        LinkId = network[newLink].Id
+                        LinkId = nonNeighbours[newLinkIndex].NodeId
                     });
-
-                    links.Remove(link);
 
                     break;
                 }

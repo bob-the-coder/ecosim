@@ -5,6 +5,7 @@ namespace Models
     public class Simulation : ISimulation
     {
         public int Id { get; set; }
+        public string Name { get; set; }
         public int NeedFulfillSortByPriority { get; set; }
         public int NeedFulfillSortByQuantity { get; set; }
         public int ProductionSortByDistance { get; set; }

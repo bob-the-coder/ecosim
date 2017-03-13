@@ -1,0 +1,263 @@
+﻿@using Newtonsoft.Json
+@model EcoSim.Models.SimulationTemplate
+@{
+    ViewBag.Title = "Create Simulation";
+}
+
+<script>
+    var SimulationTemplate = JSON.parse("@Html.Raw(HttpUtility.JavaScriptStringEncode(JsonConvert.SerializeObject(Model)))");
+</script>
+
+<div class="app-container clearfix">
+    <div class="config-section clearfix">
+        <input type="text" class="form-control" id="Name" value="My Simulation"/>
+    </div>
+        <div class="config-section clearfix">
+            <h3>Simulation Configuration</h3>
+            <div class="config-block">
+                <div class="config-name">Fulfill Needs by Priority Order</div>
+                <select class="btn btn-default" placeholder="Link Patern" id="NeedFulfillSortByPriority">
+                    <option value="0">Ascending</option>
+                    <option value="1">Descending</option>
+                </select>
+            </div>
+
+            <div class="config-block">
+                <div class="config-name">Fulfill Needs by Quantity Order</div>
+                <select class="btn btn-default" placeholder="Link Patern" id="NeedFulfillSortByQuantity">
+                    <option value="0">Ascending</option>
+                    <option value="1">Descending</option>
+                </select>
+            </div>
+
+            <div class="config-block">
+                <div class="config-name">Search Productions by Distance Order</div>
+                <select class="btn btn-default" placeholder="Link Patern" id="ProductionSortByDistance">
+                    <option value="0">Ascending</option>
+                    <option value="1">Descending</option>
+                </select>
+            </div>
+
+            <div class="config-block">
+                <div class="config-name">Search Productions by Base Cost Order</div>
+                <select class="btn btn-default" placeholder="Link Patern" id="ProductionSortByFinalCost">
+                    <option value="0">Ascending</option>
+                    <option value="1">Descending</option>
+                </select>
+            </div>
+
+            <div class="config-block">
+                <div class="config-name">Search Productions by Final Cost Order</div>
+                <select class="btn btn-default" placeholder="Link Patern" id="ProductionSortByInitialCost">
+                    <option value="0">Ascending</option>
+                    <option value="1">Descending</option>
+                </select>
+            </div>
+
+            <div class="config-block">
+                <div class="config-name">Production Price Increase per Quality</div>
+                <input type="text" class="btn btn-default" value="1.2" id="ProductPriceIncreasePerQuality" />% of Prior Cost
+            </div>
+
+            <div class="config-block">
+                <div class="config-name">Production Price Increase per Intermediary</div>
+                <input type="text" class="btn btn-default" value="1.1" id="ProductPriceIncreasePerIntermediary" />% of Prior Cost
+            </div>
+        </div>
+        <div class="config-section clearfix">
+            <h3>Agent Network Configuration</h3>
+
+            <div class="config-block">
+                <div class="config-name">Product Creation</div>
+                <select class="btn btn-default" placeholder="Link Patern" id="ProductCreationPattern">
+                    <option value="0">Amount</option>
+                    <option value="1">Percentage</option>
+                </select>
+
+                <input type="text" class="btn btn-default" placeholder="Value" value="30" id="ProductBias" />
+            </div>
+
+            <div class="config-block">
+                <div class="config-name">Producer Selection</div>
+                <select class="btn btn-default" placeholder="Link Patern" value="2" id="ProducerSelectionPattern">
+                    <option value="0">Amount</option>
+                    <option value="1">Percentage</option>
+                    <option value="2">By Chance</option>
+                </select>
+
+                <input type="text" class="btn btn-default" placeholder="Value" value="10" id="ProducerBias" />
+            </div>
+
+            <div class="config-block">
+                <div class="config-name">Production Selection</div>
+                <select class="btn btn-default" placeholder="Link Patern" value="2" id="ProductionSelectionPattern">
+                    <option value="0">Amount</option>
+                    <option value="1">Percentage</option>
+                    <option value="2">By Chance</option>
+                </select>
+
+                <input type="text" class="btn btn-default" placeholder="Value" value="5" id="ProductionBias" />
+            </div>
+
+            <div class="config-block">
+                <div class="config-name">Need Selection</div>
+                <select class="btn btn-default" placeholder="Link Patern" value="0" id="NeedSelectionPattern">
+                    <option value="0">Random Product</option>
+                    <option value="1">N Random Products</option>
+                    <option value="2">Random Production</option>
+                    <option value="3">N Random Productions</option>
+                </select>
+
+                <input type="text" class="btn btn-default" placeholder="Value" value="10" id="NeedBias" />
+            </div>
+
+            <div class="config-block">
+                <div class="config-name">Network Pattern</div>
+                <select class="btn btn-default" placeholder="Link Patern" value="4" id="NetworkPattern" onchange="toggleNetworkInputs()">
+                    <option value="0">Circular</option>
+                    <option value="1">Centroid</option>
+                    <option value="2">Random</option>
+                    <option value="3">Grid</option>
+                    <option value="4">SmallWorld</option>
+                </select>
+
+                <input type="text" class="btn btn-default" placeholder="Network Size" id="NetworkSize" value="100" />
+                <input type="text" class="btn btn-default" placeholder="Grid Height" id="GridHeight" value="4" />
+                <input type="text" class="btn btn-default" placeholder="Grid Width" id="GridWidth" value="25" />
+                <input type="text" class="btn btn-default" placeholder="Initial Degree" id="SwInitialDegree" value="1" />
+                <input type="text" class="btn btn-default" placeholder="Rewire Chance" id="SwRewireChance" value="3" />
+            </div>
+        </div>
+        <div class="config-section clearfix">
+            <h3>Agent Behaviour (initial decision probabilities)</h3>
+            <div class="config-block">
+                <div class="config-name">Chance to Expand</div>
+                <input type="text" class="btn btn-default" id="DecisionChance0" value="0.25" />
+                <input type="checkbox" class="checkbox-inline" onclick="toggleDecision(0)" />
+                Ignore decision
+            </div>
+
+            <div class="config-block">
+                <div class="config-name">Chance to Improve quality of Production(s)</div>
+                <input type="text" class="btn btn-default" id="DecisionChance1" value="0.25" />
+                <input type="checkbox" class="checkbox-inline" onclick="toggleDecision(1)" />
+                Ignore decision
+            </div>
+
+            <div class="config-block">
+                <div class="config-name">Chance to Create new Production(s)</div>
+                <input type="text" class="btn btn-default" id="DecisionChance2" value="0.25" />
+                <input type="checkbox" class="checkbox-inline" onclick="toggleDecision(2)" />
+                Ignore decision
+            </div>
+
+            <div class="config-block">
+                <div class="config-name">Chance to Create new Link(s) to Node(s)</div>
+                <input type="text" class="btn btn-default" id="DecisionChance3" value="0.25" />
+                <input type="checkbox" class="checkbox-inline" onclick="toggleDecision(3)" />
+                Ignore decision
+            </div>
+
+            <div class="config-block">
+                <div class="btn btn-primary" onclick="uniformDecisions()">Normalize Values</div>
+            </div>
+        </div>
+        <div class="config-block">
+            <div id="createButton" class="btn btn-primary" onclick="
+                 submitSimulation()">Create Simulation</div>
+        </div>
+    </div>
+
+@Scripts.Render("~/Content/visjs_js")
+<script>
+    function toggleNetworkInputs() {
+        var type = $("#NetworkPattern").val();
+        if (type === "3") {
+            $("#NetworkSize, #SwInitialDegree, #SwRewireChance").hide();
+            $("#GridHeight, #GridWidth").show();
+        } else if (type === "4") {
+            $("#GridHeight, #GridWidth").hide();
+            $("#NetworkSize, #SwInitialDegree, #SwRewireChance").show();
+        } else {
+            $("#GridHeight, #GridWidth, #SwInitialDegree, #SwRewireChance").hide();
+            $("#NetworkSize").show();
+        }
+    }
+
+    toggleNetworkInputs();
+
+    var decisions = [0.25, 0.25, 0.25, 0.25];
+    var decisionsIgnored = [false, false, false, false];
+
+    function uniformDecisions() {
+        var decisionSum = 0;
+        for (var i = 0; i < 4; i++) {
+            if (!decisionsIgnored[i]) {
+                decisionSum += +$("#DecisionChance" + i).val();
+            }
+        }
+
+        for (var j = 0; j < 4; j++) {
+            if (decisionsIgnored[j]) {
+                decisions[j] = 0;
+                $("#DecisionChance" + j).val(0);
+                $("#DecisionChance" + j).attr("disabled", true);
+            } else {
+                var val = 0;
+                if (decisionSum > 0) {
+                    val = +$("#DecisionChance" + j).val() / decisionSum;
+                    val = Math.floor(val * 100) / 100;
+                }
+                decisions[j] = val;
+                $("#DecisionChance" + j).val(val);
+                $("#DecisionChance" + j).attr("disabled", false);
+            }
+        }
+    }
+
+    function toggleDecision(which) {
+        decisionsIgnored[which] = !decisionsIgnored[which];
+
+        uniformDecisions();
+    }
+
+    function submitSimulation() {
+        uniformDecisions();
+
+        if (!SimulationTemplate) {
+            return;
+        }
+        for (var key in SimulationTemplate.Simulation) {
+            if (SimulationTemplate.Simulation.hasOwnProperty(key)) {
+                SimulationTemplate.Simulation[key] = $("#" + key).val();
+            }
+        }
+        for (var key in SimulationTemplate.NetworkConfiguration) {
+            if (SimulationTemplate.NetworkConfiguration.hasOwnProperty(key)
+                && $("#" + key).length) {
+                SimulationTemplate.NetworkConfiguration[key] = $("#" + key).val();
+            }
+        }
+        for (var i = 0; i < 4; i++) {
+            SimulationTemplate.DecisionChances[i].Enabled = !decisionsIgnored[i];
+            SimulationTemplate.DecisionChances[i].Chance = "" + decisions[i];
+        }
+
+        $("#createButton").attr("disabled", true);
+
+        $.ajax({
+            type: "POST",
+            url: "/Simulation/Create",
+            data: { template: SimulationTemplate },
+            dataType: "json",
+            success: function (result) {
+                alert("Simulation Created");
+                $("#createButton").attr("disabled", false);
+            },
+            error: function (req, status, error) {
+                alert("Something went wrong");
+                $("#createButton").attr("disabled", false);
+            }
+        });
+    }
+</script>

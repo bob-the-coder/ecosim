@@ -25,7 +25,8 @@ namespace EcoSim
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+                      "~/Content/site.css",
+                      "~/Content/Pages/*.css"));
 
             bundles.Add(new ScriptBundle("~/Content/visjs_js").Include(
                 "~/Scripts/vis.js"));

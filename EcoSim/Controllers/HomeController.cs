@@ -16,7 +16,7 @@ namespace EcoSim.Controllers
         private static readonly Random Rng = new Random((int)DateTime.Now.ToBinary());
         public ActionResult Index()
         {
-            return RedirectToAction("Simulations");
+            return RedirectToAction("Create", "Simulation");
         }
 
         public ActionResult Simulations()

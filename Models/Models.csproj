@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Decision.cs" />
     <Compile Include="DecisionChance.cs" />
+    <Compile Include="FullSimulation.cs" />
     <Compile Include="Interfaces\IDecision.cs" />
     <Compile Include="Interfaces\IDecisionChance.cs" />
     <Compile Include="Interfaces\IGuidPkObject.cs" />

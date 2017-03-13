@@ -5,9 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using BusinessLogic.Configuration;
 using BusinessLogic.Economics;
+using BusinessLogic.Enum;
 using Models;
 using DatabaseHandler.StoreProcedures;
 using DatabaseHandler.Helpers;
+using Decision = BusinessLogic.Enum.Decision;
 
 namespace BusinessLogic
 {
@@ -21,41 +23,39 @@ namespace BusinessLogic
             return StoredProcedureExecutor.ExecuteNoQueryAsTransaction(new List<StoredProcedureBase> { sp });
         }
 
-        public static bool CommitChanges(List<Node> network, List<Production> productions = null, List<Need> needs = null)
+        public static bool CommitChanges(this FullSimulation currentSim)
         {
             var procedures = new List<StoredProcedureBase>();
-            network.ForEach(node => procedures.Add(new NodeUpdate(node)));
-            productions?.ForEach(production => procedures.Add(new ProductionUpdate(production)));
-            needs?.ForEach(need => procedures.Add(new NeedUpdate(need)));
+            currentSim.Network.ForEach(node => procedures.Add(new NodeUpdate(node)));
+            currentSim.Productions.ForEach(production => procedures.Add(new ProductionUpdate(production)));
+            currentSim.Needs.ForEach(need => procedures.Add(new NeedUpdate(need)));
 
             return StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures);
         }
 
-        public static void SimulateIteration(Guid id, List<string> log = null)
+        public static void SimulateIteration(int id)
         {
-            var network = NodeManager.GetAll();
-            var links = NodeManager.GetAllLinks();
-            var simSettings = SimulationManager.GetSettings(id);
+            var currentSim = BaseCore.GetFullSimulation(id);
 
-            LinkNodes(network, links);
+            LinkNodes(currentSim.Network, currentSim.Links);
 
-            var allProductions = NodeManager.GetAllProductions();
-            var needs = NodeManager.GetAllNeeds();
-
-            network.ForEach(node => log?.AddRange(node.LogInfo()));
-
-            log?.Add("Transaction Phase");
-            log?.Add("");
-
-            foreach (var node in network)
+            var log = new SimulationLog
             {
-                var nodeNeeds = needs.Where(need => need.NodeId == node.Id).ToList();
+                Type = (int)SimulationLogType.GeneralInfo,
+                NodeId = -99,
+                Content = "TRANSACTION PHASE"
+            };
+            currentSim.CommitLog(log);
+
+            foreach (var node in currentSim.Network)
+            {
+                var nodeNeeds = currentSim.Needs.Where(need => need.NodeId == node.Id).ToList();
                 if (nodeNeeds.Count == 0)
                 {
                     continue;
                 }
 
-                node.GetShortestPathsHeap(network);
+                node.GetShortestPathsHeap(currentSim.Network);
 
                 foreach (var need in nodeNeeds)
                 {
@@ -63,13 +63,54 @@ namespace BusinessLogic
 
                     if (chanceToFulfill <= need.Priority)
                     {
-                        FulfillNeed(node, need, network, node.ShortestPathsHeap, allProductions, simSettings, log);
+                        currentSim.FulfillNeed(node, need, node.ShortestPathsHeap);
                     }
                 }
             }
 
-            var result = CommitChanges(network, allProductions, needs);
-            log?.Add($"{result}");
+            var result = currentSim.CommitChanges();
+
+            //DECISION PHASE
+            currentSim.DecisionChances = currentSim.DecisionChances.OrderBy(d => d.Chance).ToList();
+
+            foreach (var node in currentSim.Network)
+            {
+                var currentDecisionChance = Rng.NextDouble();
+                for (var i = 0; i < currentSim.DecisionChances.Count; i++)
+                {
+                    if (!currentSim.DecisionChances[i].Enabled)
+                    {
+                        continue;
+                    }
+                    if (currentDecisionChance <= currentSim.DecisionChances[i].Chance)
+                    {
+                        switch ((Decision)currentSim.DecisionChances[i].DecisionId)
+                        {
+                            case Decision.Expand:
+                                {
+                                    node.Expand(ExpansionPatterns.SimpleChild, currentSim.Network.Count);
+                                }
+                                break;
+                            case Decision.ImproveProductions:
+                                {
+                                    node.ImproveProductionQuality(currentSim.Productions);
+                                }
+                                break;
+                            case Decision.CreateProductions:
+                                {
+                                    node.CreateProduction(currentSim);
+                                }
+                                break;
+                            case Decision.CreateLinks:
+                                {
+                                    node.CreateLink(currentSim.Network);
+                                }
+                                break;
+                        }
+                        break;
+                    }
+                }
+            }
         }
 
         public static void LinkNodes(List<Node> network, List<NodeLink> links)
@@ -86,15 +127,11 @@ namespace BusinessLogic
             }
         }
 
-        private static void FulfillNeed(Node node,
+        private static void FulfillNeed(this FullSimulation currentSim, Node node,
             Need need,
-            List<Node> network,
-            Dictionary<int, int> nodeBfsResult,
-            List<Production> allProductions,
-            Simulation simSettings,
-            List<string> log)
+            Dictionary<int, int> nodeBfsResult)
         {
-            var selectedProducer = node.GetClosestProducer(network, allProductions, need);
+            var selectedProducer = node.GetClosestProducer(currentSim.Network, currentSim.Productions, need);
 
             if (selectedProducer == null)
             {
@@ -102,11 +139,11 @@ namespace BusinessLogic
             }
 
             var selectedProduction =
-                allProductions.First(p => p.NodeId == selectedProducer.Id && p.ProductId == need.ProductId);
+                currentSim.Productions.First(p => p.NodeId == selectedProducer.Id && p.ProductId == need.ProductId);
 
-            var pathToBuyer = node.GetShortestPathToNode(selectedProducer, network);
+            var pathToBuyer = node.GetShortestPathToNode(selectedProducer, currentSim.Network);
 
-            node.BuysFrom(need, selectedProducer, selectedProduction, pathToBuyer.GetRange(1, pathToBuyer.Count - 1), simSettings, log);
+            node.BuysFrom(need, selectedProducer, selectedProduction, pathToBuyer.GetRange(1, pathToBuyer.Count - 1), currentSim);
         }
 
         private static Node GetClosestProducer(this Node buyer, List<Node> network, List<Production> allProductions, Need need)

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Economics
 {
-    public class ExpasionPatterns
+    public class ExpansionPatterns
     {
         public static ExpansionPattern SimpleChild { get; } = new ExpansionPattern
         {

@@ -1,0 +1,47 @@
+﻿.app-container {
+        width: 90vw;
+        background-color: #d9d9d9;
+        margin: 5vh auto;
+        padding: 2.5vh 2.5vw;
+        position: relative;
+    }
+
+    .graph-container {
+        width: 85vw;
+        height: 70vh;
+        background-color: white;
+    }
+
+    .app-menu {
+        width: 85vw;
+        height: 15vh;
+        background-color: #585858;
+        padding: 1vh 1vw;
+    }
+
+    .config-section {
+        clear: both;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid;
+    }
+
+    .config-block {
+        float: left;
+        width: 50%;
+        margin-bottom: 10px;
+    }
+
+        .config-block .btn {
+            width: 140px;
+        }
+
+    .config-name {
+        font-weight: bold;
+    }
+
+    select.btn {
+        text-align: left;
+        padding-left: 5px;
+        padding-right: 0;
+    }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Web.Mvc;
 using BusinessLogic;
+using BusinessLogic.Configuration;
 using BusinessLogic.Enum;
 using DatabaseHandler.Helpers;
 using EcoSim.Models;
@@ -13,10 +14,33 @@ namespace EcoSim.Controllers
     {
         private static readonly Random Rng = new Random((int)DateTime.Now.ToBinary());
 
+        public ActionResult Create()
+        {
+            var viewModel = new SimulationTemplate
+            {
+                Simulation = new Simulation(),
+                NetworkConfiguration = new NetworkConfiguration(),
+                DecisionChances = new List<DecisionChance>()
+            };
+            for (var i = 0; i < 4; i++)
+            {
+                viewModel.DecisionChances.Add(new DecisionChance
+                {
+                    DecisionId = i,
+                    Enabled = true,
+                    Chance = 0.25
+                });
+            }
+            return View(viewModel);
+        }
+
         [HttpPost]
         public JsonResult Create(SimulationTemplate template)
         {
             var simulation = BaseCore.Create(template.Simulation, StoredProcedures.SimSettingsCreate);
+
+            template.DecisionChances.ForEach(d => d.SimulationId = simulation.Id);
+            var decisionChances = BaseCore.Create<DecisionChance>(template.DecisionChances, StoredProcedures.DecisionChanceCreate);
 
             var config = template.NetworkConfiguration;
             if (config.GridHeight != 0 && config.GridWidth != 0 && config.NetworkPattern == (int)NetworkPatternType.Grid)

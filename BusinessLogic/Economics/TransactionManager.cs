@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BusinessLogic.Configuration;
+using BusinessLogic.Enum;
+using DatabaseHandler.Helpers;
 using Models;
 
 namespace BusinessLogic.Economics
@@ -16,22 +18,24 @@ namespace BusinessLogic.Economics
         /// <param name="buyerNeed">Buyer's Need regarding a product</param>
         /// <param name="seller">Node selling the product</param>
         /// <param name="sellerProduction">Seller's Production regarding a product</param>
-        /// <param name="simSettings">Generic simulation settings</param>
         /// <param name="pathFromBuyerToSeller">Array of nodes between buyer and seller</param>
-        /// <param name="log"></param>
+        /// <param name="currentSim">current simulation</param>
         public static void BuysFrom(this Node buyer,
             Need buyerNeed,
             Node seller,
             Production sellerProduction,
             List<Node> pathFromBuyerToSeller,
-            Simulation simSettings,
-            List<string> log = null)
+            FullSimulation currentSim)
         {
-            log?.Add($"Transaction between {buyer.Name} and {seller.Name}");
+            currentSim.CommitLog(new SimulationLog
+            {
+                Type = (int)SimulationLogType.GeneralInfo,
+                Content = "Transaction started"
+            });
 
             var buyableQuantity = Math.Min(buyerNeed.Quantity, sellerProduction.Quantity);
 
-            var pricePerInstance = sellerProduction.PriceByQualityAndDistance(simSettings, pathFromBuyerToSeller);
+            var pricePerInstance = sellerProduction.PriceByQualityAndDistance(currentSim.Simulation, pathFromBuyerToSeller);
 
             var buyableQuantityPrice = buyableQuantity * pricePerInstance;
 
@@ -41,15 +45,19 @@ namespace BusinessLogic.Economics
 
             if (affordableQuantity == 0)
             {
-                log?.Add($"Transaction aborted << {buyer.Name} has insufficient funds >>");
-                log?.Add("");
-
                 return;
             }
 
             var currentTransactionCost = affordableQuantityPrice;
 
-            log?.Add($"{buyer.Name} pays {currentTransactionCost} for {affordableQuantity} x Pieces of Product");
+            var log = new SimulationLog
+            {
+                Type = (int)SimulationLogType.Transaction,
+                NodeId = buyer.Id,
+                Content = $"{(int)TransactionType.Buys} -{currentTransactionCost}"
+            };
+            currentSim.CommitLog(log);
+
             buyer.SpendingLimit -= currentTransactionCost;
 
             sellerProduction.Quantity -= affordableQuantity;
@@ -67,19 +75,47 @@ namespace BusinessLogic.Economics
                     continue;
                 }
 
-                var subTotal = currentTransactionCost/(1 + simSettings.ProductionSortByDistance);
-                var nodeCostCut = subTotal * simSettings.ProductionSortByDistance;
-                log?.Add($"{intermediary.Name} receives {nodeCostCut} for mediating transaction");
+                var subTotal = currentTransactionCost / (1 + currentSim.Simulation.ProductPriceIncreasePerIntermediary);
+                var nodeCostCut = subTotal * currentSim.Simulation.ProductPriceIncreasePerIntermediary;
+
+                log = new SimulationLog
+                {
+                    Type = (int)SimulationLogType.Transaction,
+                    NodeId = intermediary.Id,
+                    Content = $"{(int)TransactionType.Mediates} +{nodeCostCut}"
+                };
+                currentSim.CommitLog(log);
 
                 intermediary.SpendingLimit += nodeCostCut;
                 currentTransactionCost -= nodeCostCut;
             }
 
-            log?.Add($"{seller.Name} receives {currentTransactionCost} for {affordableQuantity} x Pieces of Product");
+            log = new SimulationLog
+            {
+                Type = (int)SimulationLogType.Transaction,
+                NodeId = seller.Id,
+                Content = $"{(int)TransactionType.Sells} +{currentTransactionCost}"
+            };
+            currentSim.CommitLog(log);
+
             seller.SpendingLimit += currentTransactionCost;
 
-            log?.Add("Transaction completed");
-            log?.Add("");
+            log = new SimulationLog
+            {
+                Type = (int)SimulationLogType.GeneralInfo,
+                NodeId = seller.Id,
+                Content = "Transaction completed"
+            };
+            currentSim.CommitLog(log);
+        }
+
+        public static SimulationLog CommitLog(this FullSimulation currentSim, SimulationLog log)
+        {
+            log.Id = Guid.NewGuid();
+            log.SimulationId = currentSim.Simulation.Id;
+            currentSim.Logs.Add(log);
+            BaseCore.Create(log, StoredProcedures.SessionLogCreate);
+            return log;
         }
     }
 }

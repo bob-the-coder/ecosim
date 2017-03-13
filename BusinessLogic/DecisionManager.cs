@@ -53,16 +53,14 @@ namespace BusinessLogic
                 production.Quality++;
                 node.SpendingLimit -= investmentCost;
             }
-
-            return;
         }
 
-        public static void CreateProduction(this Node node, Simulation simSettings, List<Product> allProducts, List<Production> allProductions, List<Need> allNeeds)
+        public static void CreateProduction(this Node node, FullSimulation currentSim)
         {
-            var validProducts = allProducts.Where(
+            var validProducts = currentSim.Products.Where(
                 product =>
-                !allProductions.Any(p => p.ProductId == product.Id && p.NodeId == node.Id) &&
-                !allNeeds.Any(n => n.ProductId == product.Id && n.NodeId == node.Id)).ToList();
+                !currentSim.Productions.Any(p => p.ProductId == product.Id && p.NodeId == node.Id) &&
+                !currentSim.Needs.Any(n => n.ProductId == product.Id && n.NodeId == node.Id)).ToList();
 
             if (validProducts.Count == 0)
             {
@@ -71,10 +69,10 @@ namespace BusinessLogic
 
             var chosenProductIndex = Rng.Next(0, validProducts.Count - 1);
 
-            var chosenProduct = allProducts[chosenProductIndex];
+            var chosenProduct = currentSim.Products[chosenProductIndex];
 
-            var productionsForChosenProducts = allProductions.Where(p => p.ProductId == chosenProduct.Id).ToList();
-            var needsForChosenProducts = allNeeds.Where(p => p.ProductId == chosenProduct.Id).ToList();
+            var productionsForChosenProducts = currentSim.Productions.Where(p => p.ProductId == chosenProduct.Id).ToList();
+            var needsForChosenProducts = currentSim.Needs.Where(p => p.ProductId == chosenProduct.Id).ToList();
 
             var averagePrice = 10.0;
             if (productionsForChosenProducts.Count > 0)
@@ -125,7 +123,7 @@ namespace BusinessLogic
                 Quantity = chosenQuantity
             };
 
-            var investmentCost = production.Quantity * production.PriceByQuality(simSettings);
+            var investmentCost = production.Quantity * production.PriceByQuality(currentSim.Simulation);
 
             if (node.SpendingLimit < investmentCost)
             {
@@ -140,13 +138,13 @@ namespace BusinessLogic
             }
 
             node.SpendingLimit -= investmentCost;
-            allProductions.Add(production);
+            currentSim.Productions.Add(production);
         }
 
         public static void CreateLink(this Node node, List<Node> network)
         {
             var validNodes = network.Where(n => n.Id != node.Id &&
-            !node.Neighbours.Any(nb => nb.Id == n.Id)).ToList();
+            node.Neighbours.All(nb => nb.Id != n.Id)).ToList();
 
             if(validNodes.Count == 0)
             {
