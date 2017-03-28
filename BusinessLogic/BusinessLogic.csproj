@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="BaseCore.cs" />
     <Compile Include="Configuration\NetworkConfiguration.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="DecisionManager.cs" />
     <Compile Include="Economics\ExpansionPattern.cs" />
     <Compile Include="Economics\ExpansionPatterns.cs" />
@@ -68,6 +69,8 @@
     <Compile Include="Enum\SortDirection.cs" />
     <Compile Include="Enum\TransactionType.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="Models\IndexSimulation.cs" />
+    <Compile Include="Models\Interfaces\IIndexSimulation.cs" />
     <Compile Include="NetworkCreationPatterns.cs" />
     <Compile Include="NetworkManager.cs" />
     <Compile Include="NodeManager.cs" />

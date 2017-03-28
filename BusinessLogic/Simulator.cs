@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.ModelConfiguration.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,11 +34,96 @@ namespace BusinessLogic
             return StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures);
         }
 
+        public static bool SaveCurrentState(this FullSimulation sim)
+        {
+            var procedures = new List<StoredProcedureBase>();
+
+            for (var i = 0; i < sim.Network.Count; i++)
+            {
+                if (procedures.Count / 100 == 1)
+                {
+                    if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+                    {
+                        return false;
+                    }
+                    procedures = new List<StoredProcedureBase>();
+                }
+                sim.Network[i].Neighbours = null;
+                sim.Network[i].ShortestPathsHeap = null;
+                procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Node, sim.Network[i]));
+            }
+            if (procedures.Count > 0)
+            {
+                if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+                {
+                    return false;
+                }
+                procedures = new List<StoredProcedureBase>();
+            }
+
+            for (var i = 0; i < sim.Productions.Count; i++)
+            {
+                if (procedures.Count / 100 == 1)
+                {
+                    if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+                    {
+                        return false;
+                    }
+                    procedures = new List<StoredProcedureBase>();
+                }
+                procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Production, sim.Productions[i]));
+            }
+            if (procedures.Count > 0)
+            {
+                if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+                {
+                    return false;
+                }
+                procedures = new List<StoredProcedureBase>();
+            }
+
+            for (var i = 0; i < sim.Needs.Count; i++)
+            {
+                if (procedures.Count / 100 == 1)
+                {
+                    if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+                    {
+                        return false;
+                    }
+                    procedures = new List<StoredProcedureBase>();
+                }
+                procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Need, sim.Needs[i]));
+            }
+            if (procedures.Count > 0)
+            {
+                if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public static void SimulateIteration(int id)
         {
             var currentSim = BaseCore.GetFullSimulation(id);
 
             LinkNodes(currentSim.Network, currentSim.Links);
+
+            var iterationStarted = BaseCore.StartIteration(currentSim.Simulation.Id);
+
+            if (!iterationStarted)
+            {
+                return;
+            }
+            currentSim.Simulation.LatestIteration++;
+
+            currentSim.CommitLog(new SimulationLog
+            {
+                NodeId = -99,
+                Type = (int)SimulationLogType.GeneralInfo,
+                Content = $"START ITERATION {currentSim.Simulation.LatestIteration}"
+            });
 
             var log = new SimulationLog
             {
@@ -68,7 +154,14 @@ namespace BusinessLogic
                 }
             }
 
-            var result = currentSim.CommitChanges();
+            var result = currentSim.SaveCurrentState();
+            if (!result)
+            {
+                return;
+            }
+
+            currentSim = BaseCore.GetFullSimulation(currentSim.Simulation.Id);
+            LinkNodes(currentSim.Network, currentSim.Links);
 
             //DECISION PHASE
             currentSim.DecisionChances = currentSim.DecisionChances.OrderBy(d => d.Chance).ToList();
@@ -88,12 +181,12 @@ namespace BusinessLogic
                         {
                             case Decision.Expand:
                                 {
-                                    node.Expand(ExpansionPatterns.SimpleChild, currentSim.Network.Count);
+                                    node.Expand(currentSim, ExpansionPatterns.SimpleChild);
                                 }
                                 break;
                             case Decision.ImproveProductions:
                                 {
-                                    node.ImproveProductionQuality(currentSim.Productions);
+                                    node.ImproveProductionQuality(currentSim);
                                 }
                                 break;
                             case Decision.CreateProductions:
@@ -103,7 +196,7 @@ namespace BusinessLogic
                                 break;
                             case Decision.CreateLinks:
                                 {
-                                    node.CreateLink(currentSim.Network);
+                                    node.CreateLink(currentSim);
                                 }
                                 break;
                         }
@@ -111,6 +204,15 @@ namespace BusinessLogic
                     }
                 }
             }
+
+            currentSim.NormalizeDecisions();
+
+            currentSim.CommitLog(new SimulationLog
+            {
+                NodeId = -99,
+                Type = (int)SimulationLogType.GeneralInfo,
+                Content = $"END ITERATION {currentSim.Simulation.LatestIteration}"
+            });
         }
 
         public static void LinkNodes(List<Node> network, List<NodeLink> links)
@@ -176,6 +278,109 @@ namespace BusinessLogic
             var shortestPathLength = producerPaths.Min(path => path.Value.Count);
 
             return producerPaths.First(path => path.Value.Count == shortestPathLength).Key;
+        }
+
+        private static void NormalizeDecisions(this FullSimulation simulation)
+        {
+            var decisions = simulation.DecisionChances;
+
+            var lastIterationsLogs = BaseCore.GetMemberList<SimulationLog>(
+                new SimulationMember { SimulationId = simulation.Simulation.Id },
+                StoredProcedures.FullSimulation_GetSimulationLogs,
+                $"IterationNumber >= {simulation.Simulation.LatestIteration - simulation.Simulation.DecisionLookBack}");
+
+            var decisionLogs = lastIterationsLogs.Where(log => log.Type == (int)SimulationLogType.Decision).ToList();
+            var transactionLogs = lastIterationsLogs.Where(log => log.Type == (int)SimulationLogType.Transaction).ToList();
+
+            var sellerProfits = 0.0;
+            var mediatorProfits = 0.0;
+            var cummulativeProductionQuality = 0;
+
+            for (var i = 0; i < transactionLogs.Count; i++)
+            {
+                var log = transactionLogs[i];
+
+                var type = -1;
+                int.TryParse(log.Content.Substring(0, 1), out type);
+
+                if (type == (int)TransactionType.Sells && decisions[(int)Decision.CreateProductions].Enabled)
+                {
+                    sellerProfits += double.Parse(log.Content.Substring(3));
+                }
+                else if (type == (int)TransactionType.Mediates && decisions[(int)Decision.CreateLinks].Enabled)
+                {
+                    mediatorProfits += double.Parse(log.Content.Substring(3));
+                }
+
+                if (log.Type == (int)SimulationLogType.BoughtProduction)
+                {
+                    cummulativeProductionQuality += int.Parse(log.Content);
+                }
+            }
+
+            var decisionPopularity = new[] { 0, 0, 0, 0 };
+            for (var i = 0; i < decisionLogs.Count; i++)
+            {
+                var decisionType = int.Parse(decisionLogs[i].Content.Substring(0, 1));
+                decisionPopularity[decisionType]++;
+            }
+
+            // calculate for each decision type, its impact
+            var indexExpand = (int)Decision.Expand;
+            var indexProduction = (int)Decision.CreateProductions;
+            var indexQuality = (int)Decision.ImproveProductions;
+            var indexMediate = (int)Decision.CreateLinks;
+
+            var decisionImpacts = new[] { 0, 0, 0, 0 };
+            decisionImpacts[indexExpand]
+                = ImpactOfDecision((double)Constants.MaxImpact / 4, decisions[indexExpand].Chance, decisionPopularity[indexExpand]);
+
+            decisionImpacts[indexMediate]
+                = ImpactOfDecision(mediatorProfits, decisions[indexMediate].Chance, decisionPopularity[indexMediate]);
+
+            decisionImpacts[indexProduction]
+                = ImpactOfDecision(sellerProfits, decisions[indexProduction].Chance, decisionPopularity[indexProduction]);
+
+            decisionImpacts[indexQuality]
+                = ImpactOfDecision(cummulativeProductionQuality, decisions[indexQuality].Chance, decisionPopularity[indexQuality]);
+
+            var fullImpact = decisionImpacts[0] + decisionImpacts[1] + decisionImpacts[2] + decisionImpacts[3];
+
+            decisions[indexExpand].Chance = (double)decisionImpacts[indexExpand] / fullImpact;
+            decisions[indexMediate].Chance = (double)decisionImpacts[indexMediate] / fullImpact;
+            decisions[indexProduction].Chance = (double)decisionImpacts[indexProduction] / fullImpact;
+            decisions[indexQuality].Chance = (double)decisionImpacts[indexQuality] / fullImpact;
+
+            var procedures = new List<StoredProcedureBase>();
+            foreach (var decision in decisions)
+            {
+                procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Decision, decision));
+            }
+
+            if (StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+            {
+                foreach (var decision in decisions)
+                {
+                    simulation.CommitLog(new SimulationLog
+                    {
+                        NodeId = -99,
+                        Type = (int)SimulationLogType.DecisionNormalization,
+                        Content = $"{decision.DecisionId} {decision.Chance} {decisionPopularity[decision.DecisionId]}"
+                    });
+                }
+            }
+        }
+
+        private static int ImpactOfDecision(double score, double currentChance, double decisionPopularity)
+        {
+            if (currentChance < Constants.Epsilon)
+            {
+                return 0;
+            }
+
+            var partialScore = (int)(score * currentChance * decisionPopularity);
+
+            return Math.Max(partialScore, Constants.MaxImpact);
         }
     }
 }

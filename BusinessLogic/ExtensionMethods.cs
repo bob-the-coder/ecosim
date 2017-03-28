@@ -20,29 +20,18 @@ namespace BusinessLogic
             };
         }
 
-        public static List<string> LogInfo(this Node n)
+        public static double PriceByQuality(this Production p, SimulationSettings simSettings)
         {
-            var info = new List<string>();
-            info.Add($"Node {n.Name}");
-            info.Add($"Initial spending limit: {n.SpendingLimit}");
-            info.Add($"Has {n.Neighbours.Count} neighbours");
-            info.Add("");
-
-            return info;
+            return p.Price * Math.Pow(1 + simSettings.ProductPriceIncreasePerQuality, (double)p.Quality / 10);
         }
 
-        public static double PriceByQuality(this Production p, Simulation simSettings)
-        {
-            return p.Price * Math.Pow(1 + simSettings.ProductPriceIncreasePerQuality, p.Quality);
-        }
-
-        public static double PriceByDistance(this Production p, Simulation simSettings,
+        public static double PriceByDistance(this Production p, SimulationSettings simSettings,
             List<Node> pathFromBuyerToSeller)
         {
             return p.Price * Math.Pow(1 + simSettings.ProductPriceIncreasePerIntermediary, pathFromBuyerToSeller.Count - 2);
         }
 
-        public static double PriceByQualityAndDistance(this Production p, Simulation simSettings,
+        public static double PriceByQualityAndDistance(this Production p, SimulationSettings simSettings,
             List<Node> pathFromBuyerToSeller)
         {
             return p.PriceByQuality(simSettings) * Math.Pow(1 + simSettings.ProductPriceIncreasePerIntermediary, pathFromBuyerToSeller.Count - 2);

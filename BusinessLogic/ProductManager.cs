@@ -12,7 +12,7 @@ namespace BusinessLogic
     {
         private static readonly Random Rng = new Random();
 
-        public static List<Product> CommitProducts(
+        public static List<Product> CreateProducts(
             ProductCreationPattern pattern = ProductCreationPattern.Percentage,
             int presetValue = 50,
             int networkSize = 0)
@@ -58,27 +58,7 @@ namespace BusinessLogic
                 result.Add(product);
             }
 
-            var procedures = new List<StoredProcedureBase>();
-            result.ForEach(product => procedures.Add(new ProductCreate(product)));
-
-            var success = false;
-            try
-            {
-                success = StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures);
-            }
-            catch (Exception)
-            {
-                success = false;
-            }
-
-            if (!success)
-            {
-                return null;
-            }
-            OperationStatus os;
-            result = StoredProcedureExecutor.GetMultipleSetResult<Product>(new ProductGetAll(), out os);
-
-            return os.Error ? null : result;
+            return result;
         }
 
         public static List<Production> CreateProductions(List<Node> network,
@@ -145,7 +125,7 @@ namespace BusinessLogic
 
         public static List<Need> CreateNeeds(List<Node> network,
             List<Product> products,
-            List<Production> productions = null,
+            List<Production> productions,
             NeedSelectionPattern pattern = NeedSelectionPattern.SingleProduct,
             int needBias = 50)
         {
@@ -172,12 +152,45 @@ namespace BusinessLogic
                     break;
                 case (NeedSelectionPattern.SingleFromProductions):
                     {
+                        foreach (var node in network)
+                        {
+                            var productIndex = Rng.Next(0, productions.Count - 1);
 
+                            var need = new Need
+                            {
+                                NodeId = node.Id,
+                                ProductId = products[productIndex].Id,
+                                Quantity = Rng.Next(1, 50),
+                                Priority = Rng.Next(1, 100)
+                            };
+
+                            needs.Add(need);
+                        }
                     }
                     break;
                 case (NeedSelectionPattern.MoreProducts):
                     {
+                        foreach (var node in network)
+                        {
+                            foreach (var product in products)
+                            {
+                                var prob = Rng.Next(0, 100);
+                                if (prob > needBias)
+                                {
+                                    continue;
+                                }
 
+                                var need = new Need
+                                {
+                                    NodeId = node.Id,
+                                    ProductId = product.Id,
+                                    Quantity = Rng.Next(1, 50),
+                                    Priority = Rng.Next(1, 100)
+                                };
+
+                                needs.Add(need);
+                            }
+                        }
                     }
                     break;
                 case (NeedSelectionPattern.MoreFromProductions):

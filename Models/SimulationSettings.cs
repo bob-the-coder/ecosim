@@ -2,7 +2,7 @@
 
 namespace Models
 {
-    public class Simulation : ISimulation
+    public class SimulationSettings : ISimulation
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -13,5 +13,7 @@ namespace Models
         public int ProductionSortByInitialCost { get; set; }
         public double ProductPriceIncreasePerQuality { get; set; }
         public double ProductPriceIncreasePerIntermediary { get; set; }
+        public int LatestIteration { get; set; }
+        public int DecisionLookBack { get; set; }
     }
 }

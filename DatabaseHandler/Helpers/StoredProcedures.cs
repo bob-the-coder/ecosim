@@ -50,7 +50,16 @@
         FullSimulation_GetSimulationLogs,
         FullSimulation_GetDecisionChances,
 
+        Save_Node,
+        Save_NodeLink,
+        Save_Need,
+        Save_Product,
+        Save_Production,
+        Save_Decision,
+
         DecisionChanceCreate,
-        SessionLogCreate
+        SessionLogCreate,
+        StartIteration,
+        Simulation_GetAll
     }
 }

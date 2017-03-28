@@ -24,7 +24,7 @@ namespace DatabaseHandler.Helpers
 
         #region Constructors
 
-        public StoredProcedureBase(StoredProcedures storedProcedure, ISimObject model = null)
+        public StoredProcedureBase(StoredProcedures storedProcedure, ISimObject model = null, string where = null, string[] ignore = null)
         {
             StoredProcedure = storedProcedure;
             Parameters = new Dictionary<string, object>();
@@ -36,9 +36,21 @@ namespace DatabaseHandler.Helpers
                     .Select(m2 => m2.Name);
                 foreach (var memberName in memberNames)
                 {
-
                     Parameters.Add($"@{memberName}", model.GetType().GetProperty(memberName).GetValue(model));
                 }
+            }
+
+            if (ignore?.Length > 0)
+            {
+                foreach (var ignored in ignore)
+                {
+                    Parameters[$"@{ignored}"] = null;
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(where))
+            {
+                Parameters.Add("@Where", where);
             }
         }
 

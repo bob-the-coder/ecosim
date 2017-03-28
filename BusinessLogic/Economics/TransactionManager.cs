@@ -27,12 +27,6 @@ namespace BusinessLogic.Economics
             List<Node> pathFromBuyerToSeller,
             FullSimulation currentSim)
         {
-            currentSim.CommitLog(new SimulationLog
-            {
-                Type = (int)SimulationLogType.GeneralInfo,
-                Content = "Transaction started"
-            });
-
             var buyableQuantity = Math.Min(buyerNeed.Quantity, sellerProduction.Quantity);
 
             var pricePerInstance = sellerProduction.PriceByQualityAndDistance(currentSim.Simulation, pathFromBuyerToSeller);
@@ -48,6 +42,12 @@ namespace BusinessLogic.Economics
                 return;
             }
 
+            currentSim.CommitLog(new SimulationLog
+            {
+                Type = (int)SimulationLogType.GeneralInfo,
+                Content = "Transaction started"
+            });
+
             var currentTransactionCost = affordableQuantityPrice;
 
             var log = new SimulationLog
@@ -57,6 +57,13 @@ namespace BusinessLogic.Economics
                 Content = $"{(int)TransactionType.Buys} -{currentTransactionCost}"
             };
             currentSim.CommitLog(log);
+
+            currentSim.CommitLog(new SimulationLog
+            {
+                Type = (int)SimulationLogType.BoughtProduction,
+                NodeId = buyer.Id,
+                Content = $"{sellerProduction.Quality}"
+            });
 
             buyer.SpendingLimit -= currentTransactionCost;
 
@@ -113,8 +120,9 @@ namespace BusinessLogic.Economics
         {
             log.Id = Guid.NewGuid();
             log.SimulationId = currentSim.Simulation.Id;
+            log.IterationNumber = currentSim.Simulation.LatestIteration;
             currentSim.Logs.Add(log);
-            BaseCore.Create(log, StoredProcedures.SessionLogCreate);
+            BaseCore.Save(log, StoredProcedures.SessionLogCreate);
             return log;
         }
     }

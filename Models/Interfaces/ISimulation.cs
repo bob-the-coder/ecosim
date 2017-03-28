@@ -10,5 +10,7 @@
         int ProductionSortByInitialCost { get; set; }
         double ProductPriceIncreasePerQuality { get; set; }
         double ProductPriceIncreasePerIntermediary { get; set; }
+        int LatestIteration { get; set; }
+        int DecisionLookBack { get; set; }
     }
 }

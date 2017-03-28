@@ -23,7 +23,7 @@ namespace EcoSim.Controllers
         {
             var viewModel = new SimulationTemplate
             {
-                Simulation = new Simulation(),
+                Simulation = new SimulationSettings(),
                 NetworkConfiguration = new NetworkConfiguration(),
                 DecisionChances = new List<DecisionChance>()
             };

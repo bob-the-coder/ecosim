@@ -4,7 +4,7 @@ namespace Models
 {
     public class FullSimulation
     {
-        public Simulation Simulation { get; set; }
+        public SimulationSettings Simulation { get; set; }
         public List<Node> Network { get; set; }
         public List<Product> Products { get; set; }
         public List<NodeLink> Links { get; set; }

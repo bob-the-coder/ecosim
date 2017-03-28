@@ -12,21 +12,21 @@ namespace BusinessLogic
 {
     public class SimulationManager
     {
-        public static Simulation GetSettings(Guid id)
+        public static SimulationSettings GetSettings(Guid id)
         {
             var sp = new SimSettingsGet(id);
             OperationStatus status;
-            var result = StoredProcedureExecutor.GetSingleSetResult<Simulation>(sp, out status);
+            var result = StoredProcedureExecutor.GetSingleSetResult<SimulationSettings>(sp, out status);
 
             return result;
         }
 
-        public static Simulation Create(Simulation model)
+        public static SimulationSettings Create(SimulationSettings model)
         {
             model.Id = -1;
             var sp = new SimSettingsCreate(model);
             OperationStatus status;
-            var result = StoredProcedureExecutor.GetSingleSetResult<Simulation>(sp, out status);
+            var result = StoredProcedureExecutor.GetSingleSetResult<SimulationSettings>(sp, out status);
 
             return result;
         }

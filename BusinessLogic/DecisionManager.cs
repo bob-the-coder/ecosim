@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using BusinessLogic.Configuration;
 using BusinessLogic.Economics;
+using BusinessLogic.Enum;
+using DatabaseHandler.Helpers;
 using Models;
 
 namespace BusinessLogic
@@ -13,15 +15,21 @@ namespace BusinessLogic
     {
         private static readonly Random Rng = new Random((int)DateTime.Now.ToBinary());
 
-        public static void Expand(this Node parentNode, ExpansionPattern pattern, int networkSize)
+        public static void Expand(this Node parentNode, FullSimulation sim, ExpansionPattern pattern)
         {
+            var investmentCost = parentNode.SpendingLimit / pattern.WealthPercentage;
+
             var childNode = new Node
             {
-                Name = $"Node {networkSize + 1}",
-                SpendingLimit = parentNode.SpendingLimit / pattern.WealthPercentage
+                Id = -1,
+                SimulationId = sim.Simulation.Id,
+                Name = $"Node {sim.Network.Count + 1}",
+                SpendingLimit = investmentCost
             };
 
-            parentNode.SpendingLimit -= parentNode.SpendingLimit / pattern.WealthPercentage;
+            childNode = BaseCore.CreateNode(childNode);
+
+            parentNode.SpendingLimit -= investmentCost;
 
             var childLinks = new List<NodeLink>();
 
@@ -35,12 +43,32 @@ namespace BusinessLogic
                 //TODO: add additional links
             }
 
-            NodeManager.AppendToNetwork(parentNode.SimulationId, new List<Node> { childNode }, childLinks);
+            var procedures = new List<StoredProcedureBase>
+            {
+                new StoredProcedureBase(StoredProcedures.Save_Node, parentNode, ignore: Constants.NodeIgnoreNav)
+            };
+            foreach (var link in childLinks)
+            {
+                procedures.Add(new StoredProcedureBase(StoredProcedures.Save_NodeLink, link));
+            }
+
+            var success = StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures);
+            if (!success)
+            {
+                return;
+            }
+
+            sim.CommitLog(new SimulationLog
+            {
+                Type = (int)SimulationLogType.Decision,
+                NodeId = parentNode.Id,
+                Content = $"{(int)Enum.Decision.Expand} {investmentCost}"
+            });
         }
 
-        public static void ImproveProductionQuality(this Node node, List<Production> allProductions)
+        public static void ImproveProductionQuality(this Node node, FullSimulation sim)
         {
-            var ownProductions = allProductions.Where(p => p.NodeId == node.Id).ToList();
+            var ownProductions = sim.Productions.Where(p => p.NodeId == node.Id).ToList();
 
             foreach (var production in ownProductions)
             {
@@ -52,6 +80,24 @@ namespace BusinessLogic
 
                 production.Quality++;
                 node.SpendingLimit -= investmentCost;
+
+                var procedures = new List<StoredProcedureBase>
+                {
+                    new StoredProcedureBase(StoredProcedures.Save_Production, production),
+                    new StoredProcedureBase(StoredProcedures.Save_Node, node,ignore: Constants.NodeIgnoreNav)
+                };
+
+                if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+                {
+                    continue;
+                }
+
+                sim.CommitLog(new SimulationLog
+                {
+                    Type = (int)SimulationLogType.Decision,
+                    NodeId = node.Id,
+                    Content = $"{(int)Enum.Decision.ImproveProductions} {investmentCost}"
+                });
             }
         }
 
@@ -104,12 +150,13 @@ namespace BusinessLogic
 
             if (producedQuantity != 0)
             {
-                chosenPrice = averagePrice * (1 - (double)neededQuantity / producedQuantity);
-                chosenQuality = (int)(averageQuality * (1 - (double)neededQuantity / producedQuantity));
+                var generalRatio = Math.Sqrt(Math.Pow(1 - (double)neededQuantity / producedQuantity, 2));
+                chosenPrice = averagePrice * generalRatio;
+                chosenQuality = (int)(averageQuality * generalRatio);
 
                 if (neededQuantity != 0)
                 {
-                    chosenQuantity = Rng.Next(0, (int)(neededQuantity * (1 - (double)neededQuantity / producedQuantity)));
+                    chosenQuantity = Rng.Next(0, (int)(neededQuantity * generalRatio));
                 }
             }
 
@@ -130,23 +177,33 @@ namespace BusinessLogic
                 return;
             }
 
-            production = ProductionManager.Create(production);
+            node.SpendingLimit -= investmentCost;
 
-            if (production == null)
+            var procedures = new List<StoredProcedureBase>
+                {
+                    new StoredProcedureBase(StoredProcedures.Save_Production, production),
+                    new StoredProcedureBase(StoredProcedures.Save_Node, node, ignore: Constants.NodeIgnoreNav)
+                };
+
+            if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
             {
                 return;
             }
 
-            node.SpendingLimit -= investmentCost;
-            currentSim.Productions.Add(production);
+            currentSim.CommitLog(new SimulationLog
+            {
+                Type = (int)SimulationLogType.Decision,
+                NodeId = node.Id,
+                Content = $"{(int)Enum.Decision.CreateProductions} {investmentCost}"
+            });
         }
 
-        public static void CreateLink(this Node node, List<Node> network)
+        public static void CreateLink(this Node node, FullSimulation currentSim)
         {
-            var validNodes = network.Where(n => n.Id != node.Id &&
+            var validNodes = currentSim.Network.Where(n => n.Id != node.Id &&
             node.Neighbours.All(nb => nb.Id != n.Id)).ToList();
 
-            if(validNodes.Count == 0)
+            if (validNodes.Count == 0)
             {
                 return;
             }
@@ -154,24 +211,44 @@ namespace BusinessLogic
             var targetIndex = Rng.Next(0, validNodes.Count - 1);
             var targetNode = validNodes[targetIndex];
 
-            node.GetShortestPathsHeap(network);
+            node.GetShortestPathsHeap(currentSim.Network);
 
-            var pathToTarget = node.GetShortestPathToNode(targetNode, network);
+            var pathToTarget = node.GetShortestPathToNode(targetNode, currentSim.Network);
 
             var investmentCost = 100.0;
-            foreach(var interNode in pathToTarget)
+            foreach (var interNode in pathToTarget)
             {
                 investmentCost *= 1.3;
             }
 
-            if(node.SpendingLimit < investmentCost)
+            if (node.SpendingLimit < investmentCost)
             {
                 return;
             }
 
-            NodeManager.AddLinks(node, new List<int> { targetNode.Id });
-
             node.SpendingLimit -= investmentCost;
+
+            var procedures = new List<StoredProcedureBase>
+                {
+                    new StoredProcedureBase(StoredProcedures.Save_NodeLink, new NodeLink
+                    {
+                        NodeId = node.Id,
+                        LinkId = targetNode.Id
+                    }),
+                    new StoredProcedureBase(StoredProcedures.Save_Node, node, ignore: Constants.NodeIgnoreNav)
+                };
+
+            if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+            {
+                return;
+            }
+
+            currentSim.CommitLog(new SimulationLog
+            {
+                Type = (int)SimulationLogType.Decision,
+                NodeId = node.Id,
+                Content = $"{(int)Enum.Decision.CreateLinks} {investmentCost}"
+            });
         }
     }
 }

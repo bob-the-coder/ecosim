@@ -5,6 +5,7 @@ using BusinessLogic;
 using BusinessLogic.Configuration;
 using BusinessLogic.Enum;
 using DatabaseHandler.Helpers;
+using DatabaseHandler.StoreProcedures;
 using EcoSim.Models;
 using Models;
 
@@ -18,7 +19,7 @@ namespace EcoSim.Controllers
         {
             var viewModel = new SimulationTemplate
             {
-                Simulation = new Simulation(),
+                Simulation = new SimulationSettings(),
                 NetworkConfiguration = new NetworkConfiguration(),
                 DecisionChances = new List<DecisionChance>()
             };
@@ -35,12 +36,21 @@ namespace EcoSim.Controllers
         }
 
         [HttpPost]
-        public JsonResult Create(SimulationTemplate template)
+        public ActionResult Create(SimulationTemplate template)
         {
-            var simulation = BaseCore.Create(template.Simulation, StoredProcedures.SimSettingsCreate);
+            var simulation = BaseCore.Save(template.Simulation, StoredProcedures.SimSettingsCreate);
 
-            template.DecisionChances.ForEach(d => d.SimulationId = simulation.Id);
-            var decisionChances = BaseCore.Create<DecisionChance>(template.DecisionChances, StoredProcedures.DecisionChanceCreate);
+            var procedures = new List<StoredProcedureBase>();
+            foreach (var decision in template.DecisionChances)
+            {
+                decision.SimulationId = simulation.Id;
+                procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Decision, decision));
+            }
+            if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+            {
+                return Json("fail");
+            }
+            procedures = new List<StoredProcedureBase>();
 
             var config = template.NetworkConfiguration;
             if (config.GridHeight != 0 && config.GridWidth != 0 && config.NetworkPattern == (int)NetworkPatternType.Grid)
@@ -59,7 +69,17 @@ namespace EcoSim.Controllers
                 });
             }
 
-            network = NodeManager.AppendToNetwork(simulation.Id, network);
+            foreach (var node in network)
+            {
+                procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Node, node));
+            }
+            if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+            {
+                return Json("fail");
+            }
+            procedures = new List<StoredProcedureBase>();
+
+            network = BaseCore.GetFullSimulation(simulation.Id).Network;
 
             var links = new List<NodeLink>();
 
@@ -99,15 +119,34 @@ namespace EcoSim.Controllers
                 return Json("Fail");
             }
 
-            network = NodeManager.AppendToNetwork(simulation.Id, links: links);
+            foreach (var link in links)
+            {
+                procedures.Add(new StoredProcedureBase(StoredProcedures.Save_NodeLink, link));
+            }
+            if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+            {
+                return Json("fail");
+            }
+            procedures = new List<StoredProcedureBase>();
 
             if (network == null)
             {
                 return Json("Fail");
             }
 
-            var products = ProductManager.CommitProducts(
+            var products = ProductManager.CreateProducts(
                 (ProductCreationPattern)config.ProductCreationPattern, config.ProductBias, network.Count);
+
+            foreach (var product in products)
+            {
+                product.SimulationId = simulation.Id;
+                procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Product, product));
+            }
+            if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+            {
+                return Json("fail");
+            }
+            products = BaseCore.GetFullSimulation(simulation.Id).Products;
 
             var productions = ProductManager.CreateProductions(
                 network,
@@ -125,6 +164,14 @@ namespace EcoSim.Controllers
                 config.NeedBias);
 
             return Json("Success");
+        }
+
+        [HttpGet]
+        public ActionResult Index()
+        {
+            var simulations = BaseCore.GetAllSimulations();
+
+            return View(simulations);
         }
     }
 }

@@ -1,8 +1,82 @@
-﻿
+﻿@model IEnumerable<BusinessLogic.Models.IndexSimulation>
+
 @{
     Layout = null;
 }
 
-<table>
-    <thead></thead>
-</table>
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>View</title>
+</head>
+<body>
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NodeCount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LinkCount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductCount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductionCount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NeedCount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IterationsDone)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NodeCount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LinkCount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductCount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductionCount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NeedCount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IterationsDone)
+                </td>
+                <td>
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                </td>
+            </tr>
+        }
+
+    </table>
+</body>
+</html>
