@@ -1,0 +1,30 @@
+﻿@model int
+
+<div>
+    <input type="text" id="i_iterations" placeholder="Number of iterations" />
+    <input type="button" id="i_submit" onclick="submit()" value="Simulate" />
+</div>
+<script>
+    function submit() {
+        $("#i_submit").attr("disabled", true);
+        console.log("Simulation started @@" + (new Date).getTime());
+        $.ajax({
+            type: "POST",
+            url: "/Output/Simulate",
+            data: {
+                id: @Model,
+                numberOfIterations: +($("#i_iterations").val())
+            },
+            dataType: "json",
+            success: function (result) {
+                alert("Simulation Done");
+                console.log("Simulation ended @@" + (new Date).getTime());
+                $("#i_submit").attr("disabled", false);
+            },
+            error: function (req, status, error) {
+                alert("Something went wrong");
+                $("#i_submit").attr("disabled", false);
+            }
+        });
+    }
+</script>

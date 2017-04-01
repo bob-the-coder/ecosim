@@ -11,5 +11,10 @@ namespace Models
         public int IterationNumber { get; set; }
         public int Type { get; set; }
         public string Content { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Id}\t{NodeId}\t{IterationNumber}\t{Type}\t{Content}";
+        }
     }
 }

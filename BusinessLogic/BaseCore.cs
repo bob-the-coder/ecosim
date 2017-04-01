@@ -87,6 +87,15 @@ namespace BusinessLogic
             return status.Error ? null : result;
         }
 
+        public static List<SimulationLog> GetLogsInIteration(int id, int iterationN)
+        {
+            return GetMemberList<SimulationLog>(new SimulationMember
+            {
+                SimulationId = id
+            }, StoredProcedures.FullSimulation_GetSimulationLogs,
+                $" WHERE IterationNumber={iterationN}");
+        }
+
         public static List<IndexSimulation> GetAllSimulations()
         {
             var sp = new StoredProcedureBase(StoredProcedures.Simulation_GetAll);

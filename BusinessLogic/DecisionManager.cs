@@ -52,6 +52,26 @@ namespace BusinessLogic
                 procedures.Add(new StoredProcedureBase(StoredProcedures.Save_NodeLink, link));
             }
 
+            if (pattern.InheritNeeds)
+            {
+                var newNeeds = sim.Needs.Where(need => need.NodeId == parentNode.Id).ToList();
+                newNeeds.ForEach(need => need.NodeId = childNode.Id);
+                foreach (var need in newNeeds)
+                {
+                    procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Need, need));
+                }
+            }
+
+            if (pattern.InheritProduction)
+            {
+                var newProductions = sim.Productions.Where(prod => prod.NodeId == parentNode.Id).ToList();
+                newProductions.ForEach(prod => prod.NodeId = childNode.Id);
+                foreach (var prod in newProductions)
+                {
+                    procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Production, prod));
+                }
+            }
+
             var success = StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures);
             if (!success)
             {

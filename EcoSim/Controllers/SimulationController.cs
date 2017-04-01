@@ -173,5 +173,11 @@ namespace EcoSim.Controllers
 
             return View(simulations);
         }
+
+        [HttpGet]
+        public ActionResult Details(int id)
+        {
+            return View(id);
+        }
     }
 }

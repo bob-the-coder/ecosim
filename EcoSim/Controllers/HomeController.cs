@@ -54,11 +54,5 @@ namespace EcoSim.Controllers
 
             return JsonConvert.SerializeObject(result);
         }
-
-        [HttpPost]
-        public void CreateInitialPopulation(NetworkConfiguration config)
-        {
-            
-        }
     }
 }
