@@ -14,7 +14,7 @@ namespace Models
 
         public override string ToString()
         {
-            return $"{Id}\t{NodeId}\t{IterationNumber}\t{Type}\t{Content}";
+            return $"{NodeId}\t{IterationNumber}\t{Type}\t{Content}";
         }
     }
 }
