@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.ModelConfiguration.Configuration;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using Models;
 using DatabaseHandler.StoreProcedures;
 using DatabaseHandler.Helpers;
 using Decision = BusinessLogic.Enum.Decision;
+using System.Web;
 
 namespace BusinessLogic
 {
@@ -104,7 +106,7 @@ namespace BusinessLogic
             return true;
         }
 
-        public static void SimulateIteration(int id)
+        public static void SimulateIteration(int id, string logPath)
         {
             var currentSim = BaseCore.GetFullSimulation(id);
 
@@ -213,6 +215,8 @@ namespace BusinessLogic
                 Type = (int)SimulationLogType.GeneralInfo,
                 Content = $"END ITERATION {currentSim.Simulation.LatestIteration}"
             });
+
+            CreateLogFile(logPath, id, currentSim.Simulation.LatestIteration);
         }
 
         public static void LinkNodes(List<Node> network, List<NodeLink> links)
@@ -381,6 +385,33 @@ namespace BusinessLogic
             var partialScore = (int)(score * currentChance * decisionPopularity);
 
             return Math.Max(partialScore, Constants.MaxImpact);
+        }
+
+        private static void CreateLogFile(string physPath, int id, int i)
+        {
+            var thisIterationLogs = BaseCore.GetLogsInIteration(id, i);
+
+            if (!Directory.Exists(physPath))
+            {
+                Directory.CreateDirectory(physPath);
+            }
+
+            var simPath = physPath + "/Simulation " + id;
+
+            if (!Directory.Exists(simPath))
+            {
+                Directory.CreateDirectory(simPath);
+            }
+
+            var logPath = simPath + "/" + i + ".txt";
+
+            using (var file = new StreamWriter(logPath))
+            {
+                foreach (var log in thisIterationLogs)
+                {
+                    file.WriteLine(log);
+                }
+            }
         }
     }
 }
