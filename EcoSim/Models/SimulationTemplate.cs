@@ -12,5 +12,6 @@ namespace EcoSim.Models
         public SimulationSettings Simulation { get; set; }
         public NetworkConfiguration NetworkConfiguration { get; set; }
         public List<DecisionChance> DecisionChances { get; set; }
+        public HttpPostedFileBase NetworkImport { get; set; }
     }
 }

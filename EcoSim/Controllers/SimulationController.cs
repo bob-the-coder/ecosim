@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Web.Mvc;
 using BusinessLogic;
 using BusinessLogic.Configuration;
@@ -39,6 +40,10 @@ namespace EcoSim.Controllers
         public ActionResult Create(SimulationTemplate template)
         {
             var simulation = BaseCore.Save(template.Simulation, StoredProcedures.SimSettingsCreate);
+            if (simulation == null)
+            {
+                return Json(new ServerResponse(true, "Failed to create Simulation"));
+            }
 
             var procedures = new List<StoredProcedureBase>();
             foreach (var decision in template.DecisionChances)
@@ -48,7 +53,7 @@ namespace EcoSim.Controllers
             }
             if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
             {
-                return Json("fail");
+                return Json(new ServerResponse(true, "Failed to create Decision Chances"));
             }
             procedures = new List<StoredProcedureBase>();
 
@@ -59,14 +64,69 @@ namespace EcoSim.Controllers
             }
 
             var network = new List<Node>(config.NetworkSize);
-            for (var i = 0; i < config.NetworkSize; i++)
+            var gephiMinId = -1;
+            var importMemStream = new MemoryStream();
+            if (template.NetworkConfiguration.NetworkPattern == (int)NetworkPatternType.ImportGephi)
             {
-                network.Add(new Node
+                template.NetworkImport.InputStream.CopyTo(importMemStream);
+                template.NetworkImport.InputStream.Seek(0, SeekOrigin.Begin);
+                using (var streamReader = new StreamReader(template.NetworkImport.InputStream))
                 {
-                    Name = $"{i}",
-                    SimulationId = simulation.Id,
-                    SpendingLimit = Rng.NextDouble() * Rng.Next(100, 500) * 10
-                });
+                    var fileLine = streamReader.ReadLine();
+                    if (string.IsNullOrEmpty(fileLine))
+                    {
+                        return Json(new ServerResponse(true, "Invalid input file"));
+                    }
+                    while (true)
+                    {
+                        fileLine = streamReader.ReadLine();
+                        if (string.IsNullOrEmpty(fileLine))
+                        {
+                            return Json(new ServerResponse(true, "Encountered empty line before edge definition in input file"));
+                        }
+
+                        var indexOfEdgeDef = fileLine.IndexOf("edge", StringComparison.Ordinal);
+                        if (indexOfEdgeDef == 0)
+                        {
+                            break;
+                        }
+                        var lineSplit = fileLine.Split(',');
+                        var currentId = "";
+                        try
+                        {
+                            currentId = lineSplit[0];
+                            var id = int.Parse(currentId);
+                            if (gephiMinId == -1)
+                            {
+                                gephiMinId = id;
+                            }
+
+                            network.Add(new Node
+                            {
+                                Id = id - gephiMinId,
+                                SimulationId = simulation.Id,
+                                Name = lineSplit[1],
+                                SpendingLimit = Rng.NextDouble() * Rng.Next(100, 500) * 10
+                            });
+                        }
+                        catch (Exception)
+                        {
+                            return Json(new ServerResponse(true, $"Failed to parse node Id (value {currentId}). Make sure Gephi Id's are int and first on node line"));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (var i = 0; i < config.NetworkSize; i++)
+                {
+                    network.Add(new Node
+                    {
+                        Name = $"{i}",
+                        SimulationId = simulation.Id,
+                        SpendingLimit = Rng.NextDouble() * Rng.Next(100, 500) * 10
+                    });
+                }
             }
 
             foreach (var node in network)
@@ -75,7 +135,7 @@ namespace EcoSim.Controllers
             }
             if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
             {
-                return Json("fail");
+                return Json(new ServerResponse(true, "Failed to create Node Network"));
             }
             procedures = new List<StoredProcedureBase>();
 
@@ -110,13 +170,18 @@ namespace EcoSim.Controllers
                         NetworkCreationPatterns.UsePatternSmallWorld(config.NetworkSize, links, network, config.SwInitialDegree, config.SwRewireChance);
                     }
                     break;
+                case NetworkPatternType.ImportGephi:
+                    {
+                        NetworkCreationPatterns.ImportFromGephi(links, network, importMemStream, gephiMinId);
+                    }
+                    break;
                 default:
-                    return Json("Fail");
+                    return Json(new ServerResponse(true, "Invalid network Pattern"));
             }
 
             if (links.Count == 0)
             {
-                return Json("Fail");
+                return Json(new ServerResponse(true, "Failed to define Network Links. Check input file or pattern parameters"));
             }
 
             foreach (var link in links)
@@ -125,7 +190,7 @@ namespace EcoSim.Controllers
             }
             if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
             {
-                return Json("fail");
+                return Json(new ServerResponse(true, "Failed to create Network Links"));
             }
             procedures = new List<StoredProcedureBase>();
 
@@ -144,7 +209,7 @@ namespace EcoSim.Controllers
             }
             if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
             {
-                return Json("fail");
+                return Json(new ServerResponse(true, "Failed to create Products Set"));
             }
             products = BaseCore.GetFullSimulation(simulation.Id).Products;
 
@@ -155,6 +220,10 @@ namespace EcoSim.Controllers
                 config.ProducerBias,
                 (ProductionSelectionPattern)config.ProductionSelectionPattern,
                 config.ProductionBias);
+            if (productions == null)
+            {
+                return Json(new ServerResponse(true, "Failed to create Productions Set"));
+            }
 
             var needs = ProductManager.CreateNeeds(
                 network,
@@ -163,7 +232,12 @@ namespace EcoSim.Controllers
                 (NeedSelectionPattern)config.NeedSelectionPattern,
                 config.NeedBias);
 
-            return Json("Success");
+            if (needs == null)
+            {
+                return Json(new ServerResponse(true, "Failed to create Needs Set"));
+            }
+
+            return Json(new ServerResponse(false, "Simulation successfully created"));
         }
 
         [HttpGet]

@@ -194,6 +194,54 @@ namespace BusinessLogic
             }
         }
 
+        public static void ImportFromGephi(List<NodeLink> links, List<Node> network, Stream fileStream, int gephiMinId = 0)
+        {
+            if (network == null || network.Count == 0 || !fileStream.CanRead)
+            {
+                return;
+            }
+
+            fileStream.Seek(0, SeekOrigin.Begin);
+            using (var streamReader = new StreamReader(fileStream))
+            {
+                var fileLine = "";
+                while (true)
+                {
+                    fileLine = streamReader.ReadLine();
+                    if (fileLine == null || fileLine.IndexOf("edge", StringComparison.Ordinal) == 0)
+                    {
+                        break;
+                    }
+                }
+
+                var networkMinId = network.Min(node => node.Id);
+                while (true)
+                {
+                    fileLine = streamReader.ReadLine();
+                    if (string.IsNullOrWhiteSpace(fileLine))
+                    {
+                        break;
+                    }
+                    var lineSplit = fileLine.Split(',');
+                    try
+                    {
+                        var nodeId = int.Parse(lineSplit[0]);
+                        var linkId = int.Parse(lineSplit[1]);
+
+                        links.Add(new NodeLink
+                        {
+                            NodeId = nodeId - gephiMinId + networkMinId,
+                            LinkId = linkId - gephiMinId + networkMinId
+                        });
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
+                }
+            }
+        }
+
         public static void ImportFromCsv(List<string> inputRows, List<NodeLink> links, List<Node> network)
         {
             return;

@@ -6,6 +6,8 @@
         Centroid = 1,
         Random = 2,
         Grid = 3,
-        SmallWorld = 4
+        SmallWorld = 4,
+        ImportGephi = 5,
+        ImportCsv = 6
     }
 }
