@@ -122,6 +122,7 @@ namespace EcoSim.Controllers
                 {
                     network.Add(new Node
                     {
+                        Id = i,
                         Name = $"{i}",
                         SimulationId = simulation.Id,
                         SpendingLimit = Rng.NextDouble() * Rng.Next(100, 500) * 10
