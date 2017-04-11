@@ -6,5 +6,6 @@ namespace Models.Interfaces
     {
         int NodeId { get; set; }
         int LinkId { get; set; }
+        int SimulationId { get; set; }
     }
 }

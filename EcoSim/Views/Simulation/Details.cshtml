@@ -17,7 +17,8 @@
             },
             dataType: "json",
             success: function (result) {
-                alert("Simulation Done");
+                var status = result.Error ? "Error" : "Success";
+                alert(status+ "\n" + result.Message);
                 console.log("Simulation ended @@" + (new Date).getTime());
                 $("#i_submit").attr("disabled", false);
             },

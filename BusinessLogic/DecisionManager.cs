@@ -236,9 +236,13 @@ namespace BusinessLogic
             var pathToTarget = node.GetShortestPathToNode(targetNode, currentSim.Network);
 
             var investmentCost = 100.0;
-            foreach (var interNode in pathToTarget)
+            if (pathToTarget == null)
             {
-                investmentCost *= 1.3;
+                investmentCost *= Math.Pow(1.3, node.Neighbours.Count);
+            }
+            else
+            {
+                investmentCost *= Math.Pow(1.3, pathToTarget.Count);
             }
 
             if (node.SpendingLimit < investmentCost)
@@ -253,7 +257,8 @@ namespace BusinessLogic
                     new StoredProcedureBase(StoredProcedures.Save_NodeLink, new NodeLink
                     {
                         NodeId = node.Id,
-                        LinkId = targetNode.Id
+                        LinkId = targetNode.Id,
+                        SimulationId = currentSim.Simulation.Id
                     }),
                     new StoredProcedureBase(StoredProcedures.Save_Node, node, ignore: Constants.NodeIgnoreNav)
                 };

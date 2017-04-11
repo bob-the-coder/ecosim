@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Web.Mvc;
 using BusinessLogic;
 using BusinessLogic.Configuration;
@@ -49,6 +50,13 @@ namespace EcoSim.Controllers
             foreach (var decision in template.DecisionChances)
             {
                 decision.SimulationId = simulation.Id;
+                var lastDecision =
+                    template.DecisionChances.LastOrDefault(d => d.DecisionId < decision.DecisionId && d.Enabled);
+                if (lastDecision != null)
+                {
+                    decision.Chance += lastDecision.Chance;
+                }
+
                 procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Decision, decision));
             }
             if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
@@ -187,6 +195,7 @@ namespace EcoSim.Controllers
 
             foreach (var link in links)
             {
+                link.SimulationId = simulation.Id;
                 procedures.Add(new StoredProcedureBase(StoredProcedures.Save_NodeLink, link));
             }
             if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))

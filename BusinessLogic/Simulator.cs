@@ -106,7 +106,7 @@ namespace BusinessLogic
             return true;
         }
 
-        public static void SimulateIteration(int id, string logPath)
+        public static bool SimulateIteration(int id, string logPath)
         {
             var currentSim = BaseCore.GetFullSimulation(id);
 
@@ -116,7 +116,7 @@ namespace BusinessLogic
 
             if (!iterationStarted)
             {
-                return;
+                return false;
             }
             currentSim.Simulation.LatestIteration++;
 
@@ -159,51 +159,55 @@ namespace BusinessLogic
             var result = currentSim.SaveCurrentState();
             if (!result)
             {
-                return;
+                return false;
             }
 
             currentSim = BaseCore.GetFullSimulation(currentSim.Simulation.Id);
             LinkNodes(currentSim.Network, currentSim.Links);
 
             //DECISION PHASE
+            log = new SimulationLog
+            {
+                Type = (int)SimulationLogType.GeneralInfo,
+                NodeId = -99,
+                Content = "DECISION PHASE"
+            };
+            currentSim.CommitLog(log);
             currentSim.DecisionChances = currentSim.DecisionChances.OrderBy(d => d.Chance).ToList();
 
             foreach (var node in currentSim.Network)
             {
                 var currentDecisionChance = Rng.NextDouble();
-                for (var i = 0; i < currentSim.DecisionChances.Count; i++)
+
+                var selectedDecision = currentSim.DecisionChances.FirstOrDefault(
+                    decision => decision.Enabled && currentDecisionChance <= decision.Chance);
+
+                if (selectedDecision == null)
                 {
-                    if (!currentSim.DecisionChances[i].Enabled)
-                    {
-                        continue;
-                    }
-                    if (currentDecisionChance <= currentSim.DecisionChances[i].Chance)
-                    {
-                        switch ((Decision)currentSim.DecisionChances[i].DecisionId)
+                    continue;
+                }
+                switch ((Decision)selectedDecision.DecisionId)
+                {
+                    case Decision.Expand:
                         {
-                            case Decision.Expand:
-                                {
-                                    node.Expand(currentSim, ExpansionPatterns.SimpleChild);
-                                }
-                                break;
-                            case Decision.ImproveProductions:
-                                {
-                                    node.ImproveProductionQuality(currentSim);
-                                }
-                                break;
-                            case Decision.CreateProductions:
-                                {
-                                    node.CreateProduction(currentSim);
-                                }
-                                break;
-                            case Decision.CreateLinks:
-                                {
-                                    node.CreateLink(currentSim);
-                                }
-                                break;
+                            node.Expand(currentSim, ExpansionPatterns.SimpleChild);
                         }
                         break;
-                    }
+                    case Decision.ImproveProductions:
+                        {
+                            node.ImproveProductionQuality(currentSim);
+                        }
+                        break;
+                    case Decision.CreateProductions:
+                        {
+                            node.CreateProduction(currentSim);
+                        }
+                        break;
+                    case Decision.CreateLinks:
+                        {
+                            node.CreateLink(currentSim);
+                        }
+                        break;
                 }
             }
 
@@ -217,6 +221,8 @@ namespace BusinessLogic
             });
 
             CreateLogFile(logPath, id, currentSim.Simulation.LatestIteration);
+
+            return true;
         }
 
         public static void LinkNodes(List<Node> network, List<NodeLink> links)
@@ -351,9 +357,42 @@ namespace BusinessLogic
             var fullImpact = decisionImpacts[0] + decisionImpacts[1] + decisionImpacts[2] + decisionImpacts[3];
 
             decisions[indexExpand].Chance = (double)decisionImpacts[indexExpand] / fullImpact;
-            decisions[indexMediate].Chance = (double)decisionImpacts[indexMediate] / fullImpact;
-            decisions[indexProduction].Chance = (double)decisionImpacts[indexProduction] / fullImpact;
+
             decisions[indexQuality].Chance = (double)decisionImpacts[indexQuality] / fullImpact;
+            if (decisions[indexQuality].Chance > 0)
+            {
+                decisions[indexQuality].Chance += decisions[indexExpand].Chance;
+            }
+
+            decisions[indexProduction].Chance = (double)decisionImpacts[indexProduction] / fullImpact;
+            if (decisions[indexProduction].Chance > 0)
+            {
+                if (decisions[indexQuality].Chance > 0)
+                {
+                    decisions[indexProduction].Chance += decisions[indexQuality].Chance;
+                }
+                else if (decisions[indexExpand].Chance > 0)
+                {
+                    decisions[indexProduction].Chance += decisions[indexExpand].Chance;
+                }
+            }
+
+            decisions[indexMediate].Chance = (double)decisionImpacts[indexMediate] / fullImpact;
+            if (decisions[indexMediate].Chance > 0)
+            {
+                if (decisions[indexProduction].Chance > 0)
+                {
+                    decisions[indexMediate].Chance += decisions[indexProduction].Chance;
+                }
+                else if (decisions[indexQuality].Chance > 0)
+                {
+                    decisions[indexMediate].Chance += decisions[indexQuality].Chance;
+                }
+                else if (decisions[indexExpand].Chance > 0)
+                {
+                    decisions[indexMediate].Chance += decisions[indexExpand].Chance;
+                }
+            }
 
             var procedures = new List<StoredProcedureBase>();
             foreach (var decision in decisions)
@@ -387,9 +426,9 @@ namespace BusinessLogic
             return Math.Max(partialScore, Constants.MaxImpact);
         }
 
-        private static void CreateLogFile(string physPath, int id, int i)
+        private static void CreateLogFile(string physPath, int id, int iteration)
         {
-            var thisIterationLogs = BaseCore.GetLogsInIteration(id, i);
+            var thisIterationLogs = BaseCore.GetLogsInIteration(id, iteration);
 
             if (!Directory.Exists(physPath))
             {
@@ -403,7 +442,7 @@ namespace BusinessLogic
                 Directory.CreateDirectory(simPath);
             }
 
-            var logPath = simPath + "/" + i + ".txt";
+            var logPath = simPath + "/" + iteration + ".txt";
 
             using (var file = new StreamWriter(logPath))
             {

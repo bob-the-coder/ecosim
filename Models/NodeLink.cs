@@ -6,5 +6,6 @@ namespace Models
     {
         public int NodeId { get; set; }
         public int LinkId { get; set; }
+        public int SimulationId { get; set; }
     }
 }

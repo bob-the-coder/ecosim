@@ -2,6 +2,7 @@
 using System.Net;
 using System.Web.Mvc;
 using BusinessLogic;
+using EcoSim.Models;
 
 namespace EcoSim.Controllers
 {
@@ -14,10 +15,13 @@ namespace EcoSim.Controllers
             var logPath = HttpContext.Server.MapPath(Constants.LogDumpLocation);
             for (var i = 0; i < numberOfIterations; i++)
             {
-                Simulator.SimulateIteration(id, logPath);
+                if (!Simulator.SimulateIteration(id, logPath))
+                {
+                    return Json(new ServerResponse(true, $"Iteration {i + 1} failed"));
+                }
             }
 
-            return Json(true);
+            return Json(new ServerResponse(false, $"Simulation done. {numberOfIterations} iterations completed."));
         }
     }
 }
