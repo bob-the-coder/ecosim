@@ -27,6 +27,12 @@ textarea {
     box-shadow: 0 0 10px 1px #777;
 }
 
+.navbar h4 {
+    color: #efefef;
+    height: 30px;
+    line-height: 30px;
+}
+
 .body-content {
     width: 1200px;
     margin: 0 auto;
