@@ -264,9 +264,9 @@
       <Project>{43cae580-e897-48bd-a7d9-eba273055641}</Project>
       <Name>BusinessLogic</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DatabaseHandler\DatabaseHandler.csproj">
-      <Project>{5168739f-8be7-4231-903f-514f7450106a}</Project>
-      <Name>DatabaseHandler</Name>
+    <ProjectReference Include="..\DataLayer\DataLayer.csproj">
+      <Project>{58eea9fb-cce3-43bf-b047-1d60ee5c198a}</Project>
+      <Name>DataLayer</Name>
     </ProjectReference>
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{d0a8366d-71bb-4d3d-9121-2689a2b48a9e}</Project>

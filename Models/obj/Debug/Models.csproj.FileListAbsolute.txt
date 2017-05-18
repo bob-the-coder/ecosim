@@ -2,4 +2,3 @@ C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\Models\bin\Deb
 C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\Models\bin\Debug\Models.pdb
 C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\Models\obj\Debug\Models.dll
 C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\Models\obj\Debug\Models.pdb
-C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\Models\obj\Debug\Models.csprojResolveAssemblyReference.cache

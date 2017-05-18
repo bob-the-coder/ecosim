@@ -9,14 +9,15 @@
 </script>
 
 <div class="app-container clearfix">
+    <h2>Create Simulation</h2>
     <div class="config-section clearfix">
-        <input type="text" class="form-control" id="Name" value="My Simulation" />
+        <input type="text" class="form-control" id="Name" value="My Simulation"/>
     </div>
     <div class="config-section clearfix">
         <h3>Simulation Configuration</h3>
         <div class="config-block">
             <div class="config-name">Fulfill Needs by Priority Order</div>
-            <select class="btn btn-default" placeholder="Link Patern" id="NeedFulfillSortByPriority">
+            <select class="form-control" placeholder="Link Patern" id="NeedFulfillSortByPriority">
                 <option value="0">Ascending</option>
                 <option value="1">Descending</option>
             </select>
@@ -24,7 +25,7 @@
 
         <div class="config-block">
             <div class="config-name">Fulfill Needs by Quantity Order</div>
-            <select class="btn btn-default" placeholder="Link Patern" id="NeedFulfillSortByQuantity">
+            <select class="form-control" placeholder="Link Patern" id="NeedFulfillSortByQuantity">
                 <option value="0">Ascending</option>
                 <option value="1">Descending</option>
             </select>
@@ -32,7 +33,7 @@
 
         <div class="config-block">
             <div class="config-name">Search Productions by Distance Order</div>
-            <select class="btn btn-default" placeholder="Link Patern" id="ProductionSortByDistance">
+            <select class="form-control" placeholder="Link Patern" id="ProductionSortByDistance">
                 <option value="0">Ascending</option>
                 <option value="1">Descending</option>
             </select>
@@ -40,7 +41,7 @@
 
         <div class="config-block">
             <div class="config-name">Search Productions by Base Cost Order</div>
-            <select class="btn btn-default" placeholder="Link Patern" id="ProductionSortByFinalCost">
+            <select class="form-control" placeholder="Link Patern" id="ProductionSortByFinalCost">
                 <option value="0">Ascending</option>
                 <option value="1">Descending</option>
             </select>
@@ -48,7 +49,7 @@
 
         <div class="config-block">
             <div class="config-name">Search Productions by Final Cost Order</div>
-            <select class="btn btn-default" placeholder="Link Patern" id="ProductionSortByInitialCost">
+            <select class="form-control" placeholder="Link Patern" id="ProductionSortByInitialCost">
                 <option value="0">Ascending</option>
                 <option value="1">Descending</option>
             </select>
@@ -56,12 +57,12 @@
 
         <div class="config-block">
             <div class="config-name">Production Price Increase per Quality</div>
-            <input type="text" class="btn btn-default" value="1.2" id="ProductPriceIncreasePerQuality" />% of Prior Cost
+            <input type="text" class="form-control" value="1.2" id="ProductPriceIncreasePerQuality"/>% of Prior Cost
         </div>
 
         <div class="config-block">
             <div class="config-name">Production Price Increase per Intermediary</div>
-            <input type="text" class="btn btn-default" value="1.1" id="ProductPriceIncreasePerIntermediary" />% of Prior Cost
+            <input type="text" class="form-control" value="1.1" id="ProductPriceIncreasePerIntermediary"/>% of Prior Cost
         </div>
     </div>
     <div class="config-section clearfix">
@@ -69,51 +70,51 @@
 
         <div class="config-block">
             <div class="config-name">Product Creation</div>
-            <select class="btn btn-default" placeholder="Link Patern" id="ProductCreationPattern">
+            <select class="form-control" placeholder="Link Patern" id="ProductCreationPattern">
                 <option value="0">Amount</option>
                 <option value="1">Percentage</option>
             </select>
 
-            <input type="text" class="btn btn-default" placeholder="Value" value="30" id="ProductBias" />
+            <input type="text" class="form-control" placeholder="Value" value="30" id="ProductBias"/>
         </div>
 
         <div class="config-block">
             <div class="config-name">Producer Selection</div>
-            <select class="btn btn-default" placeholder="Link Patern" value="2" id="ProducerSelectionPattern">
+            <select class="form-control" placeholder="Link Patern" value="2" id="ProducerSelectionPattern">
                 <option value="0">Amount</option>
                 <option value="1">Percentage</option>
                 <option value="2">By Chance</option>
             </select>
 
-            <input type="text" class="btn btn-default" placeholder="Value" value="10" id="ProducerBias" />
+            <input type="text" class="form-control" placeholder="Value" value="10" id="ProducerBias"/>
         </div>
 
         <div class="config-block">
             <div class="config-name">Production Selection</div>
-            <select class="btn btn-default" placeholder="Link Patern" value="2" id="ProductionSelectionPattern">
+            <select class="form-control" placeholder="Link Patern" value="2" id="ProductionSelectionPattern">
                 <option value="0">Amount</option>
                 <option value="1">Percentage</option>
                 <option value="2">By Chance</option>
             </select>
 
-            <input type="text" class="btn btn-default" placeholder="Value" value="5" id="ProductionBias" />
+            <input type="text" class="form-control" placeholder="Value" value="5" id="ProductionBias"/>
         </div>
 
         <div class="config-block">
             <div class="config-name">Need Selection</div>
-            <select class="btn btn-default" placeholder="Link Patern" value="0" id="NeedSelectionPattern">
+            <select class="form-control" placeholder="Link Patern" value="0" id="NeedSelectionPattern">
                 <option value="0">Random Product</option>
                 <option value="1">N Random Products</option>
                 <option value="2">Random Production</option>
                 <option value="3">N Random Productions</option>
             </select>
 
-            <input type="text" class="btn btn-default" placeholder="Value" value="10" id="NeedBias" />
+            <input type="text" class="form-control" placeholder="Value" value="10" id="NeedBias"/>
         </div>
 
         <div class="config-block">
             <div class="config-name">Network Pattern</div>
-            <select class="btn btn-default" placeholder="Link Patern" value="4" id="NetworkPattern" onchange="toggleNetworkInputs()">
+            <select class="form-control" placeholder="Link Patern" value="4" id="NetworkPattern" onchange="toggleNetworkInputs()">
                 <option value="0">Circular</option>
                 <option value="1">Centroid</option>
                 <option value="2">Random</option>
@@ -122,41 +123,41 @@
                 <option value="5">Import .gdf file</option>
             </select>
 
-            <input type="text" class="btn btn-default" placeholder="Network Size" id="NetworkSize" value="100" />
-            <input type="text" class="btn btn-default" placeholder="Grid Height" id="GridHeight" value="4" />
-            <input type="text" class="btn btn-default" placeholder="Grid Width" id="GridWidth" value="25" />
-            <input type="text" class="btn btn-default" placeholder="Initial Degree" id="SwInitialDegree" value="1" />
-            <input type="text" class="btn btn-default" placeholder="Rewire Chance" id="SwRewireChance" value="3" />
-            <input type="file" class="btn btn-default" id="NetworkImport" accept=".gdf" />
+            <input type="text" class="form-control" placeholder="Network Size" id="NetworkSize" value="100"/>
+            <input type="text" class="form-control" placeholder="Grid Height" id="GridHeight" value="4"/>
+            <input type="text" class="form-control" placeholder="Grid Width" id="GridWidth" value="25"/>
+            <input type="text" class="form-control" placeholder="Initial Degree" id="SwInitialDegree" value="1"/>
+            <input type="text" class="form-control" placeholder="Rewire Chance" id="SwRewireChance" value="3"/>
+            <input type="file" class="form-control" id="NetworkImport" accept=".gdf"/>
         </div>
     </div>
     <div class="config-section clearfix">
         <h3>Agent Behaviour (initial decision probabilities)</h3>
         <div class="config-block">
             <div class="config-name">Chance to Expand</div>
-            <input type="text" class="btn btn-default" id="DecisionChance0" value="0.25" />
-            <input type="checkbox" class="checkbox-inline" onclick="toggleDecision(0)" />
+            <input type="text" class="form-control" id="DecisionChance0" value="0.25"/>
+            <input type="checkbox" class="checkbox-inline" onclick="toggleDecision(0)"/>
             Ignore decision
         </div>
 
         <div class="config-block">
             <div class="config-name">Chance to Improve quality of Production(s)</div>
-            <input type="text" class="btn btn-default" id="DecisionChance1" value="0.25" />
-            <input type="checkbox" class="checkbox-inline" onclick="toggleDecision(1)" />
+            <input type="text" class="form-control" id="DecisionChance1" value="0.25"/>
+            <input type="checkbox" class="checkbox-inline" onclick="toggleDecision(1)"/>
             Ignore decision
         </div>
 
         <div class="config-block">
             <div class="config-name">Chance to Create new Production(s)</div>
-            <input type="text" class="btn btn-default" id="DecisionChance2" value="0.25" />
-            <input type="checkbox" class="checkbox-inline" onclick="toggleDecision(2)" />
+            <input type="text" class="form-control" id="DecisionChance2" value="0.25"/>
+            <input type="checkbox" class="checkbox-inline" onclick="toggleDecision(2)"/>
             Ignore decision
         </div>
 
         <div class="config-block">
             <div class="config-name">Chance to Create new Link(s) to Node(s)</div>
-            <input type="text" class="btn btn-default" id="DecisionChance3" value="0.25" />
-            <input type="checkbox" class="checkbox-inline" onclick="toggleDecision(3)" />
+            <input type="text" class="form-control" id="DecisionChance3" value="0.25"/>
+            <input type="checkbox" class="checkbox-inline" onclick="toggleDecision(3)"/>
             Ignore decision
         </div>
 
@@ -166,7 +167,7 @@
     </div>
     <div class="config-block">
         <div id="createButton" class="btn btn-primary" onclick="
-             submitSimulation()">Create Simulation</div>
+submitSimulation()">Create Simulation</div>
     </div>
 </div>
 

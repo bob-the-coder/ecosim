@@ -68,12 +68,10 @@ c:\users\calin sicoe\documents\visual studio 2015\Projects\EcoSim\EcoSim\obj\Deb
 c:\users\calin sicoe\documents\visual studio 2015\Projects\EcoSim\EcoSim\obj\Debug\EcoSim.dll
 c:\users\calin sicoe\documents\visual studio 2015\Projects\EcoSim\EcoSim\obj\Debug\EcoSim.pdb
 C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\EcoSim\bin\BusinessLogic.dll
-C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\EcoSim\bin\DatabaseHandler.dll
-C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\EcoSim\bin\Logging.dll
-C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\EcoSim\bin\NLog.dll
 C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\EcoSim\bin\BusinessLogic.pdb
-C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\EcoSim\bin\DatabaseHandler.pdb
-C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\EcoSim\bin\Logging.pdb
-C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\EcoSim\bin\NLog.xml
 C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\EcoSim\bin\Models.dll
 C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\EcoSim\bin\Models.pdb
+C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\EcoSim\bin\DataLayer.dll
+C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\EcoSim\bin\AutoMapper.dll
+C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\EcoSim\bin\DataLayer.pdb
+C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\EcoSim\bin\AutoMapper.xml

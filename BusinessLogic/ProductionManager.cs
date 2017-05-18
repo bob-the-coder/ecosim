@@ -4,8 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BusinessLogic.Enum;
-using DatabaseHandler.Helpers;
-using DatabaseHandler.StoreProcedures;
+using BusinessLogic.Models;
 using Models;
 
 namespace BusinessLogic
@@ -13,28 +12,7 @@ namespace BusinessLogic
     public class ProductionManager
     {
         private static readonly Random Rng = new Random();
-
-        public static List<Production> CommitProductions(List<Production> productions)
-        {
-            if (productions.Count == 0)
-            {
-                return null;
-            }
-            var procedures = new List<StoredProcedureBase>();
-            foreach (var production in productions)
-            {
-                procedures.Add(new ProductionCreate(production));
-            }
-
-            return StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures) ? productions : null;
-        }
-
-        public static Production Create(Production production)
-        {
-            OperationStatus os;
-            return StoredProcedureExecutor.GetSingleSetResult<Production>(new ProductionCreate(production), out os);
-        }
-
+        
         public static List<Production> CreateByAmount(List<Node> producers, List<Product> products, ProductionSelectionPattern pattern, int productionSelectionBias)
         {
             var productions = new List<Production>();

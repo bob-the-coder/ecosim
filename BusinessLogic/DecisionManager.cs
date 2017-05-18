@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BusinessLogic.Configuration;
+using BusinessLogic.Cores;
 using BusinessLogic.Economics;
 using BusinessLogic.Enum;
-using DatabaseHandler.Helpers;
+using BusinessLogic.ModelCore;
+using BusinessLogic.Models;
+using BusinessLogic.Workflow;
 using Models;
 
 namespace BusinessLogic
@@ -15,7 +18,7 @@ namespace BusinessLogic
     {
         private static readonly Random Rng = new Random((int)DateTime.Now.ToBinary());
 
-        public static void Expand(this Node parentNode, FullSimulation sim, ExpansionPattern pattern)
+        public static async Task<bool> Expand(this Node parentNode, FullSimulation sim, ExpansionPattern pattern)
         {
             var investmentCost = parentNode.SpendingLimit / pattern.WealthPercentage;
 
@@ -27,38 +30,48 @@ namespace BusinessLogic
                 SpendingLimit = investmentCost
             };
 
-            childNode = BaseCore.CreateNode(childNode);
+            childNode = await NodeCore.CreateAsync(childNode).ConfigureAwait(false);
+            if (childNode == null)
+            {
+                return false;
+            }
 
             parentNode.SpendingLimit -= investmentCost;
 
             var childLinks = new List<NodeLink>();
-
-            if (pattern.LinkToParent)
-            {
-                childLinks.Add(new NodeLink { NodeId = parentNode.Id, LinkId = childNode.Id });
-            }
 
             if (pattern.AdditionalLinks > 0)
             {
                 //TODO: add additional links
             }
 
-            var procedures = new List<StoredProcedureBase>
+            parentNode = await NodeCore.UpdateAsync(parentNode, true).ConfigureAwait(false);
+            if (parentNode == null)
             {
-                new StoredProcedureBase(StoredProcedures.Save_Node, parentNode, ignore: Constants.NodeIgnoreNav)
-            };
-            foreach (var link in childLinks)
+                return false;
+            }
+
+            if (pattern.LinkToParent)
             {
-                procedures.Add(new StoredProcedureBase(StoredProcedures.Save_NodeLink, link));
+                childLinks.Add(new NodeLink { NodeId = parentNode.Id, LinkId = childNode.Id });
+                childLinks.Add(new NodeLink { NodeId = childNode.Id, LinkId = parentNode.Id });
+
+                var createdLinks = await NodeLinkCore.CreateAsync(childLinks, true).ConfigureAwait(false);
+                if (createdLinks == null)
+                {
+                    return false;
+                }
             }
 
             if (pattern.InheritNeeds)
             {
                 var newNeeds = sim.Needs.Where(need => need.NodeId == parentNode.Id).ToList();
                 newNeeds.ForEach(need => need.NodeId = childNode.Id);
-                foreach (var need in newNeeds)
+
+                var createdNeeds = await NeedCore.CreateAsync(newNeeds, true).ConfigureAwait(false);
+                if (createdNeeds == null)
                 {
-                    procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Need, need));
+                    return false;
                 }
             }
 
@@ -66,27 +79,25 @@ namespace BusinessLogic
             {
                 var newProductions = sim.Productions.Where(prod => prod.NodeId == parentNode.Id).ToList();
                 newProductions.ForEach(prod => prod.NodeId = childNode.Id);
-                foreach (var prod in newProductions)
+
+                var createdProductions = await ProductionCore.CreateAsync(newProductions, true).ConfigureAwait(false);
+                if (createdProductions == null)
                 {
-                    procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Production, prod));
+                    return false;
                 }
             }
 
-            var success = StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures);
-            if (!success)
-            {
-                return;
-            }
-
-            sim.CommitLog(new SimulationLog
+            var logEntry = await SimulationLogCore.CreateAsync(new SimulationLog
             {
                 Type = (int)SimulationLogType.Decision,
                 NodeId = parentNode.Id,
                 Content = $"{(int)Enum.Decision.Expand} {investmentCost}"
-            });
+            }).ConfigureAwait(false);
+
+            return logEntry != null;
         }
 
-        public static void ImproveProductionQuality(this Node node, FullSimulation sim)
+        public static async Task<bool> ImproveProductionQuality(this Node node, FullSimulation sim)
         {
             var ownProductions = sim.Productions.Where(p => p.NodeId == node.Id).ToList();
 
@@ -101,27 +112,38 @@ namespace BusinessLogic
                 production.Quality++;
                 node.SpendingLimit -= investmentCost;
 
-                var procedures = new List<StoredProcedureBase>
+                var savedProduction = await ProductionCore.UpdateAsync(production, true).ConfigureAwait(false);
+                if (savedProduction == null)
                 {
-                    new StoredProcedureBase(StoredProcedures.Save_Production, production),
-                    new StoredProcedureBase(StoredProcedures.Save_Node, node,ignore: Constants.NodeIgnoreNav)
-                };
-
-                if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
-                {
-                    continue;
+                    return false;
                 }
 
-                sim.CommitLog(new SimulationLog
+                var savedNode = await NodeCore.UpdateAsync(node, true).ConfigureAwait(false);
+                if (savedNode == null)
+                {
+                    return false;
+                }
+                savedNode.Neighbours = node.Neighbours;
+                savedNode.ShortestPathsHeap = node.ShortestPathsHeap;
+                node = savedNode;
+
+                var logEntry = await SimulationLogCore.CreateAsync(new SimulationLog
                 {
                     Type = (int)SimulationLogType.Decision,
                     NodeId = node.Id,
                     Content = $"{(int)Enum.Decision.ImproveProductions} {investmentCost}"
-                });
+                }).ConfigureAwait(false);
+
+                if (logEntry == null)
+                {
+                    return false;
+                }
             }
+
+            return true;
         }
 
-        public static void CreateProduction(this Node node, FullSimulation currentSim)
+        public static async Task<bool> CreateProduction(this Node node, FullSimulation currentSim)
         {
             var validProducts = currentSim.Products.Where(
                 product =>
@@ -130,7 +152,7 @@ namespace BusinessLogic
 
             if (validProducts.Count == 0)
             {
-                return;
+                return false;
             }
 
             var chosenProductIndex = Rng.Next(0, validProducts.Count - 1);
@@ -194,38 +216,45 @@ namespace BusinessLogic
 
             if (node.SpendingLimit < investmentCost)
             {
-                return;
+                return false;
             }
 
             node.SpendingLimit -= investmentCost;
 
-            var procedures = new List<StoredProcedureBase>
-                {
-                    new StoredProcedureBase(StoredProcedures.Save_Production, production),
-                    new StoredProcedureBase(StoredProcedures.Save_Node, node, ignore: Constants.NodeIgnoreNav)
-                };
-
-            if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+            var createdProduction = await ProductionCore.CreateAsync(production, true).ConfigureAwait(false);
+            if (createdProduction == null)
             {
-                return;
+                return false;
             }
 
-            currentSim.CommitLog(new SimulationLog
+            var savedNode = await NodeCore.UpdateAsync(node, true).ConfigureAwait(false);
+            if (savedNode == null)
             {
-                Type = (int)SimulationLogType.Decision,
+                return false;
+            }
+
+            savedNode.Neighbours = node.Neighbours;
+            savedNode.ShortestPathsHeap = node.ShortestPathsHeap;
+            node = savedNode;
+
+            var logEntry = await SimulationLogCore.CreateAsync(new SimulationLog
+            {
+                Type = (int) SimulationLogType.Decision,
                 NodeId = node.Id,
-                Content = $"{(int)Enum.Decision.CreateProductions} {investmentCost}"
-            });
+                Content = $"{(int) Enum.Decision.CreateProductions} {investmentCost}"
+            }).ConfigureAwait(false);
+
+            return logEntry != null;
         }
 
-        public static void CreateLink(this Node node, FullSimulation currentSim)
+        public static async Task<bool> CreateLink(this Node node, FullSimulation currentSim)
         {
             var validNodes = currentSim.Network.Where(n => n.Id != node.Id &&
             node.Neighbours.All(nb => nb.Id != n.Id)).ToList();
 
             if (validNodes.Count == 0)
             {
-                return;
+                return false;
             }
 
             var targetIndex = Rng.Next(0, validNodes.Count - 1);
@@ -247,33 +276,43 @@ namespace BusinessLogic
 
             if (node.SpendingLimit < investmentCost)
             {
-                return;
+                return false;
             }
 
             node.SpendingLimit -= investmentCost;
 
-            var procedures = new List<StoredProcedureBase>
-                {
-                    new StoredProcedureBase(StoredProcedures.Save_NodeLink, new NodeLink
-                    {
-                        NodeId = node.Id,
-                        LinkId = targetNode.Id,
-                        SimulationId = currentSim.Simulation.Id
-                    }),
-                    new StoredProcedureBase(StoredProcedures.Save_Node, node, ignore: Constants.NodeIgnoreNav)
-                };
+            var newLinks = new List<NodeLink>();
+            newLinks.Add(new NodeLink { NodeId = node.Id, LinkId = targetNode.Id });
+            newLinks.Add(new NodeLink { NodeId = targetNode.Id, LinkId = node.Id });
 
-            if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+            var createdLinks = await NodeLinkCore.CreateAsync(newLinks, true).ConfigureAwait(false);
+            if (createdLinks == null)
             {
-                return;
+                return false;
             }
 
-            currentSim.CommitLog(new SimulationLog
+            var savedNode = await NodeCore.UpdateAsync(node, true).ConfigureAwait(false);
+            if (savedNode == null)
+            {
+                return false;
+            }
+
+            var logEntry = await SimulationLogCore.CreateAsync(new SimulationLog
             {
                 Type = (int)SimulationLogType.Decision,
                 NodeId = node.Id,
                 Content = $"{(int)Enum.Decision.CreateLinks} {investmentCost}"
-            });
+            }).ConfigureAwait(false);
+
+            if (logEntry == null)
+            {
+                return false;
+            }
+
+            savedNode.Neighbours = node.Neighbours;
+            savedNode.ShortestPathsHeap = node.ShortestPathsHeap;
+            node = savedNode;
+            return true;
         }
     }
 }

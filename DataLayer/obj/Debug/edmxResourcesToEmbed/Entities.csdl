@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="EcoSimModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="DecisionChance">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SimulationId" Type="Int32" Nullable="false" />
+    <Property Name="DecisionId" Type="Int32" Nullable="false" />
+    <Property Name="Chance" Type="Double" Nullable="false" />
+    <Property Name="Enabled" Type="Boolean" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Decision">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Need">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="NodeId" Type="Int32" Nullable="false" />
+    <Property Name="ProductId" Type="Int32" Nullable="false" />
+    <Property Name="Quantity" Type="Int32" Nullable="false" />
+    <Property Name="Priority" Type="Int32" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Node">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SimulationId" Type="Int32" Nullable="false" />
+    <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="SpendingLimit" Type="Double" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Production">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="NodeId" Type="Int32" Nullable="false" />
+    <Property Name="ProductId" Type="Int32" Nullable="false" />
+    <Property Name="Quantity" Type="Int32" Nullable="false" />
+    <Property Name="Quality" Type="Int32" Nullable="false" />
+    <Property Name="Price" Type="Double" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Simulation">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="NeedFulfillSortByPriority" Type="Int32" Nullable="false" />
+    <Property Name="NeedFulfillSortByQuantity" Type="Int32" Nullable="false" />
+    <Property Name="ProductionSortByDistance" Type="Int32" Nullable="false" />
+    <Property Name="ProductionSortByFinalCost" Type="Int32" Nullable="false" />
+    <Property Name="ProductionSortByInitialCost" Type="Int32" Nullable="false" />
+    <Property Name="ProductPriceIncreasePerQuality" Type="Double" Nullable="false" />
+    <Property Name="ProductPriceIncreasePerIntermediary" Type="Double" Nullable="false" />
+  </EntityType>
+  <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="DecisionChances" EntityType="Self.DecisionChance" />
+    <EntitySet Name="Decisions" EntityType="Self.Decision" />
+    <EntitySet Name="Needs" EntityType="Self.Need" />
+    <EntitySet Name="Nodes" EntityType="Self.Node" />
+    <EntitySet Name="Productions" EntityType="Self.Production" />
+    <EntitySet Name="Simulations" EntityType="Self.Simulation" />
+    <EntitySet Name="SimulationLogs" EntityType="EcoSimModel.SimulationLog" />
+    <EntitySet Name="Products" EntityType="EcoSimModel.Product" />
+    <EntitySet Name="NodeLinks" EntityType="EcoSimModel.NodeLink" />
+  </EntityContainer>
+  <EntityType Name="SimulationLog">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SimulationId" Type="Int32" Nullable="false" />
+    <Property Name="NodeId" Type="Int32" Nullable="false" />
+    <Property Name="IterationNumber" Type="Int32" Nullable="false" />
+    <Property Name="Type" Type="Int32" Nullable="false" />
+    <Property Name="Content" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="Product">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SimulationId" Type="Int32" Nullable="false" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="NodeLink">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SimulationId" Type="Int32" Nullable="false" />
+    <Property Name="NodeId" Type="Int32" Nullable="false" />
+    <Property Name="LinkId" Type="Int32" Nullable="false" />
+  </EntityType>
+</Schema>

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using BusinessLogic;
 using BusinessLogic.Configuration;
+using BusinessLogic.Cores;
 using BusinessLogic.Enum;
-using DatabaseHandler.Helpers;
-using DatabaseHandler.StoreProcedures;
+using BusinessLogic.ModelCore;
+using BusinessLogic.Models;
 using EcoSim.Models;
 using Models;
 
@@ -38,15 +40,14 @@ namespace EcoSim.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(SimulationTemplate template)
+        public async Task<ActionResult> Create(SimulationTemplate template)
         {
-            var simulation = BaseCore.Save(template.Simulation, StoredProcedures.SimSettingsCreate);
+            var simulation = await SimulationCore.CreateAsync(template.Simulation, true).ConfigureAwait(false);
             if (simulation == null)
             {
                 return Json(new ServerResponse(true, "Failed to create Simulation"));
             }
 
-            var procedures = new List<StoredProcedureBase>();
             foreach (var decision in template.DecisionChances)
             {
                 decision.SimulationId = simulation.Id;
@@ -56,14 +57,13 @@ namespace EcoSim.Controllers
                 {
                     decision.Chance += lastDecision.Chance;
                 }
-
-                procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Decision, decision));
             }
-            if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+
+            var savedDecisionChances = await DecisionChanceCore.CreateAsync(template.DecisionChances, true).ConfigureAwait(false);
+            if (savedDecisionChances == null)
             {
                 return Json(new ServerResponse(true, "Failed to create Decision Chances"));
             }
-            procedures = new List<StoredProcedureBase>();
 
             var config = template.NetworkConfiguration;
             if (config.GridHeight != 0 && config.GridWidth != 0 && config.NetworkPattern == (int)NetworkPatternType.Grid)
@@ -138,19 +138,14 @@ namespace EcoSim.Controllers
                 }
             }
 
-            foreach (var node in network)
-            {
-                procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Node, node));
-            }
-            if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+            var savedNetwork = await NodeCore.CreateAsync(network, true).ConfigureAwait(false);
+            if (savedNetwork == null || !savedNetwork.Any())
             {
                 return Json(new ServerResponse(true, "Failed to create Node Network"));
             }
-            procedures = new List<StoredProcedureBase>();
-
-            network = BaseCore.GetFullSimulation(simulation.Id).Network;
 
             var links = new List<NodeLink>();
+            network = savedNetwork.ToList();
 
             switch ((NetworkPatternType)config.NetworkPattern)
             {
@@ -192,21 +187,23 @@ namespace EcoSim.Controllers
             {
                 return Json(new ServerResponse(true, "Failed to define Network Links. Check input file or pattern parameters"));
             }
-
-            foreach (var link in links)
+            var mirrorLinks = new List<NodeLink>();
+            links.ForEach(nl =>
             {
-                link.SimulationId = simulation.Id;
-                procedures.Add(new StoredProcedureBase(StoredProcedures.Save_NodeLink, link));
-            }
-            if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+                nl.SimulationId = simulation.Id;
+                mirrorLinks.Add(new NodeLink
+                {
+                    SimulationId = simulation.Id,
+                    NodeId = nl.LinkId,
+                    LinkId = nl.NodeId
+                });
+            });
+            links.AddRange(mirrorLinks);
+
+            var savedLinks = await NodeLinkCore.CreateAsync(links, true).ConfigureAwait(false);
+            if (savedLinks == null || !savedLinks.Any())
             {
                 return Json(new ServerResponse(true, "Failed to create Network Links"));
-            }
-            procedures = new List<StoredProcedureBase>();
-
-            if (network == null)
-            {
-                return Json("Fail");
             }
 
             var products = ProductManager.CreateProducts(
@@ -215,32 +212,35 @@ namespace EcoSim.Controllers
             foreach (var product in products)
             {
                 product.SimulationId = simulation.Id;
-                procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Product, product));
             }
-            if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
+
+            var savedProducts = await ProductCore.CreateAsync(products, true).ConfigureAwait(false);
+            if (savedProducts == null || !savedProducts.Any())
             {
                 return Json(new ServerResponse(true, "Failed to create Products Set"));
             }
-            products = BaseCore.GetFullSimulation(simulation.Id).Products;
 
-            var productions = ProductManager.CreateProductions(
+            products = savedProducts.ToList();
+
+            var productions = await ProductManager.CreateProductions(
                 network,
                 products,
                 (ProducerSelectionPattern)config.ProducerSelectionPattern,
                 config.ProducerBias,
                 (ProductionSelectionPattern)config.ProductionSelectionPattern,
-                config.ProductionBias);
+                config.ProductionBias).ConfigureAwait(false);
+
             if (productions == null)
             {
                 return Json(new ServerResponse(true, "Failed to create Productions Set"));
             }
 
-            var needs = ProductManager.CreateNeeds(
+            var needs = await ProductManager.CreateNeeds(
                 network,
                 products,
                 productions,
                 (NeedSelectionPattern)config.NeedSelectionPattern,
-                config.NeedBias);
+                config.NeedBias).ConfigureAwait(false);
 
             if (needs == null)
             {
@@ -251,9 +251,9 @@ namespace EcoSim.Controllers
         }
 
         [HttpGet]
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            var simulations = BaseCore.GetAllSimulations();
+            var simulations = await SimulationCore.GetIndexAsync().ConfigureAwait(false);
 
             return View(simulations);
         }

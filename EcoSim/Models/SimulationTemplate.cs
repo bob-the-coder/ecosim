@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using BusinessLogic.Configuration;
+using BusinessLogic.Models;
 using Models;
 
 namespace EcoSim.Models

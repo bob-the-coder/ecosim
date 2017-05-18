@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using BusinessLogic;
 using BusinessLogic.Configuration;
 using BusinessLogic.Enum;
+using BusinessLogic.Models;
 using EcoSim.Models;
 using Models;
 using Newtonsoft.Json;
@@ -37,22 +38,6 @@ namespace EcoSim.Controllers
                 });
             }
             return View("SimulationSettings", viewModel);
-        }
-
-        [HttpPost]
-        public JsonResult CreateNode(Node n)
-        {
-            var result = NodeManager.Create(n);
-
-            return Json(result);
-        }
-
-        [HttpPost]
-        public string GetGraph()
-        {
-            var result = NodeManager.GetGraph();
-
-            return JsonConvert.SerializeObject(result);
         }
     }
 }

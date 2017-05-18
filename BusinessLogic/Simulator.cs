@@ -9,10 +9,11 @@ using BusinessLogic.Configuration;
 using BusinessLogic.Economics;
 using BusinessLogic.Enum;
 using Models;
-using DatabaseHandler.StoreProcedures;
-using DatabaseHandler.Helpers;
 using Decision = BusinessLogic.Enum.Decision;
 using System.Web;
+using BusinessLogic.Cores;
+using BusinessLogic.ModelCore;
+using BusinessLogic.Models;
 
 namespace BusinessLogic
 {
@@ -20,112 +21,34 @@ namespace BusinessLogic
     {
         private static readonly Random Rng = new Random();
 
-        public static bool ClearDatabase()
+        public static async Task<bool> SaveCurrentState(this FullSimulation sim)
         {
-            var sp = new ClearDatabaseSp();
-            return StoredProcedureExecutor.ExecuteNoQueryAsTransaction(new List<StoredProcedureBase> { sp });
-        }
+            var savedNodes = await NodeCore.UpdateAsync(sim.Network, true).ConfigureAwait(false);
+            if (savedNodes == null) return false;
 
-        public static bool CommitChanges(this FullSimulation currentSim)
-        {
-            var procedures = new List<StoredProcedureBase>();
-            currentSim.Network.ForEach(node => procedures.Add(new NodeUpdate(node)));
-            currentSim.Productions.ForEach(production => procedures.Add(new ProductionUpdate(production)));
-            currentSim.Needs.ForEach(need => procedures.Add(new NeedUpdate(need)));
+            var savedProductions = await ProductionCore.UpdateAsync(sim.Productions, true).ConfigureAwait(false);
+            if (savedProductions == null) return false;
 
-            return StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures);
-        }
+            var savedNeeds = await NeedCore.UpdateAsync(sim.Needs, true).ConfigureAwait(false);
+            if (savedNeeds == null) return false;
 
-        public static bool SaveCurrentState(this FullSimulation sim)
-        {
-            var procedures = new List<StoredProcedureBase>();
-
-            for (var i = 0; i < sim.Network.Count; i++)
-            {
-                if (procedures.Count / 100 == 1)
-                {
-                    if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
-                    {
-                        return false;
-                    }
-                    procedures = new List<StoredProcedureBase>();
-                }
-                sim.Network[i].Neighbours = null;
-                sim.Network[i].ShortestPathsHeap = null;
-                procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Node, sim.Network[i]));
-            }
-            if (procedures.Count > 0)
-            {
-                if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
-                {
-                    return false;
-                }
-                procedures = new List<StoredProcedureBase>();
-            }
-
-            for (var i = 0; i < sim.Productions.Count; i++)
-            {
-                if (procedures.Count / 100 == 1)
-                {
-                    if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
-                    {
-                        return false;
-                    }
-                    procedures = new List<StoredProcedureBase>();
-                }
-                procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Production, sim.Productions[i]));
-            }
-            if (procedures.Count > 0)
-            {
-                if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
-                {
-                    return false;
-                }
-                procedures = new List<StoredProcedureBase>();
-            }
-
-            for (var i = 0; i < sim.Needs.Count; i++)
-            {
-                if (procedures.Count / 100 == 1)
-                {
-                    if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
-                    {
-                        return false;
-                    }
-                    procedures = new List<StoredProcedureBase>();
-                }
-                procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Need, sim.Needs[i]));
-            }
-            if (procedures.Count > 0)
-            {
-                if (!StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
-                {
-                    return false;
-                }
-            }
             return true;
         }
 
-        public static bool SimulateIteration(int id, string logPath)
+        public static async Task<bool> SimulateIteration(int id, string logPath)
         {
-            var currentSim = BaseCore.GetFullSimulation(id);
+            var currentSim = await SimulationCore.GetFullSimulationAsync(id).ConfigureAwait(false);
 
             LinkNodes(currentSim.Network, currentSim.Links);
 
-            var iterationStarted = BaseCore.StartIteration(currentSim.Simulation.Id);
-
-            if (!iterationStarted)
-            {
-                return false;
-            }
             currentSim.Simulation.LatestIteration++;
 
-            currentSim.CommitLog(new SimulationLog
+            await currentSim.CommitLog(new SimulationLog
             {
                 NodeId = -99,
                 Type = (int)SimulationLogType.GeneralInfo,
                 Content = $"START ITERATION {currentSim.Simulation.LatestIteration}"
-            });
+            }).ConfigureAwait(false);
 
             var log = new SimulationLog
             {
@@ -133,7 +56,7 @@ namespace BusinessLogic
                 NodeId = -99,
                 Content = "TRANSACTION PHASE"
             };
-            currentSim.CommitLog(log);
+            await currentSim.CommitLog(log).ConfigureAwait(false);
 
             foreach (var node in currentSim.Network)
             {
@@ -151,18 +74,18 @@ namespace BusinessLogic
 
                     if (chanceToFulfill <= need.Priority)
                     {
-                        currentSim.FulfillNeed(node, need, node.ShortestPathsHeap);
+                        await currentSim.FulfillNeed(node, need, node.ShortestPathsHeap).ConfigureAwait(false);
                     }
                 }
             }
 
-            var result = currentSim.SaveCurrentState();
+            var result = await currentSim.SaveCurrentState().ConfigureAwait(false);
             if (!result)
             {
                 return false;
             }
 
-            currentSim = BaseCore.GetFullSimulation(currentSim.Simulation.Id);
+            currentSim = await SimulationCore.GetFullSimulationAsync(id).ConfigureAwait(false);
             LinkNodes(currentSim.Network, currentSim.Links);
 
             //DECISION PHASE
@@ -172,7 +95,8 @@ namespace BusinessLogic
                 NodeId = -99,
                 Content = "DECISION PHASE"
             };
-            currentSim.CommitLog(log);
+            await currentSim.CommitLog(log).ConfigureAwait(false);
+
             currentSim.DecisionChances = currentSim.DecisionChances.OrderBy(d => d.Chance).ToList();
 
             foreach (var node in currentSim.Network)
@@ -190,37 +114,37 @@ namespace BusinessLogic
                 {
                     case Decision.Expand:
                         {
-                            node.Expand(currentSim, ExpansionPatterns.SimpleChild);
+                            await node.Expand(currentSim, ExpansionPatterns.SimpleChild).ConfigureAwait(false);
                         }
                         break;
                     case Decision.ImproveProductions:
                         {
-                            node.ImproveProductionQuality(currentSim);
+                            await node.ImproveProductionQuality(currentSim).ConfigureAwait(false);
                         }
                         break;
                     case Decision.CreateProductions:
                         {
-                            node.CreateProduction(currentSim);
+                            await node.CreateProduction(currentSim).ConfigureAwait(false);
                         }
                         break;
                     case Decision.CreateLinks:
                         {
-                            node.CreateLink(currentSim);
+                            await node.CreateLink(currentSim).ConfigureAwait(false);
                         }
                         break;
                 }
             }
 
-            currentSim.NormalizeDecisions();
+            await currentSim.NormalizeDecisions().ConfigureAwait(false);
 
-            currentSim.CommitLog(new SimulationLog
+            await currentSim.CommitLog(new SimulationLog
             {
                 NodeId = -99,
                 Type = (int)SimulationLogType.GeneralInfo,
                 Content = $"END ITERATION {currentSim.Simulation.LatestIteration}"
-            });
+            }).ConfigureAwait(false);
 
-            CreateLogFile(logPath, id, currentSim.Simulation.LatestIteration);
+            await CreateLogFile(logPath, id, currentSim.Simulation.LatestIteration).ConfigureAwait(false);
 
             return true;
         }
@@ -239,7 +163,7 @@ namespace BusinessLogic
             }
         }
 
-        private static void FulfillNeed(this FullSimulation currentSim, Node node,
+        private static async Task FulfillNeed(this FullSimulation currentSim, Node node,
             Need need,
             Dictionary<int, int> nodeBfsResult)
         {
@@ -255,7 +179,7 @@ namespace BusinessLogic
 
             var pathToBuyer = node.GetShortestPathToNode(selectedProducer, currentSim.Network);
 
-            node.BuysFrom(need, selectedProducer, selectedProduction, pathToBuyer.GetRange(1, pathToBuyer.Count - 1), currentSim);
+            await node.BuysFrom(need, selectedProducer, selectedProduction, pathToBuyer.GetRange(1, pathToBuyer.Count - 1), currentSim).ConfigureAwait(false);
         }
 
         private static Node GetClosestProducer(this Node buyer, List<Node> network, List<Production> allProductions, Need need)
@@ -290,17 +214,19 @@ namespace BusinessLogic
             return producerPaths.First(path => path.Value.Count == shortestPathLength).Key;
         }
 
-        private static void NormalizeDecisions(this FullSimulation simulation)
+        private static async Task NormalizeDecisions(this FullSimulation simulation)
         {
             var decisions = simulation.DecisionChances;
 
-            var lastIterationsLogs = BaseCore.GetMemberList<SimulationLog>(
-                new SimulationMember { SimulationId = simulation.Simulation.Id },
-                StoredProcedures.FullSimulation_GetSimulationLogs,
-                $"IterationNumber >= {simulation.Simulation.LatestIteration - simulation.Simulation.DecisionLookBack}");
+            var lastIterationLogs =
+                await SimulationLogCore.GetListAsync(sl => sl.SimulationId == simulation.Simulation.Id &&
+                                                           sl.IterationNumber >= simulation.Simulation.LatestIteration - simulation.Simulation.DecisionLookBack)
+                                                           .ConfigureAwait(false);
 
-            var decisionLogs = lastIterationsLogs.Where(log => log.Type == (int)SimulationLogType.Decision).ToList();
-            var transactionLogs = lastIterationsLogs.Where(log => log.Type == (int)SimulationLogType.Transaction).ToList();
+            var orderedLogs = lastIterationLogs.OrderBy(sl => sl.IterationNumber).ToList();
+
+            var decisionLogs = orderedLogs.Where(log => log.Type == (int)SimulationLogType.Decision).ToList();
+            var transactionLogs = orderedLogs.Where(log => log.Type == (int)SimulationLogType.Transaction).ToList();
 
             var sellerProfits = 0.0;
             var mediatorProfits = 0.0;
@@ -394,22 +320,17 @@ namespace BusinessLogic
                 }
             }
 
-            var procedures = new List<StoredProcedureBase>();
-            foreach (var decision in decisions)
+            var savedDecisionChances = await DecisionChanceCore.UpdateAsync(decisions, true).ConfigureAwait(false);
+            if (savedDecisionChances != null)
             {
-                procedures.Add(new StoredProcedureBase(StoredProcedures.Save_Decision, decision));
-            }
-
-            if (StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures))
-            {
-                foreach (var decision in decisions)
+                foreach (var decision in savedDecisionChances)
                 {
-                    simulation.CommitLog(new SimulationLog
+                    await simulation.CommitLog(new SimulationLog
                     {
                         NodeId = -99,
                         Type = (int)SimulationLogType.DecisionNormalization,
                         Content = $"{decision.DecisionId} {decision.Chance} {decisionPopularity[decision.DecisionId]}"
-                    });
+                    }).ConfigureAwait(false);
                 }
             }
         }
@@ -426,9 +347,9 @@ namespace BusinessLogic
             return Math.Max(partialScore, Constants.MaxImpact);
         }
 
-        private static void CreateLogFile(string physPath, int id, int iteration)
+        private static async Task CreateLogFile(string physPath, int id, int iteration)
         {
-            var thisIterationLogs = BaseCore.GetLogsInIteration(id, iteration);
+            var thisIterationLogs = await SimulationLogCore.GetListAsync(sl => sl.SimulationId == id && sl.IterationNumber == iteration).ConfigureAwait(false);
 
             if (!Directory.Exists(physPath))
             {

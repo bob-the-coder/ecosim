@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="EcoSimModelStoreContainer" CdmEntityContainer="Entities">
+    <EntitySetMapping Name="DecisionChances">
+      <EntityTypeMapping TypeName="EcoSimModel.DecisionChance">
+        <MappingFragment StoreEntitySet="DecisionChances">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="SimulationId" ColumnName="SimulationId" />
+          <ScalarProperty Name="DecisionId" ColumnName="DecisionId" />
+          <ScalarProperty Name="Chance" ColumnName="Chance" />
+          <ScalarProperty Name="Enabled" ColumnName="Enabled" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Decisions">
+      <EntityTypeMapping TypeName="EcoSimModel.Decision">
+        <MappingFragment StoreEntitySet="Decisions">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Needs">
+      <EntityTypeMapping TypeName="EcoSimModel.Need">
+        <MappingFragment StoreEntitySet="Needs">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="NodeId" ColumnName="NodeId" />
+          <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+          <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+          <ScalarProperty Name="Priority" ColumnName="Priority" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Nodes">
+      <EntityTypeMapping TypeName="EcoSimModel.Node">
+        <MappingFragment StoreEntitySet="Nodes">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="SimulationId" ColumnName="SimulationId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="SpendingLimit" ColumnName="SpendingLimit" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Productions">
+      <EntityTypeMapping TypeName="EcoSimModel.Production">
+        <MappingFragment StoreEntitySet="Productions">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="NodeId" ColumnName="NodeId" />
+          <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+          <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+          <ScalarProperty Name="Quality" ColumnName="Quality" />
+          <ScalarProperty Name="Price" ColumnName="Price" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Simulations">
+      <EntityTypeMapping TypeName="EcoSimModel.Simulation">
+        <MappingFragment StoreEntitySet="Simulations">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="NeedFulfillSortByPriority" ColumnName="NeedFulfillSortByPriority" />
+          <ScalarProperty Name="NeedFulfillSortByQuantity" ColumnName="NeedFulfillSortByQuantity" />
+          <ScalarProperty Name="ProductionSortByDistance" ColumnName="ProductionSortByDistance" />
+          <ScalarProperty Name="ProductionSortByFinalCost" ColumnName="ProductionSortByFinalCost" />
+          <ScalarProperty Name="ProductionSortByInitialCost" ColumnName="ProductionSortByInitialCost" />
+          <ScalarProperty Name="ProductPriceIncreasePerQuality" ColumnName="ProductPriceIncreasePerQuality" />
+          <ScalarProperty Name="ProductPriceIncreasePerIntermediary" ColumnName="ProductPriceIncreasePerIntermediary" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SimulationLogs">
+      <EntityTypeMapping TypeName="EcoSimModel.SimulationLog">
+        <MappingFragment StoreEntitySet="SimulationLogs">
+          <ScalarProperty Name="Content" ColumnName="Content" />
+          <ScalarProperty Name="Type" ColumnName="Type" />
+          <ScalarProperty Name="IterationNumber" ColumnName="IterationNumber" />
+          <ScalarProperty Name="NodeId" ColumnName="NodeId" />
+          <ScalarProperty Name="SimulationId" ColumnName="SimulationId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Products">
+      <EntityTypeMapping TypeName="EcoSimModel.Product">
+        <MappingFragment StoreEntitySet="Products">
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="SimulationId" ColumnName="SimulationId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="NodeLinks">
+      <EntityTypeMapping TypeName="EcoSimModel.NodeLink">
+        <MappingFragment StoreEntitySet="NodeLinks">
+          <ScalarProperty Name="LinkId" ColumnName="LinkId" />
+          <ScalarProperty Name="NodeId" ColumnName="NodeId" />
+          <ScalarProperty Name="SimulationId" ColumnName="SimulationId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

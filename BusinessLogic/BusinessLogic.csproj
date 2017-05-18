@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=6.0.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.6.0.2\lib\net45\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
@@ -52,9 +56,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseCore.cs" />
     <Compile Include="Configuration\NetworkConfiguration.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Cores\DecisionChanceCore.cs" />
+    <Compile Include="Cores\DecisionCore.cs" />
+    <Compile Include="Cores\NeedCore.cs" />
+    <Compile Include="Cores\NodeCore.cs" />
+    <Compile Include="Cores\NodeLinkCore.cs" />
+    <Compile Include="Cores\ProductCore.cs" />
+    <Compile Include="Cores\ProductionCore.cs" />
+    <Compile Include="Cores\SimulationCore.cs" />
+    <Compile Include="Cores\SimulationLogCore.cs" />
     <Compile Include="DecisionManager.cs" />
     <Compile Include="Economics\ExpansionPattern.cs" />
     <Compile Include="Economics\ExpansionPatterns.cs" />
@@ -70,22 +82,47 @@
     <Compile Include="Enum\SortDirection.cs" />
     <Compile Include="Enum\TransactionType.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="Interfaces\IModel.cs" />
+    <Compile Include="Interfaces\ISinglePkModel.cs" />
+    <Compile Include="ModelCore\BaseCore.cs" />
+    <Compile Include="ModelCore\BaseSinglePkCore.cs" />
+    <Compile Include="Models\Decision.cs" />
+    <Compile Include="Models\DecisionChance.cs" />
+    <Compile Include="Models\FullSimulation.cs" />
     <Compile Include="Models\IndexSimulation.cs" />
     <Compile Include="Models\Interfaces\IIndexSimulation.cs" />
+    <Compile Include="Models\Need.cs" />
+    <Compile Include="Models\Node.cs" />
+    <Compile Include="Models\NodeLink.cs" />
+    <Compile Include="Models\Product.cs" />
+    <Compile Include="Models\Production.cs" />
+    <Compile Include="Models\Simulation.cs" />
+    <Compile Include="Models\SimulationLog.cs" />
+    <Compile Include="Models\SimulationSettings.cs" />
     <Compile Include="NetworkCreationPatterns.cs" />
     <Compile Include="NetworkManager.cs" />
-    <Compile Include="NodeManager.cs" />
     <Compile Include="ProducerManager.cs" />
     <Compile Include="ProductionManager.cs" />
     <Compile Include="ProductManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimulationManager.cs" />
+    <Compile Include="Response.cs" />
+    <Compile Include="ResponseCode.cs" />
+    <Compile Include="ResponseFactory.cs" />
     <Compile Include="Simulator.cs" />
+    <Compile Include="TypeManagement\DasConfigurator.cs" />
+    <Compile Include="TypeManagement\DataAdapterService.cs" />
+    <Compile Include="Workflow\ConfigurableQuery.cs" />
+    <Compile Include="Workflow\Enum\UnitOfWorkMode.cs" />
+    <Compile Include="Workflow\Interfaces\IConfigurableQuery.cs" />
+    <Compile Include="Workflow\Interfaces\IOrderedConfigurableQuery.cs" />
+    <Compile Include="Workflow\Interfaces\IUnitOfWork.cs" />
+    <Compile Include="Workflow\OrderedConfigurableQuery.cs" />
+    <Compile Include="Workflow\RepoUnitOfWork.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DatabaseHandler\DatabaseHandler.csproj">
-      <Project>{5168739f-8be7-4231-903f-514f7450106a}</Project>
-      <Name>DatabaseHandler</Name>
+    <ProjectReference Include="..\DataLayer\DataLayer.csproj">
+      <Project>{58eea9fb-cce3-43bf-b047-1d60ee5c198a}</Project>
+      <Name>DataLayer</Name>
     </ProjectReference>
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{d0a8366d-71bb-4d3d-9121-2689a2b48a9e}</Project>
@@ -99,6 +136,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BusinessLogic.Configuration;
+using BusinessLogic.Cores;
 using BusinessLogic.Enum;
-using DatabaseHandler.Helpers;
+using BusinessLogic.ModelCore;
+using BusinessLogic.Models;
 using Models;
 
 namespace BusinessLogic.Economics
@@ -20,7 +22,7 @@ namespace BusinessLogic.Economics
         /// <param name="sellerProduction">Seller's Production regarding a product</param>
         /// <param name="pathFromBuyerToSeller">Array of nodes between buyer and seller</param>
         /// <param name="currentSim">current simulation</param>
-        public static void BuysFrom(this Node buyer,
+        public static async Task BuysFrom(this Node buyer,
             Need buyerNeed,
             Node seller,
             Production sellerProduction,
@@ -42,11 +44,11 @@ namespace BusinessLogic.Economics
                 return;
             }
 
-            currentSim.CommitLog(new SimulationLog
+            await currentSim.CommitLog(new SimulationLog
             {
                 Type = (int)SimulationLogType.GeneralInfo,
                 Content = "Transaction started"
-            });
+            }).ConfigureAwait(false);
 
             var currentTransactionCost = affordableQuantityPrice;
 
@@ -56,14 +58,14 @@ namespace BusinessLogic.Economics
                 NodeId = buyer.Id,
                 Content = $"{(int)TransactionType.Buys} -{currentTransactionCost}"
             };
-            currentSim.CommitLog(log);
+            await currentSim.CommitLog(log).ConfigureAwait(false);
 
-            currentSim.CommitLog(new SimulationLog
+            await currentSim.CommitLog(new SimulationLog
             {
                 Type = (int)SimulationLogType.BoughtProduction,
                 NodeId = buyer.Id,
                 Content = $"{sellerProduction.Quality}"
-            });
+            }).ConfigureAwait(false);
 
             buyer.SpendingLimit -= currentTransactionCost;
 
@@ -91,7 +93,7 @@ namespace BusinessLogic.Economics
                     NodeId = intermediary.Id,
                     Content = $"{(int)TransactionType.Mediates} +{nodeCostCut}"
                 };
-                currentSim.CommitLog(log);
+                await currentSim.CommitLog(log).ConfigureAwait(false);
 
                 intermediary.SpendingLimit += nodeCostCut;
                 currentTransactionCost -= nodeCostCut;
@@ -103,7 +105,7 @@ namespace BusinessLogic.Economics
                 NodeId = seller.Id,
                 Content = $"{(int)TransactionType.Sells} +{currentTransactionCost}"
             };
-            currentSim.CommitLog(log);
+            await currentSim.CommitLog(log).ConfigureAwait(false);
 
             seller.SpendingLimit += currentTransactionCost;
 
@@ -113,16 +115,19 @@ namespace BusinessLogic.Economics
                 NodeId = seller.Id,
                 Content = "Transaction completed"
             };
-            currentSim.CommitLog(log);
+            await currentSim.CommitLog(log).ConfigureAwait(false);
         }
 
-        public static SimulationLog CommitLog(this FullSimulation currentSim, SimulationLog log)
+        public static async Task<SimulationLog> CommitLog(this FullSimulation currentSim, SimulationLog log)
         {
-            log.Id = Guid.NewGuid();
             log.SimulationId = currentSim.Simulation.Id;
             log.IterationNumber = currentSim.Simulation.LatestIteration;
+
+            log = await SimulationLogCore.CreateAsync(log, true).ConfigureAwait(false);
+
+            if (log == null) return null;
+
             currentSim.Logs.Add(log);
-            BaseCore.Save(log, StoredProcedures.SessionLogCreate);
             return log;
         }
     }

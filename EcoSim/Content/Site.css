@@ -20,3 +20,25 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.navbar {
+    -webkit-box-shadow: 0 0 10px 1px #777;
+    -ms-box-shadow: 0 0 10px 1px #777;
+    box-shadow: 0 0 10px 1px #777;
+}
+
+.body-content {
+    width: 1200px;
+    margin: 0 auto;
+    padding: 25px;
+    margin-top: 50px;
+    border-radius: 3px;
+    -webkit-box-shadow: 0 0 10px 1px #cccccc;
+    -ms-box-shadow: 0 0 10px 1px #cccccc;
+    box-shadow: 0 0 10px 1px #cccccc;
+}
+
+#i_iterations, #i_submit {
+    float: left;
+    margin-right: 20px;
+}

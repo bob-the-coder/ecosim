@@ -2,9 +2,10 @@
 using Models;
 using System;
 using System.Collections.Generic;
-using DatabaseHandler.Helpers;
-using DatabaseHandler.StoreProcedures;
 using System.Linq;
+using System.Threading.Tasks;
+using BusinessLogic.Cores;
+using BusinessLogic.Models;
 
 namespace BusinessLogic
 {
@@ -61,7 +62,7 @@ namespace BusinessLogic
             return result;
         }
 
-        public static List<Production> CreateProductions(List<Node> network,
+        public static async Task<List<Production>> CreateProductions(List<Node> network,
             List<Product> products,
             ProducerSelectionPattern selectionPattern = ProducerSelectionPattern.Percentage,
             int producerSelectionBias = 50,
@@ -92,10 +93,10 @@ namespace BusinessLogic
                     }
             }
 
-            return CreateProductionsForNetworkSubset(producers, products, productionPattern, productionSelectionBias);
+            return await CreateProductionsForNetworkSubset(producers, products, productionPattern, productionSelectionBias).ConfigureAwait(false);
         }
 
-        private static List<Production> CreateProductionsForNetworkSubset(List<Node> producers, List<Product> products, ProductionSelectionPattern pattern, int productionSelectionBias)
+        private static async Task<List<Production>> CreateProductionsForNetworkSubset(List<Node> producers, List<Product> products, ProductionSelectionPattern pattern, int productionSelectionBias)
         {
             List<Production> productions;
             switch (pattern)
@@ -120,10 +121,10 @@ namespace BusinessLogic
                         return null;
                     }
             }
-            return ProductionManager.CommitProductions(productions);
+            return (await ProductionCore.CreateAsync(productions, true).ConfigureAwait(false)).ToList();
         }
 
-        public static List<Need> CreateNeeds(List<Node> network,
+        public static async Task<List<Need>> CreateNeeds(List<Node> network,
             List<Product> products,
             List<Production> productions,
             NeedSelectionPattern pattern = NeedSelectionPattern.SingleProduct,
@@ -195,14 +196,14 @@ namespace BusinessLogic
                     break;
                 case (NeedSelectionPattern.MoreFromProductions):
                     {
-                        foreach(var node in network)
+                        foreach (var node in network)
                         {
                             var producedProducts = products.Where(p => productions.Any(p2 => p2.ProductId == p.Id)).ToList();
 
-                            foreach(var product in producedProducts)
+                            foreach (var product in producedProducts)
                             {
                                 var prob = Rng.Next(0, 100);
-                                if(prob > needBias)
+                                if (prob > needBias)
                                 {
                                     continue;
                                 }
@@ -226,14 +227,7 @@ namespace BusinessLogic
                     }
             }
 
-            var procedures = new List<StoredProcedureBase>();
-
-            foreach (var need in needs)
-            {
-                procedures.Add(new NeedCreate(need));
-            }
-
-            return StoredProcedureExecutor.ExecuteNoQueryAsTransaction(procedures) ? needs : null;
+            return (await NeedCore.CreateAsync(needs, true).ConfigureAwait(false)).ToList();
         }
     }
 }

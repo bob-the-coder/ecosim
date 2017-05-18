@@ -1,9 +1,0 @@
-C:\projects\jetscout\JetScout - Angular\JetScout\DataLayer\bin\Client\DataLayer.dll
-C:\projects\jetscout\JetScout - Angular\JetScout\DataLayer\bin\Client\Logging.dll
-C:\projects\jetscout\JetScout - Angular\JetScout\DataLayer\bin\Client\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.dll
-C:\projects\jetscout\JetScout - Angular\JetScout\DataLayer\bin\Client\RetryPolicyHelper.dll
-C:\projects\jetscout\JetScout - Angular\JetScout\DataLayer\bin\Client\NLog.dll
-C:\projects\jetscout\JetScout - Angular\JetScout\DataLayer\bin\Client\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.xml
-C:\projects\jetscout\JetScout - Angular\JetScout\DataLayer\bin\Client\NLog.xml
-C:\projects\jetscout\JetScout - Angular\JetScout\DataLayer\obj\Client\DataLayer.csprojResolveAssemblyReference.cache
-C:\projects\jetscout\JetScout - Angular\JetScout\DataLayer\obj\Client\DataLayer.dll

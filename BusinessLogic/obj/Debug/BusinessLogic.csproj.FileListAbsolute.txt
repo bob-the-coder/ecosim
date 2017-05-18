@@ -3,12 +3,6 @@ c:\Users\calin sicoe\documents\visual studio 2015\Projects\EcoSim\BusinessLogic\
 c:\Users\calin sicoe\documents\visual studio 2015\Projects\EcoSim\BusinessLogic\obj\Debug\BusinessLogic.csprojResolveAssemblyReference.cache
 c:\Users\calin sicoe\documents\visual studio 2015\Projects\EcoSim\BusinessLogic\obj\Debug\BusinessLogic.dll
 c:\Users\calin sicoe\documents\visual studio 2015\Projects\EcoSim\BusinessLogic\obj\Debug\BusinessLogic.pdb
-C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\DatabaseHandler.dll
-C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\Logging.dll
-C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\NLog.dll
-C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\DatabaseHandler.pdb
-C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\Logging.pdb
-C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\NLog.xml
 C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\BusinessLogic.dll.config
 C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\EntityFramework.dll
 C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\EntityFramework.SqlServer.dll
@@ -16,3 +10,7 @@ C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\BusinessLogic\
 C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\EntityFramework.SqlServer.xml
 C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\Models.dll
 C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\Models.pdb
+C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\AutoMapper.dll
+C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\DataLayer.dll
+C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\DataLayer.pdb
+C:\Users\Calin Sicoe\Documents\Visual Studio 2015\Projects\EcoSim\BusinessLogic\bin\Debug\AutoMapper.xml

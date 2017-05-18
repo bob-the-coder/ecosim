@@ -17,5 +17,11 @@ namespace EcoSim
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
+
+        protected void Application_Error(object sender, EventArgs e)
+        {
+            var ex = Context.Server.GetLastError();
+            ex.ToString();
+        }
     }
 }

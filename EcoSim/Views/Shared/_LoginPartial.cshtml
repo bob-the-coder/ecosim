@@ -1,7 +1,6 @@
 ﻿@using Microsoft.AspNet.Identity
 
     <ul class="nav navbar-nav navbar-right">
-        <li><a href="javscript:void(0)">Settings</a></li>
-        <li><a href="javscript:void(0)">Start</a></li>
-        <li><a href="javscript:void(0)">Stop</a></li>
+        <li>@Html.ActionLink("Create Simulation", "/Create")</li>
+        <li>@Html.ActionLink("List Simulations", "/Index")</li>
     </ul>

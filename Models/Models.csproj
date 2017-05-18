@@ -40,9 +40,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Decision.cs" />
-    <Compile Include="DecisionChance.cs" />
-    <Compile Include="FullSimulation.cs" />
     <Compile Include="Interfaces\IDecision.cs" />
     <Compile Include="Interfaces\IDecisionChance.cs" />
     <Compile Include="Interfaces\IGuidPkObject.cs" />
@@ -58,14 +55,6 @@
     <Compile Include="Interfaces\IVisJsEdge.cs" />
     <Compile Include="Interfaces\IVisJsNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Need.cs" />
-    <Compile Include="Node.cs" />
-    <Compile Include="NodeLink.cs" />
-    <Compile Include="Product.cs" />
-    <Compile Include="Production.cs" />
-    <Compile Include="SimulationSettings.cs" />
-    <Compile Include="SimulationLog.cs" />
-    <Compile Include="SimulationMember.cs" />
     <Compile Include="VisJsEdge.cs" />
     <Compile Include="VisJsGraph.cs" />
     <Compile Include="VisJsNode.cs" />
