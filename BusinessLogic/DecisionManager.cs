@@ -53,8 +53,8 @@ namespace BusinessLogic
 
             if (pattern.LinkToParent)
             {
-                childLinks.Add(new NodeLink { NodeId = parentNode.Id, LinkId = childNode.Id });
-                childLinks.Add(new NodeLink { NodeId = childNode.Id, LinkId = parentNode.Id });
+                childLinks.Add(new NodeLink { NodeId = parentNode.Id, LinkId = childNode.Id, SimulationId = sim.Simulation.Id });
+                childLinks.Add(new NodeLink { NodeId = childNode.Id, LinkId = parentNode.Id, SimulationId = sim.Simulation.Id });
 
                 var createdLinks = await NodeLinkCore.CreateAsync(childLinks, true).ConfigureAwait(false);
                 if (createdLinks == null)
@@ -282,8 +282,8 @@ namespace BusinessLogic
             node.SpendingLimit -= investmentCost;
 
             var newLinks = new List<NodeLink>();
-            newLinks.Add(new NodeLink { NodeId = node.Id, LinkId = targetNode.Id });
-            newLinks.Add(new NodeLink { NodeId = targetNode.Id, LinkId = node.Id });
+            newLinks.Add(new NodeLink { NodeId = node.Id, LinkId = targetNode.Id, SimulationId = currentSim.Simulation.Id });
+            newLinks.Add(new NodeLink { NodeId = targetNode.Id, LinkId = node.Id, SimulationId = currentSim.Simulation.Id });
 
             var createdLinks = await NodeLinkCore.CreateAsync(newLinks, true).ConfigureAwait(false);
             if (createdLinks == null)
