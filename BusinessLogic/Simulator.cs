@@ -14,6 +14,7 @@ using System.Web;
 using BusinessLogic.Cores;
 using BusinessLogic.ModelCore;
 using BusinessLogic.Models;
+using Newtonsoft.Json;
 
 namespace BusinessLogic
 {
@@ -282,42 +283,20 @@ namespace BusinessLogic
 
             var fullImpact = decisionImpacts[0] + decisionImpacts[1] + decisionImpacts[2] + decisionImpacts[3];
 
-            decisions[indexExpand].Chance = (double)decisionImpacts[indexExpand] / fullImpact;
-
-            decisions[indexQuality].Chance = (double)decisionImpacts[indexQuality] / fullImpact;
-            if (decisions[indexQuality].Chance > 0)
+            if (fullImpact > 0)
             {
-                decisions[indexQuality].Chance += decisions[indexExpand].Chance;
+                decisions[indexExpand].Chance = (double)decisionImpacts[indexExpand] / fullImpact;
+
+                decisions[indexQuality].Chance = (double)decisionImpacts[indexQuality] / fullImpact;
+
+                decisions[indexProduction].Chance = (double)decisionImpacts[indexProduction] / fullImpact;
+
+                decisions[indexMediate].Chance = (double)decisionImpacts[indexMediate] / fullImpact;
             }
 
-            decisions[indexProduction].Chance = (double)decisionImpacts[indexProduction] / fullImpact;
-            if (decisions[indexProduction].Chance > 0)
+            foreach (var decision in decisions)
             {
-                if (decisions[indexQuality].Chance > 0)
-                {
-                    decisions[indexProduction].Chance += decisions[indexQuality].Chance;
-                }
-                else if (decisions[indexExpand].Chance > 0)
-                {
-                    decisions[indexProduction].Chance += decisions[indexExpand].Chance;
-                }
-            }
-
-            decisions[indexMediate].Chance = (double)decisionImpacts[indexMediate] / fullImpact;
-            if (decisions[indexMediate].Chance > 0)
-            {
-                if (decisions[indexProduction].Chance > 0)
-                {
-                    decisions[indexMediate].Chance += decisions[indexProduction].Chance;
-                }
-                else if (decisions[indexQuality].Chance > 0)
-                {
-                    decisions[indexMediate].Chance += decisions[indexQuality].Chance;
-                }
-                else if (decisions[indexExpand].Chance > 0)
-                {
-                    decisions[indexMediate].Chance += decisions[indexExpand].Chance;
-                }
+                decision.Chance = (double)(int)(decision.Chance * 100) / 100;
             }
 
             var savedDecisionChances = await DecisionChanceCore.UpdateAsync(decisions, true).ConfigureAwait(false);
@@ -342,35 +321,34 @@ namespace BusinessLogic
                 return 0;
             }
 
-            var partialScore = (int)(score * currentChance * decisionPopularity);
+            var partialScore = (int)(score * (currentChance + decisionPopularity) / (1 + decisionPopularity));
 
-            return Math.Max(partialScore, Constants.MaxImpact);
+            return Math.Min(partialScore, Constants.MaxImpact);
         }
 
         private static async Task CreateLogFile(string physPath, int id, int iteration)
         {
+            var sim = await SimulationCore.GetAsync(id).ConfigureAwait(false);
             var thisIterationLogs = await SimulationLogCore.GetListAsync(sl => sl.SimulationId == id && sl.IterationNumber == iteration).ConfigureAwait(false);
+            thisIterationLogs = thisIterationLogs.OrderBy(log => log.Id).ToList();
 
             if (!Directory.Exists(physPath))
             {
                 Directory.CreateDirectory(physPath);
             }
 
-            var simPath = physPath + "/Simulation " + id;
+            var simPath = physPath + "/" + sim.Name;
 
             if (!Directory.Exists(simPath))
             {
                 Directory.CreateDirectory(simPath);
             }
 
-            var logPath = simPath + "/" + iteration + ".txt";
+            var logPath = simPath + "/iteration_" + iteration + ".json";
 
             using (var file = new StreamWriter(logPath))
             {
-                foreach (var log in thisIterationLogs)
-                {
-                    file.WriteLine(log);
-                }
+                file.WriteLine(JsonConvert.SerializeObject(thisIterationLogs));
             }
         }
     }

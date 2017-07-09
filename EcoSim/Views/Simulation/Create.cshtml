@@ -111,6 +111,16 @@
 
             <input type="text" class="form-control" placeholder="Value" value="10" id="NeedBias"/>
         </div>
+        
+        <div class="config-block">
+            <div class="config-name">Base Spending Limit</div>
+            <input type="text" class="form-control" placeholder="Base" id="BaseMoney" value="1000"/>
+        </div>
+
+        <div class="config-block">
+            <div class="config-name">Spending Limit Deviation</div>
+            <input type="text" class="form-control" placeholder="Deviation" id="MoneyDeviation" value="250"/>
+        </div>
 
         <div class="config-block">
             <div class="config-name">Network Pattern</div>
@@ -166,8 +176,7 @@
         </div>
     </div>
     <div class="config-block">
-        <div id="createButton" class="btn btn-primary" onclick="
-submitSimulation()">Create Simulation</div>
+        <div id="createButton" class="btn btn-primary" onclick="submitSimulation()">Create Simulation</div>
     </div>
 </div>
 
@@ -233,6 +242,10 @@ submitSimulation()">Create Simulation</div>
         if (!SimulationTemplate) {
             return;
         }
+
+        SimulationTemplate.BaseMoney = $("#BaseMoney").val();
+        SimulationTemplate.MoneyDeviation = $("#MoneyDeviation").val();
+
         for (var key in SimulationTemplate.Simulation) {
             if (SimulationTemplate.Simulation.hasOwnProperty(key)) {
                 SimulationTemplate.Simulation[key] = $("#" + key).val();

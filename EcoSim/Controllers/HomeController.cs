@@ -8,7 +8,6 @@ using BusinessLogic.Enum;
 using BusinessLogic.Models;
 using EcoSim.Models;
 using Models;
-using Newtonsoft.Json;
 
 namespace EcoSim.Controllers
 {

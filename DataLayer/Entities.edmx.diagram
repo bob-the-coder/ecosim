@@ -4,16 +4,16 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="303d934d63844822b8499f961a6b8532" Name="Diagram1">
+      <Diagram DiagramId="303d934d63844822b8499f961a6b8532" Name="Diagram1" ZoomLevel="83">
         <EntityTypeShape EntityType="EcoSimModel.DecisionChance" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="EcoSimModel.Decision" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="EcoSimModel.Need" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="EcoSimModel.Node" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="EcoSimModel.Production" Width="1.5" PointX="4.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="EcoSimModel.Simulation" Width="1.5" PointX="2.75" PointY="6.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="EcoSimModel.SimulationLog" Width="1.5" PointX="0.75" PointY="6.75" />
-        <EntityTypeShape EntityType="EcoSimModel.Product" Width="1.5" PointX="5.375" PointY="6.75" />
-        <EntityTypeShape EntityType="EcoSimModel.NodeLink" Width="1.5" PointX="2.75" PointY="3.75" />
+        <EntityTypeShape EntityType="EcoSimModel.Decision" Width="1.5" PointX="0.5" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="EcoSimModel.Need" Width="1.5" PointX="4.5" PointY="2.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="EcoSimModel.Node" Width="1.5" PointX="4.75" PointY="4.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="EcoSimModel.Production" Width="1.5" PointX="6.875" PointY="4.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="EcoSimModel.Simulation" Width="1.5" PointX="7" PointY="0.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EcoSimModel.SimulationLog" Width="1.5" PointX="8.75" PointY="4.625" />
+        <EntityTypeShape EntityType="EcoSimModel.Product" Width="1.5" PointX="9" PointY="2.375" />
+        <EntityTypeShape EntityType="EcoSimModel.NodeLink" Width="1.5" PointX="2.75" PointY="4.5" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

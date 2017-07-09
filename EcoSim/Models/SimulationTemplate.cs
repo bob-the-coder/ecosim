@@ -14,5 +14,8 @@ namespace EcoSim.Models
         public NetworkConfiguration NetworkConfiguration { get; set; }
         public List<DecisionChance> DecisionChances { get; set; }
         public HttpPostedFileBase NetworkImport { get; set; }
+
+        public double BaseMoney { get; set; }
+        public int MoneyDeviation { get; set; }
     }
 }

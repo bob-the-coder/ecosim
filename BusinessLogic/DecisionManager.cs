@@ -103,7 +103,8 @@ namespace BusinessLogic
 
             foreach (var production in ownProductions)
             {
-                var investmentCost = 250 * (100 + production.Quality * 2) / 100;
+                var investmentCost = production.Quantity *
+                    Math.Pow(1 + sim.Simulation.ProductPriceIncreasePerQuality, production.Quality);
                 if (node.SpendingLimit < investmentCost)
                 {
                     continue;
@@ -177,13 +178,29 @@ namespace BusinessLogic
             var neededQuantity = 0;
             if (needsForChosenProducts.Count > 0)
             {
-                neededQuantity = needsForChosenProducts.Sum(p2 => p2.Quantity);
+                try
+                {
+                    neededQuantity = needsForChosenProducts.Sum(p2 => p2.Quantity);
+                }
+                catch (Exception)
+                {
+                    //overflow
+                    neededQuantity = Rng.Next(10, 100);
+                }
             }
 
             var producedQuantity = 0;
             if (productionsForChosenProducts.Count > 0)
             {
-                producedQuantity = productionsForChosenProducts.Sum(p2 => p2.Quantity);
+                try
+                {
+                    producedQuantity = productionsForChosenProducts.Sum(p2 => p2.Quantity);
+                }
+                catch (Exception)
+                {
+                    //overflow
+                    producedQuantity = Rng.Next(0, 100);
+                }
             }
 
             var chosenPrice = averagePrice;
@@ -198,7 +215,7 @@ namespace BusinessLogic
 
                 if (neededQuantity != 0)
                 {
-                    chosenQuantity = Rng.Next(0, (int)(neededQuantity * generalRatio));
+                    chosenQuantity = Rng.Next(0, (int)(neededQuantity * generalRatio) + 1);
                 }
             }
 
@@ -239,9 +256,9 @@ namespace BusinessLogic
 
             var logEntry = await SimulationLogCore.CreateAsync(new SimulationLog
             {
-                Type = (int) SimulationLogType.Decision,
+                Type = (int)SimulationLogType.Decision,
                 NodeId = node.Id,
-                Content = $"{(int) Enum.Decision.CreateProductions} {investmentCost}"
+                Content = $"{(int)Enum.Decision.CreateProductions} {investmentCost}"
             }).ConfigureAwait(false);
 
             return logEntry != null;

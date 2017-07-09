@@ -53,10 +53,6 @@ namespace EcoSim.Controllers
                 decision.SimulationId = simulation.Id;
                 var lastDecision =
                     template.DecisionChances.LastOrDefault(d => d.DecisionId < decision.DecisionId && d.Enabled);
-                if (lastDecision != null)
-                {
-                    decision.Chance += lastDecision.Chance;
-                }
             }
 
             var savedDecisionChances = await DecisionChanceCore.CreateAsync(template.DecisionChances, true).ConfigureAwait(false);
@@ -108,13 +104,13 @@ namespace EcoSim.Controllers
                             {
                                 gephiMinId = id;
                             }
-
+                            var willBeNegative = Rng.NextDouble();
                             network.Add(new Node
                             {
                                 Id = id - gephiMinId,
                                 SimulationId = simulation.Id,
                                 Name = lineSplit[1],
-                                SpendingLimit = Rng.NextDouble() * Rng.Next(100, 500) * 10
+                                SpendingLimit = template.BaseMoney + Rng.Next(-template.MoneyDeviation, template.MoneyDeviation)
                             });
                         }
                         catch (Exception)
@@ -133,7 +129,7 @@ namespace EcoSim.Controllers
                         Id = i,
                         Name = $"{i}",
                         SimulationId = simulation.Id,
-                        SpendingLimit = Rng.NextDouble() * Rng.Next(100, 500) * 10
+                        SpendingLimit = template.BaseMoney + Rng.Next(-template.MoneyDeviation, template.MoneyDeviation)
                     });
                 }
             }

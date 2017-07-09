@@ -5,6 +5,5 @@ C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\DataLayer\bin\
 C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\DataLayer\bin\Debug\EntityFramework.SqlServer.dll
 C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\DataLayer\bin\Debug\EntityFramework.xml
 C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\DataLayer\bin\Debug\EntityFramework.SqlServer.xml
-C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\DataLayer\obj\Debug\DataLayer.csprojResolveAssemblyReference.cache
 C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\DataLayer\obj\Debug\DataLayer.dll
 C:\Users\Calin Sicoe\documents\visual studio 2015\Projects\EcoSim\DataLayer\obj\Debug\DataLayer.pdb
